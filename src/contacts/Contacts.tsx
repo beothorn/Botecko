@@ -1,4 +1,5 @@
 import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -7,6 +8,19 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import ListItemText from '@mui/material/ListItemText';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    paddingTop: theme.spacing(2),
+  },
+  title: {
+    flexGrow: 1,
+  },
+  appBar: {
+    backgroundColor: theme.palette.primary.light,
+    color: theme.palette.primary.contrastText,
+  },
+}));
 
 const contacts = [
   {
@@ -27,16 +41,18 @@ const contacts = [
 ];
 
 export function Contacts() {
+  const classes = useStyles();
+
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="static" className={classes.appBar}>
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" component="div" className={classes.title}>
             BotBook
           </Typography>
         </Toolbar>
       </AppBar>
-      <List sx={{ paddingTop: 2 }}>
+      <List className={classes.root}>
         {contacts.map((contact) => (
           <ListItem button key={contact.name}>
             <ListItemAvatar>

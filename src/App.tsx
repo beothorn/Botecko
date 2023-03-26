@@ -30,7 +30,7 @@ export default function App() {
             break;
     }
 
-    return <Box sx={{ padding: '1rem', bgcolor: 'background.paper' }}>
+    return <Box sx={{ bgcolor: 'background.paper' }}>
             {currentScreenComponent}
         </Box>;
 }
