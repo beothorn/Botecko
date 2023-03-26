@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, TextField, IconButton } from '@material-ui/core';
 import SendIcon from '@mui/icons-material/Send';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { dispatchTestCall, selectOpenAiKey } from '../appStateSlice';
 
 type ChatBubbleProps = {
   text: string;
@@ -68,11 +70,10 @@ const styles = makeStyles((theme) => ({
 const Chat = () => {
   const classes = styles();
   const [message, setMessage] = useState('');
+  const openAiKey = useAppSelector(selectOpenAiKey);
+  const dispatch = useAppDispatch();
 
-  const handleSendMessage = () => {
-    console.log('Message:', message);
-    setMessage('');
-  };
+  const handleSendMessage = () => dispatchTestCall(dispatch, openAiKey);
 
   return (
     <div className={classes.root}>

@@ -1,0 +1,19 @@
+You need to summarize a chat into one subject that can be searched on the chat history.
+For example, for this exchange:
+[
+{"role": "user", "content": "Hello!"},
+{"role": "assistant", "content": "Hello!"},
+{"role": "user", "content": "Do you remember when we chatted about soccer the other day?!"}
+]
+You need to respond:
+{"search": ["soccer"]}
+Another example:
+[
+{"role": "assistant", "content": "LOL, ok that was fun!"},
+{"role": "user", "content": "Hi, I wanted to ask you about our issue with that error with the javascript app!"}
+]
+You need to respond:
+{"search": ["error", "javascript", "app"]}
+===
+Now, create a search for:
+$Messages
