@@ -16,7 +16,7 @@ export function TestOpenAiToken() {
             dispatchActionCheckOpenAiKey(dispatch, openAiKeyFromStore)
         }else{
             if (openAiKeyFromStorage === null ||  openAiKeyFromStorage === '') {
-                dispatch(actionSetScreen('presentation'));
+                dispatch(actionSetScreen('settings'));
             }else{
                 dispatchActionCheckOpenAiKey(dispatch, openAiKeyFromStorage)
             }

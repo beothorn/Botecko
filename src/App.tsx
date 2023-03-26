@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { Presentation } from './presentation/Presentation';
+import { Contacts } from './contacts/Contacts';
+import { Settings } from './settings/Settings';
 import { ErrorScreen } from './errorScreen/ErrorScreen';
 import { TestOpenAiToken } from './testOpenAiToken/TestOpenAiToken';
 
@@ -9,14 +10,17 @@ import { selectScreen } from './appStateSlice';
 
 import Box from '@mui/material/Box';
 
-export function App() {
+export default function App() {
 
     const currentScreen = useAppSelector(selectScreen);
 
     let currentScreenComponent = <></>;
     switch (currentScreen) {
-        case 'presentation':
-            currentScreenComponent = <Presentation />;
+        case 'contacts':
+            currentScreenComponent = <Contacts />;
+            break;
+        case 'settings':
+            currentScreenComponent = <Settings />;
             break;
         case 'testOpenAiToken':
             currentScreenComponent = <TestOpenAiToken />;

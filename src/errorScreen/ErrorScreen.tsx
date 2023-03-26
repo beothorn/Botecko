@@ -9,7 +9,7 @@ import { actionSetScreen } from '../appStateSlice';
 export function ErrorScreen() {
     const dispatch = useAppDispatch()
 
-    const gotoNextScreen = () => dispatch(actionSetScreen('presentation'));
+    const gotoNextScreen = () => dispatch(actionSetScreen('contacts'));
 
     return <>
         <Typography sx={{marginBottom: '1rem'}} variant="h5" gutterBottom>
