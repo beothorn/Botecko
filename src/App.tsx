@@ -9,6 +9,7 @@ import { useAppSelector } from './hooks';
 import { selectScreen } from './appStateSlice';
 
 import Box from '@mui/material/Box';
+import Chat from './chat/Chat';
 
 export default function App() {
 
@@ -24,6 +25,9 @@ export default function App() {
             break;
         case 'testOpenAiToken':
             currentScreenComponent = <TestOpenAiToken />;
+            break;
+        case 'chat':
+            currentScreenComponent = <Chat />;
             break;
         case 'error':
             currentScreenComponent = <ErrorScreen />;

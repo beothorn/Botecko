@@ -8,6 +8,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import ListItemText from '@mui/material/ListItemText';
+import { useAppDispatch } from '../hooks';
+import { actionSetScreen } from '../appStateSlice';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,6 +44,9 @@ const contacts = [
 
 export function Contacts() {
   const classes = useStyles();
+  const dispatch = useAppDispatch();
+
+  const gotoChat = () => dispatch(actionSetScreen('chat'));
 
   return (
     <>
@@ -54,7 +59,7 @@ export function Contacts() {
       </AppBar>
       <List className={classes.root}>
         {contacts.map((contact) => (
-          <ListItem button key={contact.name}>
+          <ListItem button key={contact.name} onClick={gotoChat}>
             <ListItemAvatar>
               <Avatar alt={contact.name} src={contact.avatarUrl} />
             </ListItemAvatar>

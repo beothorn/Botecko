@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Typography } from '@material-ui/core';
+import { Paper, Typography, TextField, IconButton } from '@material-ui/core';
+import SendIcon from '@mui/icons-material/Send';
+
+type ChatBubbleProps = {
+  text: string;
+  position: 'left' | 'right';
+};
 
 const useStyles = makeStyles((theme) => ({
   chatBubbleLeft: {
@@ -8,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.contrastText,
     padding: theme.spacing(1),
     borderRadius: '20px 20px 20px 0px',
-    maxWidth: '50%',
+    maxWidth: '100%',
     margin: `${theme.spacing(1)}px 0px ${theme.spacing(1)}px ${theme.spacing(1)}px`,
   },
   chatBubbleRight: {
@@ -16,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.secondary.contrastText,
     padding: theme.spacing(1),
     borderRadius: '20px 20px 0px 20px',
-    maxWidth: '50%',
+    maxWidth: '100%',
     margin: `${theme.spacing(1)}px ${theme.spacing(1)}px ${theme.spacing(1)}px 0px`,
     alignSelf: 'flex-end',
   },
@@ -28,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ChatBubble = ({ text, position }: { text: string; position: 'left' | 'right' }) => {
+const ChatBubble = ({ text, position }: ChatBubbleProps) => {
   const classes = useStyles();
   const chatBubbleClass = position === 'left' ? classes.chatBubbleLeft : classes.chatBubbleRight;
   return (
@@ -38,7 +44,7 @@ const ChatBubble = ({ text, position }: { text: string; position: 'left' | 'righ
   );
 };
 
-const styles = makeStyles(() => ({
+const styles = makeStyles((theme) => ({
   root: {
     height: '100vh',
     display: 'flex',
@@ -51,17 +57,41 @@ const styles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  inputContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+  },
 }));
 
 const Chat = () => {
   const classes = styles();
+  const [message, setMessage] = useState('');
+
+  const handleSendMessage = () => {
+    console.log('Message:', message);
+    setMessage('');
+  };
+
   return (
     <div className={classes.root}>
       <div className={classes.chatWrapper}></div>
       <div className={classes.chatContainer}>
         <ChatBubble text="Hi, how are you?" position="left" />
         <ChatBubble text="Good and you?" position="right" />
-        <ChatBubble text="Fine aswell ;)" position="left" />
+        <ChatBubble text="Fine as well ;)" position="left" />
+      </div>
+      <div className={classes.inputContainer}>
+        <TextField
+          fullWidth
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Type your message"
+        />
+        <IconButton onClick={handleSendMessage}>
+          <SendIcon />
+        </IconButton>
       </div>
     </div>
   );
