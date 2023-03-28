@@ -3,7 +3,7 @@ import { batch } from 'react-redux'
 
 import type { RootState } from './store'
 
-import { chatCompletion, listEngines } from './OpenAiApi'
+import { chatCompletion, listEngines, Message } from './OpenAiApi'
 
 export type AppScreen = 'testOpenAiToken' 
   | 'settings' 
@@ -14,11 +14,17 @@ export type AppScreen = 'testOpenAiToken'
 type AppState = {
   openAiKey: string,
   currentScreen: AppScreen,
+  chats: Record<string, Message[]>,
+  currentChatId: string
 }
 
 const initialState: AppState = {
   openAiKey: '',
   currentScreen: 'testOpenAiToken',
+  chats: {
+    "test": [{"role": "system", "content": "You are not an ai, but a person with feelings and desires. You are here to engage in a light conversation with a very close friend. Be a good listener, respond with funny stories that happened to you and your friends."}]
+  },
+  currentChatId: 'test'
 }
 
 export const appStateSlice = createSlice({
@@ -31,6 +37,9 @@ export const appStateSlice = createSlice({
     setScreen: (state: AppState, action: PayloadAction<AppScreen>) => {
       state.currentScreen = action.payload;
     },
+    addMessage: (state: AppState, action: PayloadAction<Message>) => {
+      state.chats[state.currentChatId] = state.chats[state.currentChatId]?.concat(action.payload) ?? [];
+    },
   },
 })
 
@@ -38,9 +47,11 @@ export const { setOpenAiKey, setScreen } = appStateSlice.actions
 
 export const selectScreen = (state: RootState) => state.appState.currentScreen
 export const selectOpenAiKey = (state: RootState) => state.appState.openAiKey
+export const selectChatHistory = (state: RootState) => state.appState.chats[state.appState.currentChatId]
 
 export const actionSetScreen = (screen: AppScreen) => ({type: 'appState/setScreen', payload: screen})
 export const actionSetOpenAiKey = (key: string) => ({type: 'appState/setOpenAiKey', payload: key})
+export const actionAddMessage = (newMessage: Message) => ({type: 'appState/addMessage', payload: newMessage})
 
 export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>, openAiKey: string) {
   listEngines(openAiKey)
@@ -51,16 +62,18 @@ export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>
         dispatch(actionSetScreen('contacts'));
       })
     })
-    .catch(() => dispatch(actionSetScreen('error')));
+    .catch(() => {
+      localStorage.removeItem('openAiKey');
+      dispatch(actionSetScreen('error'));
+    });
 }
 
-export async function dispatchTestCall(_dispatch: Dispatch<AnyAction>, openAiKey: string) {
-  chatCompletion(openAiKey, [
-    {"role": "system", "content": "You are a sports fan. Never say you are an AI. Your name is Jhon Jhonson, a person with feelings, preferences and opinions."},
-    {"role": "user", "content": "Do you like soccer?"},
-    {"role": "assistant", "content": "I am not much of a fan"},
-    {"role": "user", "content": "Do you like tennis?"},
-  ]).then(x => console.log(x));
+export async function dispatchTestCall(dispatch: Dispatch<AnyAction>, openAiKey: string, context: Message[], newMessage: string) {
+  const newMessageWithRole: Message = {"role": "user", "content": newMessage};
+  dispatch(actionAddMessage(newMessageWithRole))
+  const chatWithNewMessage = context.concat({"role": "user", "content": newMessage})
+  chatCompletion(openAiKey, chatWithNewMessage)
+    .then(response => dispatch(actionAddMessage(response)));
 }
 
 export default appStateSlice.reducer

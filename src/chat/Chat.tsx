@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, TextField, IconButton } from '@material-ui/core';
 import SendIcon from '@mui/icons-material/Send';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { dispatchTestCall, selectOpenAiKey } from '../appStateSlice';
+import { dispatchTestCall, selectOpenAiKey, selectChatHistory } from '../appStateSlice';
 
 type ChatBubbleProps = {
   text: string;
@@ -71,17 +71,31 @@ const Chat = () => {
   const classes = styles();
   const [message, setMessage] = useState('');
   const openAiKey = useAppSelector(selectOpenAiKey);
+  const chatHistory = useAppSelector(selectChatHistory) ?? [];
   const dispatch = useAppDispatch();
 
-  const handleSendMessage = () => dispatchTestCall(dispatch, openAiKey);
+  const handleSendMessage = (msg: string) => {
+    setMessage('');
+    dispatchTestCall(dispatch, openAiKey, chatHistory, msg);
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.keyCode === 13) {
+      handleSendMessage(message);
+    }
+  }
 
   return (
     <div className={classes.root}>
       <div className={classes.chatWrapper}></div>
       <div className={classes.chatContainer}>
-        <ChatBubble text="Hi, how are you?" position="left" />
-        <ChatBubble text="Good and you?" position="right" />
-        <ChatBubble text="Fine as well ;)" position="left" />
+      {chatHistory.filter(m => m.role !== 'system').map((message, index) => (
+          <ChatBubble
+            key={index}
+            text={message.content}
+            position={message.role === 'user' ? 'right' : 'left'}
+          />
+        ))}
       </div>
       <div className={classes.inputContainer}>
         <TextField
@@ -89,8 +103,9 @@ const Chat = () => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type your message"
+          onKeyDown={handleKeyDown}
         />
-        <IconButton onClick={handleSendMessage}>
+        <IconButton onClick={() => handleSendMessage(message)}>
           <SendIcon />
         </IconButton>
       </div>
