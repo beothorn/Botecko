@@ -84201,6 +84201,7 @@ function dispatchActionCheckOpenAiKey(dispatch, openAiKey) {
         });
     });
 }
+var debug = false;
 function dispatchTestCall(dispatch, openAiKey, context, newMessage) {
     return __awaiter(this, void 0, void 0, function () {
         var newMessageWithRole, chatWithNewMessage;
@@ -84208,8 +84209,13 @@ function dispatchTestCall(dispatch, openAiKey, context, newMessage) {
             newMessageWithRole = { "role": "user", "content": newMessage };
             dispatch(actionAddMessage(newMessageWithRole));
             chatWithNewMessage = context.concat({ "role": "user", "content": newMessage });
-            (0,_OpenAiApi__WEBPACK_IMPORTED_MODULE_1__.chatCompletion)(openAiKey, chatWithNewMessage)
-                .then(function (response) { return dispatch(actionAddMessage(response)); });
+            if (debug) {
+                dispatch(actionAddMessage({ "role": "assistant", "content": "Lorem ipsum" }));
+            }
+            else {
+                (0,_OpenAiApi__WEBPACK_IMPORTED_MODULE_1__.chatCompletion)(openAiKey, chatWithNewMessage)
+                    .then(function (response) { return dispatch(actionAddMessage(response)); });
+            }
             return [2 /*return*/];
         });
     });
@@ -84268,7 +84274,7 @@ var useStyles = (0,_material_ui_core_styles__WEBPACK_IMPORTED_MODULE_3__["defaul
         display: 'flex',
         flexDirection: 'column',
         padding: theme.spacing(2),
-        height: '100%',
+        height: '100vh',
     },
 }); });
 var ChatBubble = function (_a) {
@@ -84283,6 +84289,8 @@ var styles = (0,_material_ui_core_styles__WEBPACK_IMPORTED_MODULE_3__["default"]
         height: '100vh',
         display: 'flex',
         flexDirection: 'column',
+        overflowY: 'scroll',
+        overflowAnchor: 'none',
     },
     chatWrapper: {
         flexGrow: 1,
@@ -84305,6 +84313,13 @@ var Chat = function () {
     var openAiKey = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectOpenAiKey);
     var chatHistory = (_a = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectChatHistory)) !== null && _a !== void 0 ? _a : [];
     var dispatch = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppDispatch)();
+    var rootRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+        var root = rootRef.current;
+        if (root) {
+            root.scrollTop = root.scrollHeight;
+        }
+    }, [chatHistory]);
     var handleSendMessage = function (msg) {
         setMessage('');
         (0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.dispatchTestCall)(dispatch, openAiKey, chatHistory, msg);
@@ -84314,7 +84329,7 @@ var Chat = function () {
             handleSendMessage(message);
         }
     };
-    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.root },
+    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.root, ref: rootRef },
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.chatWrapper }),
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.chatContainer }, chatHistory.filter(function (m) { return m.role !== 'system'; }).map(function (message, index) { return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(ChatBubble, { key: index, text: message.content, position: message.role === 'user' ? 'right' : 'left' })); })),
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.inputContainer },

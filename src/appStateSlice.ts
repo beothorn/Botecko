@@ -147,12 +147,19 @@ export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>
     });
 }
 
+const debug = false;
+
 export async function dispatchTestCall(dispatch: Dispatch<AnyAction>, openAiKey: string, context: Message[], newMessage: string) {
   const newMessageWithRole: Message = {"role": "user", "content": newMessage};
   dispatch(actionAddMessage(newMessageWithRole))
   const chatWithNewMessage = context.concat({"role": "user", "content": newMessage})
-  chatCompletion(openAiKey, chatWithNewMessage)
-    .then(response => dispatch(actionAddMessage(response)));
+  if(debug){
+    dispatch(actionAddMessage({"role": "assistant", "content": "Lorem ipsum"}));
+  }else{
+    chatCompletion(openAiKey, chatWithNewMessage)
+      .then(response => dispatch(actionAddMessage(response)));
+  }
+  
 }
 
 export default appStateSlice.reducer

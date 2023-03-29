@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, TextField, IconButton } from '@material-ui/core';
 import SendIcon from '@mui/icons-material/Send';
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(2),
-    height: '100%',
+    height: '100vh',
   },
 }));
 
@@ -51,6 +51,8 @@ const styles = makeStyles((theme) => ({
     height: '100vh',
     display: 'flex',
     flexDirection: 'column',
+    overflowY: 'scroll',
+    overflowAnchor: 'none',
   },
   chatWrapper: {
     flexGrow: 1,
@@ -73,6 +75,14 @@ const Chat = () => {
   const openAiKey = useAppSelector(selectOpenAiKey);
   const chatHistory = useAppSelector(selectChatHistory) ?? [];
   const dispatch = useAppDispatch();
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (root) {
+      root.scrollTop = root.scrollHeight;
+    }
+  }, [chatHistory]);
 
   const handleSendMessage = (msg: string) => {
     setMessage('');
@@ -86,7 +96,7 @@ const Chat = () => {
   }
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} ref={rootRef}>
       <div className={classes.chatWrapper}></div>
       <div className={classes.chatContainer}>
       {chatHistory.filter(m => m.role !== 'system').map((message, index) => (

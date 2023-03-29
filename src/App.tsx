@@ -34,7 +34,7 @@ export default function App() {
             break;
     }
 
-    return <Box sx={{ bgcolor: 'background.paper' }}>
+    return <Box sx={{ bgcolor: 'background.paper'}}>
             {currentScreenComponent}
         </Box>;
 }
