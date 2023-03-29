@@ -8,8 +8,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import ListItemText from '@mui/material/ListItemText';
-import { useAppDispatch } from '../hooks';
-import { actionSetScreen } from '../appStateSlice';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { actionSetChatId, actionSetScreen, selectContacts } from '../appStateSlice';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,29 +24,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const contacts = [
-  {
-    name: 'Alice',
-    message: 'Hi, how are you?',
-    avatarUrl: 'https://randomuser.me/api/portraits/women/79.jpg',
-  },
-  {
-    name: 'Bob',
-    message: 'Can we meet tomorrow?',
-    avatarUrl: 'https://randomuser.me/api/portraits/men/83.jpg',
-  },
-  {
-    name: 'Charlie',
-    message: 'Thanks for your help!',
-    avatarUrl: 'https://randomuser.me/api/portraits/men/34.jpg',
-  },
-];
-
 export function Contacts() {
   const classes = useStyles();
   const dispatch = useAppDispatch();
-
-  const gotoChat = () => dispatch(actionSetScreen('chat'));
+  const contacts = useAppSelector(selectContacts) ?? [];
+  const gotoChat = (key: string) => {
+    dispatch(actionSetChatId(key))
+    dispatch(actionSetScreen('chat'));
+  };
 
   return (
     <>
@@ -58,12 +43,12 @@ export function Contacts() {
         </Toolbar>
       </AppBar>
       <List className={classes.root}>
-        {contacts.map((contact) => (
-          <ListItem button key={contact.name} onClick={gotoChat}>
+        {Object.entries(contacts).map(([key, contact]) => (
+          <ListItem button key={contact.meta.name} onClick={() => gotoChat(key)}>
             <ListItemAvatar>
-              <Avatar alt={contact.name} src={contact.avatarUrl} />
+              <Avatar alt={contact.avatarMeta.prompt} src={contact.avatarMeta.url} />
             </ListItemAvatar>
-            <ListItemText primary={contact.name} secondary={contact.message} />
+            <ListItemText primary={contact.meta.name} secondary={contact.meta.userProfile} />
           </ListItem>
         ))}
       </List>

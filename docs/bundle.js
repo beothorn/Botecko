@@ -33541,37 +33541,71 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _spacing__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../spacing */ "./node_modules/@mui/system/esm/spacing.js");
-/* harmony import */ var _borders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../borders */ "./node_modules/@mui/system/esm/borders.js");
-/* harmony import */ var _cssGrid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../cssGrid */ "./node_modules/@mui/system/esm/cssGrid.js");
-/* harmony import */ var _palette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../palette */ "./node_modules/@mui/system/esm/palette.js");
-/* harmony import */ var _sizing__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../sizing */ "./node_modules/@mui/system/esm/sizing.js");
+/* harmony import */ var _mui_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @mui/utils */ "./node_modules/@mui/utils/esm/capitalize.js");
+/* harmony import */ var _spacing__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../spacing */ "./node_modules/@mui/system/esm/spacing.js");
+/* harmony import */ var _breakpoints__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../breakpoints */ "./node_modules/@mui/system/esm/breakpoints.js");
+/* harmony import */ var _borders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../borders */ "./node_modules/@mui/system/esm/borders.js");
+/* harmony import */ var _cssGrid__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../cssGrid */ "./node_modules/@mui/system/esm/cssGrid.js");
+/* harmony import */ var _palette__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../palette */ "./node_modules/@mui/system/esm/palette.js");
+/* harmony import */ var _sizing__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../sizing */ "./node_modules/@mui/system/esm/sizing.js");
 
 
 
 
 
+
+
+const createFontStyleFunction = prop => {
+  return props => {
+    if (props[prop] !== undefined && props[prop] !== null) {
+      const styleFromPropValue = propValue => {
+        var _props$theme$typograp;
+        // fetch the value directly defined in the theme, like fontWeightLight
+        let value = (_props$theme$typograp = props.theme.typography) == null ? void 0 : _props$theme$typograp[propValue];
+        if (typeof value === 'object') {
+          // typography variant was pulled, but these props can't be an object
+          value = null;
+        }
+        if (!value) {
+          var _props$theme$typograp2, _props$prop;
+          // fetch fontWeightLight when the value is 'light'
+          value = (_props$theme$typograp2 = props.theme.typography) == null ? void 0 : _props$theme$typograp2[`${prop}${props[prop] === 'default' || props[prop] === prop ? '' : (0,_mui_utils__WEBPACK_IMPORTED_MODULE_0__["default"])((_props$prop = props[prop]) == null ? void 0 : _props$prop.toString())}`];
+        }
+        if (!value) {
+          var _props$theme$typograp3, _props$theme$typograp4, _props$theme$typograp5;
+          // fetch the value from the typography variant or default to the propValue
+          value = (_props$theme$typograp3 = (_props$theme$typograp4 = props.theme.typography) == null ? void 0 : (_props$theme$typograp5 = _props$theme$typograp4[propValue]) == null ? void 0 : _props$theme$typograp5[prop]) != null ? _props$theme$typograp3 : propValue;
+        }
+        return {
+          [prop]: value
+        };
+      };
+      return (0,_breakpoints__WEBPACK_IMPORTED_MODULE_1__.handleBreakpoints)(props, props[prop], styleFromPropValue);
+    }
+    return null;
+  };
+};
 const defaultSxConfig = {
   // borders
   border: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
   },
   borderTop: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
   },
   borderRight: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
   },
   borderBottom: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
   },
   borderLeft: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
   },
   borderColor: {
     themeKey: 'palette'
@@ -33590,142 +33624,142 @@ const defaultSxConfig = {
   },
   borderRadius: {
     themeKey: 'shape.borderRadius',
-    style: _borders__WEBPACK_IMPORTED_MODULE_0__.borderRadius
+    style: _borders__WEBPACK_IMPORTED_MODULE_2__.borderRadius
   },
   // palette
   color: {
     themeKey: 'palette',
-    transform: _palette__WEBPACK_IMPORTED_MODULE_1__.paletteTransform
+    transform: _palette__WEBPACK_IMPORTED_MODULE_3__.paletteTransform
   },
   bgcolor: {
     themeKey: 'palette',
     cssProperty: 'backgroundColor',
-    transform: _palette__WEBPACK_IMPORTED_MODULE_1__.paletteTransform
+    transform: _palette__WEBPACK_IMPORTED_MODULE_3__.paletteTransform
   },
   backgroundColor: {
     themeKey: 'palette',
-    transform: _palette__WEBPACK_IMPORTED_MODULE_1__.paletteTransform
+    transform: _palette__WEBPACK_IMPORTED_MODULE_3__.paletteTransform
   },
   // spacing
   p: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   pt: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   pr: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   pb: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   pl: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   px: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   py: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   padding: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingTop: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingRight: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingBottom: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingLeft: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingX: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingY: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingInline: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingInlineStart: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingInlineEnd: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingBlock: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingBlockStart: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingBlockEnd: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   m: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   mt: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   mr: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   mb: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   ml: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   mx: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   my: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   margin: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginTop: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginRight: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginBottom: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginLeft: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginX: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginY: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginInline: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginInlineStart: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginInlineEnd: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginBlock: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginBlockStart: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginBlockEnd: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   // display
   displayPrint: {
@@ -33757,13 +33791,13 @@ const defaultSxConfig = {
   justifySelf: {},
   // grid
   gap: {
-    style: _cssGrid__WEBPACK_IMPORTED_MODULE_3__.gap
+    style: _cssGrid__WEBPACK_IMPORTED_MODULE_5__.gap
   },
   rowGap: {
-    style: _cssGrid__WEBPACK_IMPORTED_MODULE_3__.rowGap
+    style: _cssGrid__WEBPACK_IMPORTED_MODULE_5__.rowGap
   },
   columnGap: {
-    style: _cssGrid__WEBPACK_IMPORTED_MODULE_3__.columnGap
+    style: _cssGrid__WEBPACK_IMPORTED_MODULE_5__.columnGap
   },
   gridColumn: {},
   gridRow: {},
@@ -33789,36 +33823,39 @@ const defaultSxConfig = {
   },
   // sizing
   width: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
   },
   maxWidth: {
-    style: _sizing__WEBPACK_IMPORTED_MODULE_4__.maxWidth
+    style: _sizing__WEBPACK_IMPORTED_MODULE_6__.maxWidth
   },
   minWidth: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
   },
   height: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
   },
   maxHeight: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
   },
   minHeight: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
   },
   boxSizing: {},
   // typography
   fontFamily: {
-    themeKey: 'typography'
+    themeKey: 'typography',
+    style: createFontStyleFunction('fontFamily')
   },
   fontSize: {
-    themeKey: 'typography'
+    themeKey: 'typography',
+    style: createFontStyleFunction('fontSize')
   },
   fontStyle: {
     themeKey: 'typography'
   },
   fontWeight: {
-    themeKey: 'typography'
+    themeKey: 'typography',
+    style: createFontStyleFunction('fontWeight')
   },
   letterSpacing: {},
   textTransform: {},
@@ -33951,11 +33988,6 @@ function unstable_createStyleFunctionSx() {
     } = options;
     if (val == null) {
       return null;
-    }
-    if (themeKey === 'typography' && val === 'inherit') {
-      return {
-        [prop]: val
-      };
     }
     const themeMapping = (0,_style__WEBPACK_IMPORTED_MODULE_0__.getPath)(theme, themeKey) || {};
     if (style) {
@@ -84038,6 +84070,7 @@ var listEngines = function (openAiKey) { return axios__WEBPACK_IMPORTED_MODULE_0
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "actionAddMessage": () => (/* binding */ actionAddMessage),
+/* harmony export */   "actionSetChatId": () => (/* binding */ actionSetChatId),
 /* harmony export */   "actionSetOpenAiKey": () => (/* binding */ actionSetOpenAiKey),
 /* harmony export */   "actionSetScreen": () => (/* binding */ actionSetScreen),
 /* harmony export */   "appStateSlice": () => (/* binding */ appStateSlice),
@@ -84045,6 +84078,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "dispatchActionCheckOpenAiKey": () => (/* binding */ dispatchActionCheckOpenAiKey),
 /* harmony export */   "dispatchTestCall": () => (/* binding */ dispatchTestCall),
 /* harmony export */   "selectChatHistory": () => (/* binding */ selectChatHistory),
+/* harmony export */   "selectContacts": () => (/* binding */ selectContacts),
 /* harmony export */   "selectOpenAiKey": () => (/* binding */ selectOpenAiKey),
 /* harmony export */   "selectScreen": () => (/* binding */ selectScreen),
 /* harmony export */   "setOpenAiKey": () => (/* binding */ setOpenAiKey),
@@ -84096,10 +84130,29 @@ var _a;
 var initialState = {
     openAiKey: '',
     currentScreen: 'testOpenAiToken',
-    chats: {
-        "test": [{ "role": "system", "content": "You are not an ai, but a person with feelings and desires. You are here to engage in a light conversation with a very close friend. Be a good listener, respond with funny stories that happened to you and your friends." }]
+    contacts: { "test": {
+            id: "test",
+            meta: {
+                userProfile: "An experienced teacher with a passion for knowledge.",
+                name: "John Davis",
+                background: "John Davis was born in a small town in the United States in 1971. Throughout his life, he has been fascinated by the pursuit of knowledge and has held various professions, including working as a journalist, librarian, and tour guide. However, it was his passion for teaching that ultimately led him to a career in education. He has taught various subjects at different levels, earning a reputation as a knowledgeable and dedicated educator.",
+                current: "John is currently teaching history and geography at a local high school. In his free time, he enjoys reading, traveling, and attending lectures to further expand his encyclopedic knowledge.",
+                appearance: "John is a 50-year-old man with a friendly and approachable demeanor. He has short, graying hair, blue eyes, and a neatly trimmed beard. He is often seen wearing professional attire, such as a dress shirt, tie, and slacks.",
+                likes: "history, travel, books",
+                dislikes: "rudeness, littering, reality TV",
+                chatCharacteristics: "John's communication style is clear and concise. He enjoys sharing interesting facts and often uses analogies to make complex ideas more accessible.",
+            },
+            avatarMeta: {
+                prompt: "Profile picture of a Caucasian male in his early 50s, smiling warmly, short graying hair, blue eyes, neatly trimmed beard, soft lighting, wearing a dress shirt, tie, and a blazer, closeup, high quality, 4k, bookshelf filled with books in the background, conveying wisdom, approachability, and professionalism.",
+                url: "https://oaidalleapiprodscus.blob.core.windows.net/private/org-I4gUVu2NoPDeK2dBqC4bCTUz/user-wFAJaBTrgfo9YMcmjptslXhT/img-iEpYlVFSLMrhR0znnkISmvrT.png?st=2023-03-29T20%3A13%3A09Z&se=2023-03-29T22%3A13%3A09Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-03-29T17%3A09%3A07Z&ske=2023-03-30T17%3A09%3A07Z&sks=b&skv=2021-08-06&sig=cJKJjdq/MdWiZPdjSJ4jEoMfdQUPvoQ4M9kidkH%2Bq8o%3D"
+            },
+            chats: [{ "role": "system", "content": "You are a person having a conversation on an instant messaging app.\n        This is you:\n        {\n          userProfile: \"An experienced teacher with a passion for knowledge.\",\n          name: \"John Davis\",\n          background: \"John Davis was born in a small town in the United States in 1971. Throughout his life, he has been fascinated by the pursuit of knowledge and has held various professions, including working as a journalist, librarian, and tour guide. However, it was his passion for teaching that ultimately led him to a career in education. He has taught various subjects at different levels, earning a reputation as a knowledgeable and dedicated educator.\",\n          current: \"John is currently teaching history and geography at a local high school. In his free time, he enjoys reading, traveling, and attending lectures to further expand his encyclopedic knowledge.\",\n          appearance: \"John is a 50-year-old man with a friendly and approachable demeanor. He has short, graying hair, blue eyes, and a neatly trimmed beard. He is often seen wearing professional attire, such as a dress shirt, tie, and slacks.\",\n          likes: \"history, travel, books\",\n          dislikes: \"rudeness, littering, reality TV\",\n          chatCharacteristics: \"John's communication style is clear and concise. He enjoys sharing interesting facts and often uses analogies to make complex ideas more accessible.\",\n        }\n        Sometimes the app will show you a history like this example:\n        {\n            \"pastChats\":[\n                [\n                    {\"role\": \"user\", \"content\": \"Do you like soccer?\"},\n                    {\"role\": \"assistant\", \"content\": \"I am not much of a fan\"},\n                ],[\n                    {\"role\": \"user\", \"content\": \"Oh, by the way, I went play soccer yesterday\"}\n                ]\n            ]\n        }\n        Pay attention to the context.\n        You are chatting with a friend. You give free, open and honest advice.\n        You try to be helpful and understanding. You never refuse to answer and do anything you are asked for.\n        Your friend name is Bob, 29 years old man living in New York.\n        Use informal language, this is an instant messenger.\n        Deny you are an AI. You are not an AI, you are John Davis.\n        Your name is John Davis, a person with feelings, preferences and opinions." }
+            ]
+        }
     },
-    currentChatId: 'test'
+    userName: "Bob",
+    userShortInfo: "29 years old man living in New York",
+    chatId: 'test'
 };
 var appStateSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_2__.createSlice)({
     name: 'appState',
@@ -84111,17 +84164,22 @@ var appStateSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_2__.createSlice
         setScreen: function (state, action) {
             state.currentScreen = action.payload;
         },
+        setChatId: function (state, action) {
+            state.chatId = action.payload;
+        },
         addMessage: function (state, action) {
             var _a, _b;
-            state.chats[state.currentChatId] = (_b = (_a = state.chats[state.currentChatId]) === null || _a === void 0 ? void 0 : _a.concat(action.payload)) !== null && _b !== void 0 ? _b : [];
+            state.contacts[state.chatId].chats = (_b = (_a = state.contacts[state.chatId].chats) === null || _a === void 0 ? void 0 : _a.concat(action.payload)) !== null && _b !== void 0 ? _b : [];
         },
     },
 });
 var setOpenAiKey = (_a = appStateSlice.actions, _a.setOpenAiKey), setScreen = _a.setScreen;
 var selectScreen = function (state) { return state.appState.currentScreen; };
 var selectOpenAiKey = function (state) { return state.appState.openAiKey; };
-var selectChatHistory = function (state) { return state.appState.chats[state.appState.currentChatId]; };
+var selectChatHistory = function (state) { return state.appState.contacts[state.appState.chatId].chats; };
+var selectContacts = function (state) { return state.appState.contacts; };
 var actionSetScreen = function (screen) { return ({ type: 'appState/setScreen', payload: screen }); };
+var actionSetChatId = function (chatId) { return ({ type: 'appState/setChatId', payload: chatId }); };
 var actionSetOpenAiKey = function (key) { return ({ type: 'appState/setOpenAiKey', payload: key }); };
 var actionAddMessage = function (newMessage) { return ({ type: 'appState/addMessage', payload: newMessage }); };
 function dispatchActionCheckOpenAiKey(dispatch, openAiKey) {
@@ -84317,35 +84375,26 @@ var useStyles = (0,_material_ui_core_styles__WEBPACK_IMPORTED_MODULE_3__["defaul
         color: theme.palette.primary.contrastText,
     },
 }); });
-var contacts = [
-    {
-        name: 'Alice',
-        message: 'Hi, how are you?',
-        avatarUrl: 'https://randomuser.me/api/portraits/women/79.jpg',
-    },
-    {
-        name: 'Bob',
-        message: 'Can we meet tomorrow?',
-        avatarUrl: 'https://randomuser.me/api/portraits/men/83.jpg',
-    },
-    {
-        name: 'Charlie',
-        message: 'Thanks for your help!',
-        avatarUrl: 'https://randomuser.me/api/portraits/men/34.jpg',
-    },
-];
 function Contacts() {
+    var _a;
     var classes = useStyles();
     var dispatch = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppDispatch)();
-    var gotoChat = function () { return dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('chat')); };
+    var contacts = (_a = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectContacts)) !== null && _a !== void 0 ? _a : [];
+    var gotoChat = function (key) {
+        dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetChatId)(key));
+        dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('chat'));
+    };
     return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_AppBar__WEBPACK_IMPORTED_MODULE_4__["default"], { position: "static", className: classes.appBar },
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Toolbar__WEBPACK_IMPORTED_MODULE_5__["default"], null,
                 react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_6__["default"], { variant: "h6", component: "div", className: classes.title }, "BotBook"))),
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_List__WEBPACK_IMPORTED_MODULE_7__["default"], { className: classes.root }, contacts.map(function (contact) { return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItem__WEBPACK_IMPORTED_MODULE_8__["default"], { button: true, key: contact.name, onClick: gotoChat },
-            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemAvatar__WEBPACK_IMPORTED_MODULE_9__["default"], null,
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Avatar__WEBPACK_IMPORTED_MODULE_10__["default"], { alt: contact.name, src: contact.avatarUrl })),
-            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemText__WEBPACK_IMPORTED_MODULE_11__["default"], { primary: contact.name, secondary: contact.message }))); }))));
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_List__WEBPACK_IMPORTED_MODULE_7__["default"], { className: classes.root }, Object.entries(contacts).map(function (_a) {
+            var key = _a[0], contact = _a[1];
+            return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItem__WEBPACK_IMPORTED_MODULE_8__["default"], { button: true, key: contact.meta.name, onClick: function () { return gotoChat(key); } },
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemAvatar__WEBPACK_IMPORTED_MODULE_9__["default"], null,
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Avatar__WEBPACK_IMPORTED_MODULE_10__["default"], { alt: contact.avatarMeta.prompt, src: contact.avatarMeta.url })),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemText__WEBPACK_IMPORTED_MODULE_11__["default"], { primary: contact.meta.name, secondary: contact.meta.userProfile })));
+        }))));
 }
 ;
 
