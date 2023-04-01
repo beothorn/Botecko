@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { batch } from 'react-redux';
 
 import Typography from '@mui/material/Typography';
@@ -8,11 +8,11 @@ import TextField from '@mui/material/TextField';
 import { useAppSelector, useAppDispatch } from '../hooks'
 import { selectOpenAiKey, actionSetOpenAiKey, actionSetScreen } from '../appStateSlice';
 
-export function Settings() {
+export default function Settings() {
 
     const openAiKey = useAppSelector(selectOpenAiKey);
     const dispatch = useAppDispatch()
-    const [openAiKeyInputValue, setOpenAiKey] = React.useState(openAiKey);
+    const [openAiKeyInputValue, setOpenAiKey] = useState(openAiKey);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setOpenAiKey(event.target.value);

@@ -69,7 +69,7 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
-const Chat = () => {
+export default function Chat(){
   const classes = styles();
   const [message, setMessage] = useState('');
   const openAiKey = useAppSelector(selectOpenAiKey);
@@ -128,6 +128,4 @@ const Chat = () => {
       </div>
     </div>
   );
-};
-
-export default Chat;
+}

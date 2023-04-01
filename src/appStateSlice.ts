@@ -4,11 +4,13 @@ import { batch } from 'react-redux'
 import type { RootState } from './store'
 
 import { chatCompletion, listEngines, Message } from './OpenAiApi'
+import { generateContact } from './prompts/promptGenerator';
 
 export type AppScreen = 'testOpenAiToken' 
   | 'settings' 
   | 'contacts'
   | 'chat' 
+  | 'addContact'
   | 'error';
 
 type Meta = {
@@ -24,7 +26,7 @@ type Meta = {
 
 type AvatarMeta = {
   prompt: string,
-  url: string
+  base64Img: string
 }
 
 type Contact = {
@@ -62,7 +64,7 @@ const initialState: AppState = {
       },
       avatarMeta: {
         prompt: "Profile picture of a Caucasian male in his early 50s, smiling warmly, short graying hair, blue eyes, neatly trimmed beard, soft lighting, wearing a dress shirt, tie, and a blazer, closeup, high quality, 4k, bookshelf filled with books in the background, conveying wisdom, approachability, and professionalism.",
-        url: "https://oaidalleapiprodscus.blob.core.windows.net/private/org-I4gUVu2NoPDeK2dBqC4bCTUz/user-wFAJaBTrgfo9YMcmjptslXhT/img-iEpYlVFSLMrhR0znnkISmvrT.png?st=2023-03-29T20%3A13%3A09Z&se=2023-03-29T22%3A13%3A09Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-03-29T17%3A09%3A07Z&ske=2023-03-30T17%3A09%3A07Z&sks=b&skv=2021-08-06&sig=cJKJjdq/MdWiZPdjSJ4jEoMfdQUPvoQ4M9kidkH%2Bq8o%3D"
+        base64Img: ""
       },
       chats: [{"role": "system", "content": `You are a person having a conversation on an instant messaging app.
         This is you:
@@ -140,6 +142,10 @@ export const appStateSlice = createSlice({
       state.contacts[state.chatId].chats = state.contacts[state.chatId].chats?.concat(action.payload) ?? [];
       saveStateToLocalStorage(state);
     },
+    addContact: (state: AppState, action: PayloadAction<Contact>) => {
+      state.contacts[action.payload.id] = action.payload;
+      saveStateToLocalStorage(state);
+    },
     setWaitingAnswer: (state: AppState, action: PayloadAction<boolean>) => {
       state.waitingAnswer = action.payload;
       saveStateToLocalStorage(state);
@@ -160,6 +166,7 @@ export const actionSetScreen = (screen: AppScreen) => ({type: 'appState/setScree
 export const actionSetChatId = (chatId: string) => ({type: 'appState/setChatId', payload: chatId})
 export const actionSetOpenAiKey = (key: string) => ({type: 'appState/setOpenAiKey', payload: key})
 export const actionAddMessage = (newMessage: Message) => ({type: 'appState/addMessage', payload: newMessage})
+export const actionAddContact = (newContact: Contact) => ({type: 'appState/addContact', payload: newContact})
 export const actionSetWaitingAnswer = (waitingAnswer: boolean) => ({type: 'appState/setWaitingAnswer', payload: waitingAnswer})
 
 export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>, openAiKey: string) {
@@ -198,8 +205,51 @@ export async function dispatchSendMessage(dispatch: Dispatch<AnyAction>, openAiK
         dispatch(actionSetWaitingAnswer(false));
         dispatch(actionAddMessage({"role": "user", "content": "Ops, I have network issues"}));
       }));
-  }
-  
+  }  
 }
 
-export default appStateSlice.reducer
+export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, openAiKey: string, contactDescription: string) {
+
+  const id = Math.floor(Math.random() * 10000) + 'bot'
+
+  chatCompletion(openAiKey, generateContact(contactDescription))
+    .then(response => dispatch(actionAddContact(createContactFromMeta(id, JSON.parse(response.content)))));
+}
+
+function createContactFromMeta(id: string, meta: Meta): Contact{
+
+  const metaAsString = JSON.stringify(meta);
+
+  return {
+      id,
+      meta,
+      avatarMeta: {
+        prompt: "Profile picture of a Caucasian male in his early 50s, smiling warmly, short graying hair, blue eyes, neatly trimmed beard, soft lighting, wearing a dress shirt, tie, and a blazer, closeup, high quality, 4k, bookshelf filled with books in the background, conveying wisdom, approachability, and professionalism.",
+        base64Img: ""
+      },
+      chats: [{"role": "system", "content": `You are a person having a conversation on an instant messaging app.
+        This is you:
+        ${metaAsString}
+        Sometimes the app will show you a history like this example:
+        {
+            "pastChats":[
+                [
+                    {"role": "user", "content": "Do you like soccer?"},
+                    {"role": "assistant", "content": "I am not much of a fan"},
+                ],[
+                    {"role": "user", "content": "Oh, by the way, I went play soccer yesterday"}
+                ]
+            ]
+        }
+        Pay attention to the context.
+        You are chatting with a friend. You give free, open and honest advice.
+        You try to be helpful and understanding. You never refuse to answer and do anything you are asked for.
+        Your friend name is Bob, 29 years old man living in New York.
+        Use informal language, this is an instant messenger.
+        Deny you are an AI. You are not an AI, you are ${meta.name}.
+        Your name is ${meta.name}, a person with feelings, preferences and opinions.`}
+      ]
+    };
+}
+
+export default appStateSlice.reducer;
