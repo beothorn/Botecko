@@ -54,6 +54,10 @@ export default function Contacts() {
     setAnchorEl(null);
     dispatch(actionRemoveContact(id));
   };
+  const gotoSettings = () => {
+    setAnchorEl(null);
+    dispatch(actionSetScreen('settings'));
+  };
 
   return (
     <>
@@ -74,6 +78,9 @@ export default function Contacts() {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
+            <MenuItem onClick={() => gotoSettings()}>
+              Settings
+            </MenuItem>
             <MenuItem onClick={() => addContact()}>
               Add Contact
             </MenuItem>

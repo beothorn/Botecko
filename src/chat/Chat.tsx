@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import SendIcon from '@mui/icons-material/Send';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { selectOpenAiKey, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact } from '../appStateSlice';
+import { selectSettings, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact } from '../appStateSlice';
 import { Paper, Typography, TextField, IconButton, AppBar, Avatar, Menu, MenuItem, Toolbar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -82,7 +82,7 @@ const styles = makeStyles((theme) => ({
 export default function Chat() {
   const classes = styles();
   const [message, setMessage] = useState('');
-  const openAiKey = useAppSelector(selectOpenAiKey);
+  const settings = useAppSelector(selectSettings);
   const chatHistory = useAppSelector(selectChatHistory) ?? [];
   const currentContact = useAppSelector(selectCurrentContact);
   const metaData = currentContact.meta;
@@ -101,7 +101,7 @@ export default function Chat() {
 
   const handleSendMessage = (msg: string) => {
     setMessage('');
-    dispatchSendMessage(dispatch, openAiKey, chatHistory, msg);
+    dispatchSendMessage(dispatch, currentContact, settings, chatHistory, msg);
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {

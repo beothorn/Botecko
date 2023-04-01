@@ -5,12 +5,26 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
 import { useAppDispatch, useAppSelector } from '../hooks'
-import { actionSetScreen, dispatchCreateContact, selectOpenAiKey } from '../appStateSlice';
+import { actionSetScreen, dispatchCreateContact, selectSettings } from '../appStateSlice';
 import { batch } from 'react-redux';
+import { AppBar, IconButton, Toolbar } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+    title: {
+        flexGrow: 1,
+    },
+    appBar: {
+        backgroundColor: theme.palette.primary.dark,
+        color: theme.palette.primary.contrastText,
+    },
+}));
 
 export function AddContact() {
+    const classes = useStyles();
     const dispatch = useAppDispatch();
-    const openAiKey = useAppSelector(selectOpenAiKey);
+    const settings = useAppSelector(selectSettings);
 
     const [profile, setProfile] = useState('');
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,15 +33,30 @@ export function AddContact() {
 
     const generateContact = () => {
         batch(() => {
-            dispatchCreateContact(dispatch, openAiKey, profile);
+            dispatchCreateContact(dispatch, settings, profile);
             dispatch(actionSetScreen('contacts'));
         })
     };
 
+    const gotoContacts = () => {
+        dispatch(actionSetScreen('contacts'));
+    };
+
     return <>
-        <Typography variant="h6" gutterBottom>
-            Add Profile
-        </Typography>
+        <AppBar position="static" className={classes.appBar}>
+            <Toolbar>
+                <IconButton
+                color="inherit"
+                aria-label="menu"
+                onClick={gotoContacts}
+                >
+                    <ArrowBackIcon />
+                </IconButton>
+                <Typography variant="h6" component="div" className={classes.title}>
+                {"Adding Contact"}
+                </Typography>
+            </Toolbar>
+        </AppBar>
         <TextField 
             value={profile}
             onChange={handleChange}

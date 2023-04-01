@@ -73492,12 +73492,12 @@ __webpack_require__.r(__webpack_exports__);
 
 var openAiUrl = 'https://api.openai.com/v1';
 var model = "gpt-4";
-var chatCompletion = function (openAiKey, messages) { return axios__WEBPACK_IMPORTED_MODULE_0___default().post("".concat(openAiUrl, "/chat/completions"), {
+var chatCompletion = function (settings, messages) { return axios__WEBPACK_IMPORTED_MODULE_0___default().post("".concat(openAiUrl, "/chat/completions"), {
     "model": model,
     "messages": messages
 }, {
     headers: {
-        'Authorization': "Bearer ".concat(openAiKey),
+        'Authorization': "Bearer ".concat(settings.openAiKey),
         'Content-Type': 'application/json'
     }
 }).then(function (result) {
@@ -73505,14 +73505,14 @@ var chatCompletion = function (openAiKey, messages) { return axios__WEBPACK_IMPO
     console.log(response);
     return response;
 }); };
-var imageGeneration = function (openAiKey, prompt) { return axios__WEBPACK_IMPORTED_MODULE_0___default().post("".concat(openAiUrl, "/images/generations"), {
+var imageGeneration = function (settings, prompt) { return axios__WEBPACK_IMPORTED_MODULE_0___default().post("".concat(openAiUrl, "/images/generations"), {
     "prompt": prompt,
     "n": 1,
     "size": "256x256",
     "response_format": "b64_json"
 }, {
     headers: {
-        'Authorization': "Bearer ".concat(openAiKey),
+        'Authorization': "Bearer ".concat(settings.openAiKey),
         'Content-Type': 'application/json'
     }
 }).then(function (result) {
@@ -73520,9 +73520,9 @@ var imageGeneration = function (openAiKey, prompt) { return axios__WEBPACK_IMPOR
     var response = result.data.data[0].b64_json;
     return response;
 }); };
-var listEngines = function (openAiKey) { return axios__WEBPACK_IMPORTED_MODULE_0___default().get("".concat(openAiUrl, "/engines"), {
+var listEngines = function (settings) { return axios__WEBPACK_IMPORTED_MODULE_0___default().get("".concat(openAiUrl, "/engines"), {
     headers: {
-        'Authorization': "Bearer ".concat(openAiKey),
+        'Authorization': "Bearer ".concat(settings.openAiKey),
         'Content-Type': 'application/json'
     }
 }); };
@@ -73543,12 +73543,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _mui_material_Typography__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material/Typography */ "./node_modules/@mui/material/Typography/Typography.js");
-/* harmony import */ var _mui_material_Button__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material/Button */ "./node_modules/@mui/material/Button/Button.js");
-/* harmony import */ var _mui_material_TextField__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material/TextField */ "./node_modules/@mui/material/TextField/TextField.js");
+/* harmony import */ var _mui_material_Typography__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material/Typography */ "./node_modules/@mui/material/Typography/Typography.js");
+/* harmony import */ var _mui_material_Button__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @mui/material/Button */ "./node_modules/@mui/material/Button/Button.js");
+/* harmony import */ var _mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material/TextField */ "./node_modules/@mui/material/TextField/TextField.js");
 /* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hooks */ "./src/hooks.ts");
 /* harmony import */ var _appStateSlice__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../appStateSlice */ "./src/appStateSlice.ts");
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/AppBar/AppBar.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Toolbar/Toolbar.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/IconButton/IconButton.js");
+/* harmony import */ var _mui_icons_material_ArrowBack__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/icons-material/ArrowBack */ "./node_modules/@mui/icons-material/ArrowBack.js");
+/* harmony import */ var _material_ui_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @material-ui/core */ "./node_modules/@material-ui/core/esm/styles/makeStyles.js");
 
 
 
@@ -73556,23 +73561,43 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+var useStyles = (0,_material_ui_core__WEBPACK_IMPORTED_MODULE_4__["default"])(function (theme) { return ({
+    title: {
+        flexGrow: 1,
+    },
+    appBar: {
+        backgroundColor: theme.palette.primary.dark,
+        color: theme.palette.primary.contrastText,
+    },
+}); });
 function AddContact() {
+    var classes = useStyles();
     var dispatch = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppDispatch)();
-    var openAiKey = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectOpenAiKey);
+    var settings = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectSettings);
     var _a = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''), profile = _a[0], setProfile = _a[1];
     var handleChange = function (event) {
         setProfile(event.target.value);
     };
     var generateContact = function () {
         (0,react_redux__WEBPACK_IMPORTED_MODULE_3__.batch)(function () {
-            (0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.dispatchCreateContact)(dispatch, openAiKey, profile);
+            (0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.dispatchCreateContact)(dispatch, settings, profile);
             dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('contacts'));
         });
     };
+    var gotoContacts = function () {
+        dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('contacts'));
+    };
     return react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_4__["default"], { variant: "h6", gutterBottom: true }, "Add Profile"),
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_5__["default"], { value: profile, onChange: handleChange, required: true, size: "small", id: "profile", label: "Contact description", variant: "outlined" }),
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_6__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: generateContact }, "Generate new Contact"));
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], { position: "static", className: classes.appBar },
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], null,
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], { color: "inherit", "aria-label": "menu", onClick: gotoContacts },
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_ArrowBack__WEBPACK_IMPORTED_MODULE_8__["default"], null)),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_9__["default"], { variant: "h6", component: "div", className: classes.title }, "Adding Contact"))),
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__["default"], { value: profile, onChange: handleChange, required: true, size: "small", id: "profile", label: "Contact description", variant: "outlined" }),
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_11__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: generateContact }, "Generate new Contact"));
 }
 
 
@@ -73591,8 +73616,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "actionAddMessage": () => (/* binding */ actionAddMessage),
 /* harmony export */   "actionRemoveContact": () => (/* binding */ actionRemoveContact),
 /* harmony export */   "actionSetChatId": () => (/* binding */ actionSetChatId),
-/* harmony export */   "actionSetOpenAiKey": () => (/* binding */ actionSetOpenAiKey),
+/* harmony export */   "actionSetErrorMessage": () => (/* binding */ actionSetErrorMessage),
 /* harmony export */   "actionSetScreen": () => (/* binding */ actionSetScreen),
+/* harmony export */   "actionSetSettings": () => (/* binding */ actionSetSettings),
 /* harmony export */   "actionSetWaitingAnswer": () => (/* binding */ actionSetWaitingAnswer),
 /* harmony export */   "appStateSlice": () => (/* binding */ appStateSlice),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
@@ -73602,11 +73628,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "selectChatHistory": () => (/* binding */ selectChatHistory),
 /* harmony export */   "selectContacts": () => (/* binding */ selectContacts),
 /* harmony export */   "selectCurrentContact": () => (/* binding */ selectCurrentContact),
-/* harmony export */   "selectOpenAiKey": () => (/* binding */ selectOpenAiKey),
+/* harmony export */   "selectErrorMessage": () => (/* binding */ selectErrorMessage),
 /* harmony export */   "selectScreen": () => (/* binding */ selectScreen),
-/* harmony export */   "selectWaitingAnswer": () => (/* binding */ selectWaitingAnswer),
-/* harmony export */   "setOpenAiKey": () => (/* binding */ setOpenAiKey),
-/* harmony export */   "setScreen": () => (/* binding */ setScreen)
+/* harmony export */   "selectSettings": () => (/* binding */ selectSettings),
+/* harmony export */   "selectWaitingAnswer": () => (/* binding */ selectWaitingAnswer)
 /* harmony export */ });
 /* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @reduxjs/toolkit */ "./node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js");
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
@@ -73648,43 +73673,25 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _a;
 
 
 
 
-var debug = false;
 var initialState = {
-    openAiKey: '',
-    currentScreen: 'testOpenAiToken',
-    contacts: { "test": {
-            id: "test",
-            meta: {
-                userProfile: "An experienced teacher with a passion for knowledge.",
-                name: "John Davis",
-                background: "John Davis was born in a small town in the United States in 1971. Throughout his life, he has been fascinated by the pursuit of knowledge and has held various professions, including working as a journalist, librarian, and tour guide. However, it was his passion for teaching that ultimately led him to a career in education. He has taught various subjects at different levels, earning a reputation as a knowledgeable and dedicated educator.",
-                current: "John is currently teaching history and geography at a local high school. In his free time, he enjoys reading, traveling, and attending lectures to further expand his encyclopedic knowledge.",
-                appearance: "John is a 50-year-old man with a friendly and approachable demeanor. He has short, graying hair, blue eyes, and a neatly trimmed beard. He is often seen wearing professional attire, such as a dress shirt, tie, and slacks.",
-                likes: "history, travel, books",
-                dislikes: "rudeness, littering, reality TV",
-                chatCharacteristics: "John's communication style is clear and concise. He enjoys sharing interesting facts and often uses analogies to make complex ideas more accessible.",
-            },
-            avatarMeta: {
-                prompt: "Profile picture of a Caucasian male in his early 50s, smiling warmly, short graying hair, blue eyes, neatly trimmed beard, soft lighting, wearing a dress shirt, tie, and a blazer, closeup, high quality, 4k, bookshelf filled with books in the background, conveying wisdom, approachability, and professionalism.",
-                base64Img: ""
-            },
-            chats: [{ "role": "system", "content": "You are a person having a conversation on an instant messaging app.\n        This is you:\n        {\n          userProfile: \"An experienced teacher with a passion for knowledge.\",\n          name: \"John Davis\",\n          background: \"John Davis was born in a small town in the United States in 1971. Throughout his life, he has been fascinated by the pursuit of knowledge and has held various professions, including working as a journalist, librarian, and tour guide. However, it was his passion for teaching that ultimately led him to a career in education. He has taught various subjects at different levels, earning a reputation as a knowledgeable and dedicated educator.\",\n          current: \"John is currently teaching history and geography at a local high school. In his free time, he enjoys reading, traveling, and attending lectures to further expand his encyclopedic knowledge.\",\n          appearance: \"John is a 50-year-old man with a friendly and approachable demeanor. He has short, graying hair, blue eyes, and a neatly trimmed beard. He is often seen wearing professional attire, such as a dress shirt, tie, and slacks.\",\n          likes: \"history, travel, books\",\n          dislikes: \"rudeness, littering, reality TV\",\n          chatCharacteristics: \"John's communication style is clear and concise. He enjoys sharing interesting facts and often uses analogies to make complex ideas more accessible.\",\n        }\n        Sometimes the app will show you a history like this example:\n        {\n            \"pastChats\":[\n                [\n                    {\"role\": \"user\", \"content\": \"Do you like soccer?\"},\n                    {\"role\": \"assistant\", \"content\": \"I am not much of a fan\"},\n                ],[\n                    {\"role\": \"user\", \"content\": \"Oh, by the way, I went play soccer yesterday\"}\n                ]\n            ]\n        }\n        Pay attention to the context.\n        You are chatting with a friend. You give free, open and honest advice.\n        You try to be helpful and understanding. You never refuse to answer and do anything you are asked for.\n        Your friend name is Bob, 29 years old man living in New York.\n        Use informal language, this is an instant messenger.\n        Deny you are an AI. You are not an AI, you are John Davis.\n        Your name is John Davis, a person with feelings, preferences and opinions." }
-            ],
-            loaded: true
-        }
+    settings: {
+        openAiKey: "",
+        userName: "",
+        userShortInfo: "",
+        model: "gpt-4"
     },
-    userName: "Bob",
-    userShortInfo: "29 years old man living in New York",
-    chatId: 'test',
-    waitingAnswer: false
+    currentScreen: 'testOpenAiToken',
+    contacts: {},
+    chatId: '',
+    waitingAnswer: false,
+    errorMessage: ''
 };
-var localStorageKey = 'v0.0.1';
-var getInitialState = function () {
+var localStorageKey = 'v0.1.0';
+function getInitialState() {
     var storedState = localStorage.getItem(localStorageKey);
     if (storedState) {
         var loadedInitialState = JSON.parse(storedState);
@@ -73693,7 +73700,7 @@ var getInitialState = function () {
         return loadedInitialState;
     }
     return initialState;
-};
+}
 function saveStateToLocalStorage(state) {
     localStorage.setItem(localStorageKey, JSON.stringify(state));
 }
@@ -73701,8 +73708,8 @@ var appStateSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_3__.createSlice
     name: 'appState',
     initialState: getInitialState(),
     reducers: {
-        setOpenAiKey: function (state, action) {
-            state.openAiKey = action.payload;
+        setSettings: function (state, action) {
+            state.settings = action.payload;
             saveStateToLocalStorage(state);
         },
         setScreen: function (state, action) {
@@ -73712,6 +73719,9 @@ var appStateSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_3__.createSlice
         setChatId: function (state, action) {
             state.chatId = action.payload;
             saveStateToLocalStorage(state);
+        },
+        setErrorMessage: function (state, action) {
+            state.errorMessage = action.payload;
         },
         addMessage: function (state, action) {
             var _a, _b;
@@ -73732,40 +73742,42 @@ var appStateSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_3__.createSlice
         },
     },
 });
-var setOpenAiKey = (_a = appStateSlice.actions, _a.setOpenAiKey), setScreen = _a.setScreen;
 var selectScreen = function (state) { return state.appState.currentScreen; };
-var selectOpenAiKey = function (state) { return state.appState.openAiKey; };
+var selectSettings = function (state) { return state.appState.settings; };
+var selectErrorMessage = function (state) { return state.appState.errorMessage; };
 var selectCurrentContact = function (state) { return state.appState.contacts[state.appState.chatId]; };
 var selectChatHistory = function (state) { return state.appState.contacts[state.appState.chatId].chats; };
 var selectContacts = function (state) { return state.appState.contacts; };
 var selectWaitingAnswer = function (state) { return state.appState.waitingAnswer; };
 var actionSetScreen = function (screen) { return ({ type: 'appState/setScreen', payload: screen }); };
 var actionSetChatId = function (chatId) { return ({ type: 'appState/setChatId', payload: chatId }); };
-var actionSetOpenAiKey = function (key) { return ({ type: 'appState/setOpenAiKey', payload: key }); };
+var actionSetSettings = function (settings) { return ({ type: 'appState/setSettings', payload: settings }); };
+var actionSetErrorMessage = function (error) { return ({ type: 'appState/setErrorMessage', payload: error }); };
 var actionAddMessage = function (newMessage) { return ({ type: 'appState/addMessage', payload: newMessage }); };
 var actionAddContact = function (newContact) { return ({ type: 'appState/addContact', payload: newContact }); };
 var actionRemoveContact = function (id) { return ({ type: 'appState/removeContact', payload: id }); };
 var actionSetWaitingAnswer = function (waitingAnswer) { return ({ type: 'appState/setWaitingAnswer', payload: waitingAnswer }); };
-function dispatchActionCheckOpenAiKey(dispatch, openAiKey) {
+function dispatchActionCheckOpenAiKey(dispatch, settings) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            (0,_OpenAiApi__WEBPACK_IMPORTED_MODULE_1__.listEngines)(openAiKey)
+            (0,_OpenAiApi__WEBPACK_IMPORTED_MODULE_1__.listEngines)(settings)
                 .then(function () {
-                localStorage.setItem('openAiKey', openAiKey);
                 return (0,react_redux__WEBPACK_IMPORTED_MODULE_0__.batch)(function () {
-                    dispatch(actionSetOpenAiKey(openAiKey));
+                    dispatch(actionSetSettings(settings));
                     dispatch(actionSetScreen('contacts'));
                 });
             })
                 .catch(function () {
-                localStorage.removeItem('openAiKey');
-                dispatch(actionSetScreen('error'));
+                (0,react_redux__WEBPACK_IMPORTED_MODULE_0__.batch)(function () {
+                    dispatch(actionSetErrorMessage("Bad openAI key"));
+                    dispatch(actionSetScreen('error'));
+                });
             });
             return [2 /*return*/];
         });
     });
 }
-function dispatchSendMessage(dispatch, openAiKey, context, newMessage) {
+function dispatchSendMessage(dispatch, contact, settings, context, newMessage) {
     return __awaiter(this, void 0, void 0, function () {
         var newMessageWithRole, chatWithNewMessage;
         return __generator(this, function (_a) {
@@ -73775,12 +73787,12 @@ function dispatchSendMessage(dispatch, openAiKey, context, newMessage) {
                 dispatch(actionAddMessage(newMessageWithRole));
             });
             chatWithNewMessage = context.concat({ "role": "user", "content": newMessage });
-            if (debug) {
+            if (settings.model === "debug") {
                 dispatch(actionAddMessage({ "role": "assistant", "content": "Lorem ipsum" }));
                 dispatch(actionSetWaitingAnswer(false));
             }
             else {
-                (0,_OpenAiApi__WEBPACK_IMPORTED_MODULE_1__.chatCompletion)(openAiKey, chatWithNewMessage)
+                (0,_OpenAiApi__WEBPACK_IMPORTED_MODULE_1__.chatCompletion)(settings, [writeSystemEntry(contact.meta, settings.userName, settings.userShortInfo)].concat(chatWithNewMessage))
                     .then(function (response) { return (0,react_redux__WEBPACK_IMPORTED_MODULE_0__.batch)(function () {
                     dispatch(actionSetWaitingAnswer(false));
                     dispatch(actionAddMessage(response));
@@ -73793,7 +73805,7 @@ function dispatchSendMessage(dispatch, openAiKey, context, newMessage) {
         });
     });
 }
-function dispatchCreateContact(dispatch, openAiKey, contactDescription) {
+function dispatchCreateContact(dispatch, settings, contactDescription) {
     return __awaiter(this, void 0, void 0, function () {
         var id;
         return __generator(this, function (_a) {
@@ -73817,7 +73829,7 @@ function dispatchCreateContact(dispatch, openAiKey, contactDescription) {
                 chats: [],
                 loaded: false
             }));
-            if (debug) {
+            if (settings.model === "debug") {
                 dispatch(actionAddContact({
                     id: id,
                     meta: {
@@ -73839,10 +73851,10 @@ function dispatchCreateContact(dispatch, openAiKey, contactDescription) {
                 }));
             }
             else {
-                (0,_OpenAiApi__WEBPACK_IMPORTED_MODULE_1__.chatCompletion)(openAiKey, (0,_prompts_promptGenerator__WEBPACK_IMPORTED_MODULE_2__.generateContact)(contactDescription))
+                (0,_OpenAiApi__WEBPACK_IMPORTED_MODULE_1__.chatCompletion)(settings, (0,_prompts_promptGenerator__WEBPACK_IMPORTED_MODULE_2__.generateContact)(contactDescription))
                     .then(function (response) {
                     var responseJson = JSON.parse(response.content);
-                    (0,_OpenAiApi__WEBPACK_IMPORTED_MODULE_1__.imageGeneration)(openAiKey, responseJson.avatar)
+                    (0,_OpenAiApi__WEBPACK_IMPORTED_MODULE_1__.imageGeneration)(settings, responseJson.avatar)
                         .then(function (img) { return dispatch(actionAddContact(createContactFromMeta(id, responseJson, img))); })
                         .catch(function () { return dispatch(actionAddContact(createContactFromMeta(id, responseJson, ""))); });
                 }).catch(function () { return dispatch(actionRemoveContact(id)); });
@@ -73852,7 +73864,6 @@ function dispatchCreateContact(dispatch, openAiKey, contactDescription) {
     });
 }
 function createContactFromMeta(id, meta, avatarBase64Img) {
-    var metaAsString = JSON.stringify(meta);
     return {
         id: id,
         meta: meta,
@@ -73860,10 +73871,13 @@ function createContactFromMeta(id, meta, avatarBase64Img) {
             prompt: meta.avatar,
             base64Img: avatarBase64Img
         },
-        chats: [{ "role": "system", "content": "You are a person having a conversation on an instant messaging app.\n        This is you:\n        ".concat(metaAsString, "\n        Sometimes the app will show you a history like this example:\n        {\n            \"pastChats\":[\n                [\n                    {\"role\": \"user\", \"content\": \"Do you like soccer?\"},\n                    {\"role\": \"assistant\", \"content\": \"I am not much of a fan\"},\n                ],[\n                    {\"role\": \"user\", \"content\": \"Oh, by the way, I went play soccer yesterday\"}\n                ]\n            ]\n        }\n        Pay attention to the context.\n        You are chatting with a friend. You give free, open and honest advice.\n        You try to be helpful and understanding. You never refuse to answer and do anything you are asked for.\n        Your friend name is Bob, 29 years old man living in New York.\n        Use informal language, this is an instant messenger.\n        Deny you are an AI. You are not an AI, you are ").concat(meta.name, ".\n        Your name is ").concat(meta.name, ", a person with feelings, preferences and opinions.") }
-        ],
+        chats: [],
         loaded: true
     };
+}
+function writeSystemEntry(meta, userName, userShortInfo) {
+    var metaAsString = JSON.stringify(meta);
+    return { "role": "system", "content": "You are a person having a conversation on an instant messaging app.\n  This is you:\n  ".concat(metaAsString, "\n  Sometimes the app will show you a history like this example:\n  {\n      \"pastChats\":[\n          [\n              {\"role\": \"user\", \"content\": \"Do you like soccer?\"},\n              {\"role\": \"assistant\", \"content\": \"I am not much of a fan\"},\n          ],[\n              {\"role\": \"user\", \"content\": \"Oh, by the way, I went play soccer yesterday\"}\n          ]\n      ]\n  }\n  Pay attention to the context.\n  You are chatting with a friend. You give free, open and honest advice.\n  You try to be helpful and understanding. You never refuse to answer and do anything you are asked for.\n  Use informal language, this is an instant messenger.\n  Deny you are an AI. You are not an AI, you are ").concat(meta.name, ".\n  Your name is ").concat(meta.name, ", a person with feelings, preferences and opinions.\n  You are talking with your friend ").concat(userName, ". His profile is '").concat(userShortInfo, "'.") };
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (appStateSlice.reducer);
 
@@ -73973,7 +73987,7 @@ function Chat() {
     var _a;
     var classes = styles();
     var _b = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''), message = _b[0], setMessage = _b[1];
-    var openAiKey = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectOpenAiKey);
+    var settings = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectSettings);
     var chatHistory = (_a = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectChatHistory)) !== null && _a !== void 0 ? _a : [];
     var currentContact = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectCurrentContact);
     var metaData = currentContact.meta;
@@ -73989,7 +74003,7 @@ function Chat() {
     }, [chatHistory]);
     var handleSendMessage = function (msg) {
         setMessage('');
-        (0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.dispatchSendMessage)(dispatch, openAiKey, chatHistory, msg);
+        (0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.dispatchSendMessage)(dispatch, currentContact, settings, chatHistory, msg);
     };
     var handleKeyDown = function (event) {
         if (event.keyCode === 13) {
@@ -74128,6 +74142,10 @@ function Contacts() {
         setAnchorEl(null);
         dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionRemoveContact)(id));
     };
+    var gotoSettings = function () {
+        setAnchorEl(null);
+        dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('settings'));
+    };
     return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_AppBar__WEBPACK_IMPORTED_MODULE_4__["default"], { position: "static", className: classes.appBar },
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Toolbar__WEBPACK_IMPORTED_MODULE_5__["default"], null,
@@ -74135,6 +74153,7 @@ function Contacts() {
                 react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_IconButton__WEBPACK_IMPORTED_MODULE_7__["default"], { color: "inherit", "aria-label": "menu", onClick: handleClick },
                     react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_Menu__WEBPACK_IMPORTED_MODULE_8__["default"], null)),
                 react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Menu__WEBPACK_IMPORTED_MODULE_9__["default"], { anchorEl: anchorEl, open: Boolean(anchorEl), onClose: handleClose },
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_MenuItem__WEBPACK_IMPORTED_MODULE_10__["default"], { onClick: function () { return gotoSettings(); } }, "Settings"),
                     react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_MenuItem__WEBPACK_IMPORTED_MODULE_10__["default"], { onClick: function () { return addContact(); } }, "Add Contact")))),
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_List__WEBPACK_IMPORTED_MODULE_11__["default"], { className: classes.root }, Object.entries(contacts).map(function (_a) {
             var key = _a[0], contact = _a[1];
@@ -74179,9 +74198,10 @@ __webpack_require__.r(__webpack_exports__);
 
 function ErrorScreen() {
     var dispatch = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppDispatch)();
+    var error = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectErrorMessage);
     var gotoNextScreen = function () { return dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('contacts')); };
     return react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_3__["default"], { sx: { marginBottom: '1rem' }, variant: "h5", gutterBottom: true }, "Oops, something went wrong..."),
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_3__["default"], { sx: { marginBottom: '1rem' }, variant: "h5", gutterBottom: true }, error),
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_4__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: gotoNextScreen }, "Continue"));
 }
 
@@ -74243,11 +74263,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
-/* harmony import */ var _mui_material_Typography__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material/Typography */ "./node_modules/@mui/material/Typography/Typography.js");
-/* harmony import */ var _mui_material_Button__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material/Button */ "./node_modules/@mui/material/Button/Button.js");
-/* harmony import */ var _mui_material_TextField__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material/TextField */ "./node_modules/@mui/material/TextField/TextField.js");
+/* harmony import */ var _mui_material_Typography__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material/Typography */ "./node_modules/@mui/material/Typography/Typography.js");
+/* harmony import */ var _mui_material_Button__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @mui/material/Button */ "./node_modules/@mui/material/Button/Button.js");
+/* harmony import */ var _mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material/TextField */ "./node_modules/@mui/material/TextField/TextField.js");
 /* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../hooks */ "./src/hooks.ts");
 /* harmony import */ var _appStateSlice__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../appStateSlice */ "./src/appStateSlice.ts");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/AppBar/AppBar.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Toolbar/Toolbar.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/IconButton/IconButton.js");
+/* harmony import */ var _mui_icons_material_ArrowBack__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/icons-material/ArrowBack */ "./node_modules/@mui/icons-material/ArrowBack.js");
+/* harmony import */ var _material_ui_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @material-ui/core */ "./node_modules/@material-ui/core/esm/styles/makeStyles.js");
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 
 
 
@@ -74255,23 +74291,58 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+var useStyles = (0,_material_ui_core__WEBPACK_IMPORTED_MODULE_4__["default"])(function (theme) { return ({
+    title: {
+        flexGrow: 1,
+    },
+    appBar: {
+        backgroundColor: theme.palette.primary.dark,
+        color: theme.palette.primary.contrastText,
+        marginBottom: "1rem",
+    },
+    form: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "1rem",
+        margin: "1rem",
+    },
+}); });
 function Settings() {
-    var openAiKey = (0,_hooks__WEBPACK_IMPORTED_MODULE_2__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_3__.selectOpenAiKey);
+    var classes = useStyles();
+    var settingsFromState = (0,_hooks__WEBPACK_IMPORTED_MODULE_2__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_3__.selectSettings);
     var dispatch = (0,_hooks__WEBPACK_IMPORTED_MODULE_2__.useAppDispatch)();
-    var _a = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(openAiKey), openAiKeyInputValue = _a[0], setOpenAiKey = _a[1];
-    var handleChange = function (event) {
-        setOpenAiKey(event.target.value);
+    var _a = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(settingsFromState), settings = _a[0], setSettings = _a[1];
+    var handleChange = function (event, key) {
+        setSettings(function (prevState) {
+            var _a;
+            return (__assign(__assign({}, prevState), (_a = {}, _a[key] = event.target.value, _a)));
+        });
     };
     var updateKey = function () {
         (0,react_redux__WEBPACK_IMPORTED_MODULE_1__.batch)(function () {
-            dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_3__.actionSetOpenAiKey)(openAiKeyInputValue));
+            dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_3__.actionSetSettings)(settings));
             dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_3__.actionSetScreen)('testOpenAiToken'));
         });
     };
+    var gotoContacts = function () {
+        dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_3__.actionSetScreen)('contacts'));
+    };
     return react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_4__["default"], { variant: "h6", gutterBottom: true }, "Settings"),
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_5__["default"], { value: openAiKeyInputValue, onChange: handleChange, required: true, size: "small", id: "open-ai-key", label: "OpenAi key", variant: "outlined" }),
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_6__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: updateKey }, "Ok"));
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], { position: "static", className: classes.appBar },
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], null,
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], { color: "inherit", "aria-label": "menu", onClick: gotoContacts },
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_ArrowBack__WEBPACK_IMPORTED_MODULE_8__["default"], null)),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_9__["default"], { variant: "h6", component: "div", className: classes.title }, "Settings"))),
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_9__["default"], { variant: "h6", gutterBottom: true }, "Settings"),
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement("form", { className: classes.form },
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__["default"], { value: settings.openAiKey, onChange: function (event) { return handleChange(event, "openAiKey"); }, required: true, size: "small", id: "open-ai-key", label: "OpenAi key", variant: "outlined" }),
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__["default"], { value: settings.userName, onChange: function (event) { return handleChange(event, "userName"); }, required: true, size: "small", id: "user-name", label: "User name", variant: "outlined" }),
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__["default"], { value: settings.userShortInfo, onChange: function (event) { return handleChange(event, "userShortInfo"); }, required: true, size: "small", id: "user-short-info", label: "User short info", variant: "outlined" }),
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__["default"], { value: settings.model, onChange: function (event) { return handleChange(event, "model"); }, required: true, size: "small", id: "model", label: "Model", variant: "outlined" }),
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_11__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: updateKey }, "Ok")));
 }
 
 
@@ -74343,21 +74414,21 @@ var useStyles = (0,_material_ui_core__WEBPACK_IMPORTED_MODULE_3__["default"])(fu
 function TestOpenAiToken() {
     var classes = useStyles();
     var dispatch = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppDispatch)();
-    var openAiKeyFromStore = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectOpenAiKey);
-    var openAiKeyFromStorage = localStorage.getItem('openAiKey');
+    var settings = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectSettings);
+    var openAiKeyFromStore = settings.openAiKey;
     (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
         if (openAiKeyFromStore !== '') {
-            (0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.dispatchActionCheckOpenAiKey)(dispatch, openAiKeyFromStore);
+            (0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.dispatchActionCheckOpenAiKey)(dispatch, settings);
         }
         else {
-            if (openAiKeyFromStorage === null || openAiKeyFromStorage === '') {
+            if (openAiKeyFromStore === null || openAiKeyFromStore === '') {
                 dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('settings'));
             }
             else {
-                (0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.dispatchActionCheckOpenAiKey)(dispatch, openAiKeyFromStorage);
+                (0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.dispatchActionCheckOpenAiKey)(dispatch, settings);
             }
         }
-    }, [openAiKeyFromStore, openAiKeyFromStorage]);
+    }, [openAiKeyFromStore, settings]);
     return react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], { position: "static", className: classes.appBar },
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], null,

@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { useAppSelector, useAppDispatch } from '../hooks'
-import { actionSetScreen, dispatchActionCheckOpenAiKey, selectOpenAiKey } from '../appStateSlice';
+import { actionSetScreen, dispatchActionCheckOpenAiKey, selectSettings } from '../appStateSlice';
 import { AppBar, Toolbar, Typography} from '@mui/material';
 import { makeStyles } from '@material-ui/core';
 
@@ -19,21 +19,21 @@ const useStyles = makeStyles((theme) => ({
 
 export function TestOpenAiToken() {
     const classes = useStyles();
-    const dispatch = useAppDispatch()
-    const openAiKeyFromStore = useAppSelector(selectOpenAiKey);
-    const openAiKeyFromStorage = localStorage.getItem('openAiKey');
+    const dispatch = useAppDispatch();
+    const settings = useAppSelector(selectSettings);
+    const openAiKeyFromStore = settings.openAiKey;
 
     useEffect(() => {
         if(openAiKeyFromStore !== ''){
-            dispatchActionCheckOpenAiKey(dispatch, openAiKeyFromStore)
+            dispatchActionCheckOpenAiKey(dispatch, settings)
         }else{
-            if (openAiKeyFromStorage === null ||  openAiKeyFromStorage === '') {
+            if (openAiKeyFromStore === null ||  openAiKeyFromStore === '') {
                 dispatch(actionSetScreen('settings'));
             }else{
-                dispatchActionCheckOpenAiKey(dispatch, openAiKeyFromStorage)
+                dispatchActionCheckOpenAiKey(dispatch, settings)
             }
         }
-    }, [openAiKeyFromStore, openAiKeyFromStorage]);
+    }, [openAiKeyFromStore, settings]);
 
     return <>
         <AppBar position="static" className={classes.appBar}>
