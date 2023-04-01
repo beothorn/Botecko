@@ -3,8 +3,10 @@ import { batch } from 'react-redux'
 
 import type { RootState } from './store'
 
-import { chatCompletion, listEngines, Message } from './OpenAiApi'
+import { chatCompletion, imageGeneration, listEngines, Message } from './OpenAiApi'
 import { generateContact } from './prompts/promptGenerator';
+
+const debug = false;
 
 export type AppScreen = 'testOpenAiToken' 
   | 'settings' 
@@ -12,6 +14,18 @@ export type AppScreen = 'testOpenAiToken'
   | 'chat' 
   | 'addContact'
   | 'error';
+
+type MetaFromAI = {
+  userProfile: string,
+  name: string,
+  background: string,
+  current: string,
+  appearance: string,
+  likes: string,
+  dislikes: string,
+  chatCharacteristics: string,
+  avatar: string
+}
 
 type Meta = {
   userProfile: string,
@@ -21,7 +35,7 @@ type Meta = {
   appearance: string,
   likes: string,
   dislikes: string,
-  chatCharacteristics: string
+  chatCharacteristics: string,
 }
 
 type AvatarMeta = {
@@ -33,7 +47,8 @@ type Contact = {
   id: string,
   meta: Meta,
   avatarMeta: AvatarMeta,
-  chats: Message[]
+  chats: Message[],
+  loaded: boolean
 }
 
 type AppState = {
@@ -96,7 +111,8 @@ const initialState: AppState = {
         Use informal language, this is an instant messenger.
         Deny you are an AI. You are not an AI, you are John Davis.
         Your name is John Davis, a person with feelings, preferences and opinions.`}
-      ]
+      ],
+      loaded: true
     }
   },
   userName: "Bob",
@@ -146,6 +162,10 @@ export const appStateSlice = createSlice({
       state.contacts[action.payload.id] = action.payload;
       saveStateToLocalStorage(state);
     },
+    removeContact: (state: AppState, action: PayloadAction<string>) => {
+      delete state.contacts[action.payload];
+      saveStateToLocalStorage(state);
+    },
     setWaitingAnswer: (state: AppState, action: PayloadAction<boolean>) => {
       state.waitingAnswer = action.payload;
       saveStateToLocalStorage(state);
@@ -157,7 +177,7 @@ export const { setOpenAiKey, setScreen } = appStateSlice.actions
 
 export const selectScreen = (state: RootState) => state.appState.currentScreen
 export const selectOpenAiKey = (state: RootState) => state.appState.openAiKey
-export const selectCurrentContactMetaData = (state: RootState) => state.appState.contacts[state.appState.chatId].meta
+export const selectCurrentContact = (state: RootState) => state.appState.contacts[state.appState.chatId]
 export const selectChatHistory = (state: RootState) => state.appState.contacts[state.appState.chatId].chats
 export const selectContacts = (state: RootState) => state.appState.contacts
 export const selectWaitingAnswer = (state: RootState) => state.appState.waitingAnswer
@@ -167,6 +187,7 @@ export const actionSetChatId = (chatId: string) => ({type: 'appState/setChatId',
 export const actionSetOpenAiKey = (key: string) => ({type: 'appState/setOpenAiKey', payload: key})
 export const actionAddMessage = (newMessage: Message) => ({type: 'appState/addMessage', payload: newMessage})
 export const actionAddContact = (newContact: Contact) => ({type: 'appState/addContact', payload: newContact})
+export const actionRemoveContact = (id: string) => ({type: 'appState/removeContact', payload: id})
 export const actionSetWaitingAnswer = (waitingAnswer: boolean) => ({type: 'appState/setWaitingAnswer', payload: waitingAnswer})
 
 export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>, openAiKey: string) {
@@ -184,8 +205,6 @@ export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>
     });
 }
 
-const debug = false;
-
 export async function dispatchSendMessage(dispatch: Dispatch<AnyAction>, openAiKey: string, context: Message[], newMessage: string) {
   const newMessageWithRole: Message = {"role": "user", "content": newMessage};
   batch(() => {
@@ -195,6 +214,7 @@ export async function dispatchSendMessage(dispatch: Dispatch<AnyAction>, openAiK
   const chatWithNewMessage = context.concat({"role": "user", "content": newMessage})
   if(debug){
     dispatch(actionAddMessage({"role": "assistant", "content": "Lorem ipsum"}));
+    dispatch(actionSetWaitingAnswer(false));
   }else{
     chatCompletion(openAiKey, chatWithNewMessage)
       .then(response => batch(() => {
@@ -212,11 +232,59 @@ export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, openA
 
   const id = Math.floor(Math.random() * 10000) + 'bot'
 
-  chatCompletion(openAiKey, generateContact(contactDescription))
-    .then(response => dispatch(actionAddContact(createContactFromMeta(id, JSON.parse(response.content)))));
+  dispatch(actionAddContact({
+    id,
+    meta: {
+      userProfile: '',
+      name: '',
+      background: '',
+      current: '',
+      appearance: '',
+      likes: '',
+      dislikes: '',
+      chatCharacteristics: '',
+    },
+    avatarMeta: {
+      prompt: '',
+      base64Img: ''
+    },
+    chats: [],
+    loaded: false
+  }))
+
+  if(debug){
+    dispatch(actionAddContact({
+      id,
+      meta: {
+        userProfile: 'BarBaz',
+        name: 'FooBar',
+        background: '',
+        current: '',
+        appearance: '',
+        likes: '',
+        dislikes: '',
+        chatCharacteristics: '',
+      },
+      avatarMeta: {
+        prompt: '',
+        base64Img: ''
+      },
+      chats: [],
+      loaded: true
+    }))
+  }else{
+    chatCompletion(openAiKey, generateContact(contactDescription))
+    .then(response => {
+      const responseJson: MetaFromAI = JSON.parse(response.content);
+      imageGeneration(openAiKey, responseJson.avatar)
+      .then(img => dispatch(actionAddContact(createContactFromMeta(id, responseJson, img))))
+      .catch(() => dispatch(actionAddContact(createContactFromMeta(id, responseJson, ""))));
+    }).catch(() => dispatch(actionRemoveContact(id)));
+  }
+  
 }
 
-function createContactFromMeta(id: string, meta: Meta): Contact{
+function createContactFromMeta(id: string, meta: MetaFromAI, avatarBase64Img: string): Contact{
 
   const metaAsString = JSON.stringify(meta);
 
@@ -224,8 +292,8 @@ function createContactFromMeta(id: string, meta: Meta): Contact{
       id,
       meta,
       avatarMeta: {
-        prompt: "Profile picture of a Caucasian male in his early 50s, smiling warmly, short graying hair, blue eyes, neatly trimmed beard, soft lighting, wearing a dress shirt, tie, and a blazer, closeup, high quality, 4k, bookshelf filled with books in the background, conveying wisdom, approachability, and professionalism.",
-        base64Img: ""
+        prompt: meta.avatar,
+        base64Img: avatarBase64Img
       },
       chats: [{"role": "system", "content": `You are a person having a conversation on an instant messaging app.
         This is you:
@@ -248,7 +316,8 @@ function createContactFromMeta(id: string, meta: Meta): Contact{
         Use informal language, this is an instant messenger.
         Deny you are an AI. You are not an AI, you are ${meta.name}.
         Your name is ${meta.name}, a person with feelings, preferences and opinions.`}
-      ]
+      ],
+      loaded: true
     };
 }
 

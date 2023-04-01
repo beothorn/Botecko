@@ -12,8 +12,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { actionSetChatId, actionSetScreen, selectContacts } from '../appStateSlice';
+import { actionRemoveContact, actionSetChatId, actionSetScreen, selectContacts } from '../appStateSlice';
 import ListItemButton from '@mui/material/ListItemButton';
+import { CircularProgress } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,6 +50,10 @@ export default function Contacts() {
     setAnchorEl(null);
     dispatch(actionSetScreen('addContact'));
   };
+  const removeContact = (id: string) => {
+    setAnchorEl(null);
+    dispatch(actionRemoveContact(id));
+  };
 
   return (
     <>
@@ -57,7 +62,6 @@ export default function Contacts() {
           <Typography variant="h6" component="div" className={classes.title}>
             BotBook
           </Typography>
-          {/* Add the IconButton with the Menu */}
           <IconButton
             color="inherit"
             aria-label="menu"
@@ -78,11 +82,19 @@ export default function Contacts() {
       </AppBar>
       <List className={classes.root}>
         {Object.entries(contacts).map(([key, contact]) => (
+          contact.loaded ? 
           <ListItemButton key={contact.meta.name} onClick={() => gotoChat(key)}>
             <ListItemAvatar>
               <Avatar alt={contact.avatarMeta.prompt} src={`data:image/png;base64, ${contact.avatarMeta.base64Img}`} />
             </ListItemAvatar>
             <ListItemText primary={contact.meta.name} secondary={contact.meta.userProfile} />
+          </ListItemButton>
+          :
+          <ListItemButton key={contact.meta.name} onClick={() => removeContact(key)}>
+            <ListItemAvatar>
+              <CircularProgress />
+            </ListItemAvatar>
+            <ListItemText primary={"Contact is loading..."} />
           </ListItemButton>
         ))}
       </List>

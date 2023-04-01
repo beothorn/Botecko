@@ -22,18 +22,19 @@ export const chatCompletion = (openAiKey: string, messages: Message[]): Promise<
     return response;
 });
 
-export const imageGeneration = (openAiKey: string, prompt: string): Promise<Message> => axios.post(`${openAiUrl}/chat/completions`, {
+export const imageGeneration = (openAiKey: string, prompt: string): Promise<string> => axios.post(`${openAiUrl}/images/generations`, {
     "prompt": prompt,
     "n": 1,
-    "size": "256x256"
+    "size": "256x256",
+    "response_format": "b64_json"
 }, {
     headers: {
         'Authorization': `Bearer ${openAiKey}`,
         'Content-Type': 'application/json'
     }
 }).then((result) => {
-    const response = result.data[0].url;
-    console.log(response);
+    console.log(result);
+    const response = result.data.data[0].b64_json;
     return response;
 });
 

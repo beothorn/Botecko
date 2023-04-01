@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Typography, TextField, IconButton } from '@material-ui/core';
 import SendIcon from '@mui/icons-material/Send';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { selectOpenAiKey, selectChatHistory, selectWaitingAnswer, selectCurrentContactMetaData, dispatchSendMessage } from '../appStateSlice';
+import { selectOpenAiKey, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact } from '../appStateSlice';
+import { Paper, Typography, TextField, IconButton, AppBar, Avatar, Menu, MenuItem, Toolbar } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { batch } from 'react-redux';
 
 type ChatBubbleProps = {
   text: string;
@@ -67,14 +70,23 @@ const styles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
   },
+  appBar: {
+    backgroundColor: theme.palette.primary.dark,
+    color: theme.palette.primary.contrastText,
+  },
+  title: {
+    flexGrow: 1,
+  },
 }));
 
-export default function Chat(){
+export default function Chat() {
   const classes = styles();
   const [message, setMessage] = useState('');
   const openAiKey = useAppSelector(selectOpenAiKey);
   const chatHistory = useAppSelector(selectChatHistory) ?? [];
-  const metaData = useAppSelector(selectCurrentContactMetaData);
+  const currentContact = useAppSelector(selectCurrentContact);
+  const metaData = currentContact.meta;
+  const avatarMetaData = currentContact.avatarMeta;
   const isWaitingAnswer = useAppSelector(selectWaitingAnswer);
 
   const dispatch = useAppDispatch();
@@ -98,11 +110,69 @@ export default function Chat(){
     }
   }
 
-  return (
+  // Add state for the menu
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const contactInfo = () => {
+    setAnchorEl(null);
+    dispatch(actionSetScreen('contacts'));
+  };
+  const deleteContact = () => {
+    setAnchorEl(null);
+    batch(() => {
+      dispatch(actionSetScreen('contacts'));
+      dispatch(actionRemoveContact(currentContact.id));
+    });
+  };
+  const gotoContacts = () => {
+    setAnchorEl(null);
+    dispatch(actionSetScreen('contacts'));
+  };
+
+  return (<>
+    <AppBar position="absolute" className={classes.appBar}>
+      <Toolbar>
+        <IconButton
+          color="inherit"
+          aria-label="menu"
+          onClick={gotoContacts}
+        >
+          <ArrowBackIcon />
+        </IconButton>
+        <Avatar alt={avatarMetaData.prompt} src={`data:image/png;base64, ${avatarMetaData.base64Img}`} />
+        <Typography variant="h6" component="div" className={classes.title}>
+          {metaData.name}
+        </Typography>
+        <IconButton
+          color="inherit"
+          aria-label="menu"
+          onClick={handleClick}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={() => contactInfo()}>
+            Contact info
+          </MenuItem>
+          <MenuItem onClick={() => deleteContact()}>
+            Delete Contact
+          </MenuItem>
+        </Menu>
+      </Toolbar>
+    </AppBar>
     <div className={classes.root} ref={rootRef}>
       <div className={classes.chatWrapper}></div>
       <div className={classes.chatContainer}>
-      {chatHistory.filter(m => m.role !== 'system').map((message, index) => (
+        {chatHistory.filter(m => m.role !== 'system').map((message, index) => (
           <ChatBubble
             key={index}
             text={message.content}
@@ -110,9 +180,9 @@ export default function Chat(){
           />
         ))}
         {isWaitingAnswer && <ChatBubble
-            text={`${metaData.name} is typing...`}
-            position={'left'}
-          />}
+          text={`${metaData.name} is typing...`}
+          position={'left'}
+        />}
       </div>
       <div className={classes.inputContainer}>
         <TextField
@@ -127,5 +197,5 @@ export default function Chat(){
         </IconButton>
       </div>
     </div>
-  );
+  </>);
 }
