@@ -33541,71 +33541,37 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _mui_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @mui/utils */ "./node_modules/@mui/utils/esm/capitalize.js");
-/* harmony import */ var _spacing__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../spacing */ "./node_modules/@mui/system/esm/spacing.js");
-/* harmony import */ var _breakpoints__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../breakpoints */ "./node_modules/@mui/system/esm/breakpoints.js");
-/* harmony import */ var _borders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../borders */ "./node_modules/@mui/system/esm/borders.js");
-/* harmony import */ var _cssGrid__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../cssGrid */ "./node_modules/@mui/system/esm/cssGrid.js");
-/* harmony import */ var _palette__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../palette */ "./node_modules/@mui/system/esm/palette.js");
-/* harmony import */ var _sizing__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../sizing */ "./node_modules/@mui/system/esm/sizing.js");
+/* harmony import */ var _spacing__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../spacing */ "./node_modules/@mui/system/esm/spacing.js");
+/* harmony import */ var _borders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../borders */ "./node_modules/@mui/system/esm/borders.js");
+/* harmony import */ var _cssGrid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../cssGrid */ "./node_modules/@mui/system/esm/cssGrid.js");
+/* harmony import */ var _palette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../palette */ "./node_modules/@mui/system/esm/palette.js");
+/* harmony import */ var _sizing__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../sizing */ "./node_modules/@mui/system/esm/sizing.js");
 
 
 
 
 
-
-
-const createFontStyleFunction = prop => {
-  return props => {
-    if (props[prop] !== undefined && props[prop] !== null) {
-      const styleFromPropValue = propValue => {
-        var _props$theme$typograp;
-        // fetch the value directly defined in the theme, like fontWeightLight
-        let value = (_props$theme$typograp = props.theme.typography) == null ? void 0 : _props$theme$typograp[propValue];
-        if (typeof value === 'object') {
-          // typography variant was pulled, but these props can't be an object
-          value = null;
-        }
-        if (!value) {
-          var _props$theme$typograp2, _props$prop;
-          // fetch fontWeightLight when the value is 'light'
-          value = (_props$theme$typograp2 = props.theme.typography) == null ? void 0 : _props$theme$typograp2[`${prop}${props[prop] === 'default' || props[prop] === prop ? '' : (0,_mui_utils__WEBPACK_IMPORTED_MODULE_0__["default"])((_props$prop = props[prop]) == null ? void 0 : _props$prop.toString())}`];
-        }
-        if (!value) {
-          var _props$theme$typograp3, _props$theme$typograp4, _props$theme$typograp5;
-          // fetch the value from the typography variant or default to the propValue
-          value = (_props$theme$typograp3 = (_props$theme$typograp4 = props.theme.typography) == null ? void 0 : (_props$theme$typograp5 = _props$theme$typograp4[propValue]) == null ? void 0 : _props$theme$typograp5[prop]) != null ? _props$theme$typograp3 : propValue;
-        }
-        return {
-          [prop]: value
-        };
-      };
-      return (0,_breakpoints__WEBPACK_IMPORTED_MODULE_1__.handleBreakpoints)(props, props[prop], styleFromPropValue);
-    }
-    return null;
-  };
-};
 const defaultSxConfig = {
   // borders
   border: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
   },
   borderTop: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
   },
   borderRight: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
   },
   borderBottom: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
   },
   borderLeft: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
   },
   borderColor: {
     themeKey: 'palette'
@@ -33624,142 +33590,142 @@ const defaultSxConfig = {
   },
   borderRadius: {
     themeKey: 'shape.borderRadius',
-    style: _borders__WEBPACK_IMPORTED_MODULE_2__.borderRadius
+    style: _borders__WEBPACK_IMPORTED_MODULE_0__.borderRadius
   },
   // palette
   color: {
     themeKey: 'palette',
-    transform: _palette__WEBPACK_IMPORTED_MODULE_3__.paletteTransform
+    transform: _palette__WEBPACK_IMPORTED_MODULE_1__.paletteTransform
   },
   bgcolor: {
     themeKey: 'palette',
     cssProperty: 'backgroundColor',
-    transform: _palette__WEBPACK_IMPORTED_MODULE_3__.paletteTransform
+    transform: _palette__WEBPACK_IMPORTED_MODULE_1__.paletteTransform
   },
   backgroundColor: {
     themeKey: 'palette',
-    transform: _palette__WEBPACK_IMPORTED_MODULE_3__.paletteTransform
+    transform: _palette__WEBPACK_IMPORTED_MODULE_1__.paletteTransform
   },
   // spacing
   p: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   pt: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   pr: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   pb: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   pl: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   px: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   py: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   padding: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   paddingTop: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   paddingRight: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   paddingBottom: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   paddingLeft: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   paddingX: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   paddingY: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   paddingInline: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   paddingInlineStart: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   paddingInlineEnd: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   paddingBlock: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   paddingBlockStart: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   paddingBlockEnd: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
   },
   m: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   mt: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   mr: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   mb: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   ml: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   mx: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   my: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   margin: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   marginTop: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   marginRight: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   marginBottom: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   marginLeft: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   marginX: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   marginY: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   marginInline: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   marginInlineStart: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   marginInlineEnd: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   marginBlock: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   marginBlockStart: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   marginBlockEnd: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
   },
   // display
   displayPrint: {
@@ -33791,13 +33757,13 @@ const defaultSxConfig = {
   justifySelf: {},
   // grid
   gap: {
-    style: _cssGrid__WEBPACK_IMPORTED_MODULE_5__.gap
+    style: _cssGrid__WEBPACK_IMPORTED_MODULE_3__.gap
   },
   rowGap: {
-    style: _cssGrid__WEBPACK_IMPORTED_MODULE_5__.rowGap
+    style: _cssGrid__WEBPACK_IMPORTED_MODULE_3__.rowGap
   },
   columnGap: {
-    style: _cssGrid__WEBPACK_IMPORTED_MODULE_5__.columnGap
+    style: _cssGrid__WEBPACK_IMPORTED_MODULE_3__.columnGap
   },
   gridColumn: {},
   gridRow: {},
@@ -33823,39 +33789,36 @@ const defaultSxConfig = {
   },
   // sizing
   width: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
   },
   maxWidth: {
-    style: _sizing__WEBPACK_IMPORTED_MODULE_6__.maxWidth
+    style: _sizing__WEBPACK_IMPORTED_MODULE_4__.maxWidth
   },
   minWidth: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
   },
   height: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
   },
   maxHeight: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
   },
   minHeight: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
   },
   boxSizing: {},
   // typography
   fontFamily: {
-    themeKey: 'typography',
-    style: createFontStyleFunction('fontFamily')
+    themeKey: 'typography'
   },
   fontSize: {
-    themeKey: 'typography',
-    style: createFontStyleFunction('fontSize')
+    themeKey: 'typography'
   },
   fontStyle: {
     themeKey: 'typography'
   },
   fontWeight: {
-    themeKey: 'typography',
-    style: createFontStyleFunction('fontWeight')
+    themeKey: 'typography'
   },
   letterSpacing: {},
   textTransform: {},
@@ -33988,6 +33951,11 @@ function unstable_createStyleFunctionSx() {
     } = options;
     if (val == null) {
       return null;
+    }
+    if (themeKey === 'typography' && val === 'inherit') {
+      return {
+        [prop]: val
+      };
     }
     const themeMapping = (0,_style__WEBPACK_IMPORTED_MODULE_0__.getPath)(theme, themeKey) || {};
     if (style) {
@@ -84073,14 +84041,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "actionSetChatId": () => (/* binding */ actionSetChatId),
 /* harmony export */   "actionSetOpenAiKey": () => (/* binding */ actionSetOpenAiKey),
 /* harmony export */   "actionSetScreen": () => (/* binding */ actionSetScreen),
+/* harmony export */   "actionSetWaitingAnswer": () => (/* binding */ actionSetWaitingAnswer),
 /* harmony export */   "appStateSlice": () => (/* binding */ appStateSlice),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   "dispatchActionCheckOpenAiKey": () => (/* binding */ dispatchActionCheckOpenAiKey),
-/* harmony export */   "dispatchTestCall": () => (/* binding */ dispatchTestCall),
+/* harmony export */   "dispatchSendMessage": () => (/* binding */ dispatchSendMessage),
 /* harmony export */   "selectChatHistory": () => (/* binding */ selectChatHistory),
 /* harmony export */   "selectContacts": () => (/* binding */ selectContacts),
+/* harmony export */   "selectCurrentContactMetaData": () => (/* binding */ selectCurrentContactMetaData),
 /* harmony export */   "selectOpenAiKey": () => (/* binding */ selectOpenAiKey),
 /* harmony export */   "selectScreen": () => (/* binding */ selectScreen),
+/* harmony export */   "selectWaitingAnswer": () => (/* binding */ selectWaitingAnswer),
 /* harmony export */   "setOpenAiKey": () => (/* binding */ setOpenAiKey),
 /* harmony export */   "setScreen": () => (/* binding */ setScreen)
 /* harmony export */ });
@@ -84152,36 +84123,62 @@ var initialState = {
     },
     userName: "Bob",
     userShortInfo: "29 years old man living in New York",
-    chatId: 'test'
+    chatId: 'test',
+    waitingAnswer: false
 };
+var localStorageKey = 'v0.0.1';
+var getInitialState = function () {
+    var storedState = localStorage.getItem(localStorageKey);
+    if (storedState) {
+        var loadedInitialState = JSON.parse(storedState);
+        loadedInitialState.currentScreen = 'testOpenAiToken';
+        loadedInitialState.waitingAnswer = false;
+        return loadedInitialState;
+    }
+    return initialState;
+};
+function saveStateToLocalStorage(state) {
+    localStorage.setItem(localStorageKey, JSON.stringify(state));
+}
 var appStateSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_2__.createSlice)({
     name: 'appState',
-    initialState: initialState,
+    initialState: getInitialState(),
     reducers: {
         setOpenAiKey: function (state, action) {
             state.openAiKey = action.payload;
+            saveStateToLocalStorage(state);
         },
         setScreen: function (state, action) {
             state.currentScreen = action.payload;
+            saveStateToLocalStorage(state);
         },
         setChatId: function (state, action) {
             state.chatId = action.payload;
+            saveStateToLocalStorage(state);
         },
         addMessage: function (state, action) {
             var _a, _b;
             state.contacts[state.chatId].chats = (_b = (_a = state.contacts[state.chatId].chats) === null || _a === void 0 ? void 0 : _a.concat(action.payload)) !== null && _b !== void 0 ? _b : [];
+            saveStateToLocalStorage(state);
+        },
+        setWaitingAnswer: function (state, action) {
+            state.waitingAnswer = action.payload;
+            saveStateToLocalStorage(state);
         },
     },
 });
 var setOpenAiKey = (_a = appStateSlice.actions, _a.setOpenAiKey), setScreen = _a.setScreen;
 var selectScreen = function (state) { return state.appState.currentScreen; };
 var selectOpenAiKey = function (state) { return state.appState.openAiKey; };
+var selectCurrentContactMetaData = function (state) { return state.appState.contacts[state.appState.chatId].meta; };
 var selectChatHistory = function (state) { return state.appState.contacts[state.appState.chatId].chats; };
 var selectContacts = function (state) { return state.appState.contacts; };
+var selectWaitingAnswer = function (state) { return state.appState.waitingAnswer; };
 var actionSetScreen = function (screen) { return ({ type: 'appState/setScreen', payload: screen }); };
 var actionSetChatId = function (chatId) { return ({ type: 'appState/setChatId', payload: chatId }); };
 var actionSetOpenAiKey = function (key) { return ({ type: 'appState/setOpenAiKey', payload: key }); };
 var actionAddMessage = function (newMessage) { return ({ type: 'appState/addMessage', payload: newMessage }); };
+var actionSetWaitingAnswer = function (waitingAnswer) { return ({ type: 'appState/setWaitingAnswer', payload: waitingAnswer }); };
 function dispatchActionCheckOpenAiKey(dispatch, openAiKey) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -84202,19 +84199,28 @@ function dispatchActionCheckOpenAiKey(dispatch, openAiKey) {
     });
 }
 var debug = false;
-function dispatchTestCall(dispatch, openAiKey, context, newMessage) {
+function dispatchSendMessage(dispatch, openAiKey, context, newMessage) {
     return __awaiter(this, void 0, void 0, function () {
         var newMessageWithRole, chatWithNewMessage;
         return __generator(this, function (_a) {
             newMessageWithRole = { "role": "user", "content": newMessage };
-            dispatch(actionAddMessage(newMessageWithRole));
+            (0,react_redux__WEBPACK_IMPORTED_MODULE_0__.batch)(function () {
+                dispatch(actionSetWaitingAnswer(true));
+                dispatch(actionAddMessage(newMessageWithRole));
+            });
             chatWithNewMessage = context.concat({ "role": "user", "content": newMessage });
             if (debug) {
                 dispatch(actionAddMessage({ "role": "assistant", "content": "Lorem ipsum" }));
             }
             else {
                 (0,_OpenAiApi__WEBPACK_IMPORTED_MODULE_1__.chatCompletion)(openAiKey, chatWithNewMessage)
-                    .then(function (response) { return dispatch(actionAddMessage(response)); });
+                    .then(function (response) { return (0,react_redux__WEBPACK_IMPORTED_MODULE_0__.batch)(function () {
+                    dispatch(actionSetWaitingAnswer(false));
+                    dispatch(actionAddMessage(response));
+                }); }).catch(function () { return (0,react_redux__WEBPACK_IMPORTED_MODULE_0__.batch)(function () {
+                    dispatch(actionSetWaitingAnswer(false));
+                    dispatch(actionAddMessage({ "role": "user", "content": "Ops, I have network issues" }));
+                }); });
             }
             return [2 /*return*/];
         });
@@ -84312,6 +84318,8 @@ var Chat = function () {
     var _b = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''), message = _b[0], setMessage = _b[1];
     var openAiKey = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectOpenAiKey);
     var chatHistory = (_a = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectChatHistory)) !== null && _a !== void 0 ? _a : [];
+    var metaData = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectCurrentContactMetaData);
+    var isWaitingAnswer = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectWaitingAnswer);
     var dispatch = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppDispatch)();
     var rootRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
     (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
@@ -84322,7 +84330,7 @@ var Chat = function () {
     }, [chatHistory]);
     var handleSendMessage = function (msg) {
         setMessage('');
-        (0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.dispatchTestCall)(dispatch, openAiKey, chatHistory, msg);
+        (0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.dispatchSendMessage)(dispatch, openAiKey, chatHistory, msg);
     };
     var handleKeyDown = function (event) {
         if (event.keyCode === 13) {
@@ -84331,7 +84339,9 @@ var Chat = function () {
     };
     return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.root, ref: rootRef },
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.chatWrapper }),
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.chatContainer }, chatHistory.filter(function (m) { return m.role !== 'system'; }).map(function (message, index) { return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(ChatBubble, { key: index, text: message.content, position: message.role === 'user' ? 'right' : 'left' })); })),
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.chatContainer },
+            chatHistory.filter(function (m) { return m.role !== 'system'; }).map(function (message, index) { return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(ChatBubble, { key: index, text: message.content, position: message.role === 'user' ? 'right' : 'left' })); }),
+            isWaitingAnswer && react__WEBPACK_IMPORTED_MODULE_0___default().createElement(ChatBubble, { text: "".concat(metaData.name, " is typing..."), position: 'left' })),
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.inputContainer },
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_6__["default"], { fullWidth: true, value: message, onChange: function (e) { return setMessage(e.target.value); }, placeholder: "Type your message", onKeyDown: handleKeyDown }),
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_7__["default"], { onClick: function () { return handleSendMessage(message); } },
