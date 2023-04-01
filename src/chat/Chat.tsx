@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, TextField, IconButton } from '@material-ui/core';
 import SendIcon from '@mui/icons-material/Send';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { dispatchTestCall, selectOpenAiKey, selectChatHistory } from '../appStateSlice';
+import { selectOpenAiKey, selectChatHistory, selectWaitingAnswer, selectCurrentContactMetaData, dispatchSendMessage } from '../appStateSlice';
 
 type ChatBubbleProps = {
   text: string;
@@ -74,6 +74,9 @@ const Chat = () => {
   const [message, setMessage] = useState('');
   const openAiKey = useAppSelector(selectOpenAiKey);
   const chatHistory = useAppSelector(selectChatHistory) ?? [];
+  const metaData = useAppSelector(selectCurrentContactMetaData);
+  const isWaitingAnswer = useAppSelector(selectWaitingAnswer);
+
   const dispatch = useAppDispatch();
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -86,7 +89,7 @@ const Chat = () => {
 
   const handleSendMessage = (msg: string) => {
     setMessage('');
-    dispatchTestCall(dispatch, openAiKey, chatHistory, msg);
+    dispatchSendMessage(dispatch, openAiKey, chatHistory, msg);
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -106,6 +109,10 @@ const Chat = () => {
             position={message.role === 'user' ? 'right' : 'left'}
           />
         ))}
+        {isWaitingAnswer && <ChatBubble
+            text={`${metaData.name} is typing...`}
+            position={'left'}
+          />}
       </div>
       <div className={classes.inputContainer}>
         <TextField

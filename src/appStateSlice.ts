@@ -40,7 +40,8 @@ type AppState = {
   contacts: Record<string, Contact>,
   chatId: string,
   userName: string,
-  userShortInfo: string
+  userShortInfo: string,
+  waitingAnswer: boolean
 }
 
 const initialState: AppState = {
@@ -98,24 +99,50 @@ const initialState: AppState = {
   },
   userName: "Bob",
   userShortInfo: "29 years old man living in New York",
-  chatId: 'test'
+  chatId: 'test',
+  waitingAnswer: false
+}
+
+const localStorageKey = 'v0.0.1';
+
+const getInitialState = (): AppState => {
+  const storedState = localStorage.getItem(localStorageKey);
+  if (storedState) {
+    const loadedInitialState = JSON.parse(storedState);
+    loadedInitialState.currentScreen = 'testOpenAiToken';
+    loadedInitialState.waitingAnswer = false;
+    return loadedInitialState;
+  }
+  return initialState;
+}
+
+function saveStateToLocalStorage(state: AppState) {
+  localStorage.setItem(localStorageKey, JSON.stringify(state));
 }
 
 export const appStateSlice = createSlice({
   name: 'appState',
-  initialState,
+  initialState: getInitialState(),
   reducers: {
     setOpenAiKey: (state: AppState, action: PayloadAction<string>) => {
       state.openAiKey = action.payload;
+      saveStateToLocalStorage(state);
     },
     setScreen: (state: AppState, action: PayloadAction<AppScreen>) => {
       state.currentScreen = action.payload;
+      saveStateToLocalStorage(state);
     },
     setChatId: (state: AppState, action: PayloadAction<string>) => {
       state.chatId = action.payload;
+      saveStateToLocalStorage(state);
     },
     addMessage: (state: AppState, action: PayloadAction<Message>) => {
       state.contacts[state.chatId].chats = state.contacts[state.chatId].chats?.concat(action.payload) ?? [];
+      saveStateToLocalStorage(state);
+    },
+    setWaitingAnswer: (state: AppState, action: PayloadAction<boolean>) => {
+      state.waitingAnswer = action.payload;
+      saveStateToLocalStorage(state);
     },
   },
 })
@@ -124,13 +151,16 @@ export const { setOpenAiKey, setScreen } = appStateSlice.actions
 
 export const selectScreen = (state: RootState) => state.appState.currentScreen
 export const selectOpenAiKey = (state: RootState) => state.appState.openAiKey
+export const selectCurrentContactMetaData = (state: RootState) => state.appState.contacts[state.appState.chatId].meta
 export const selectChatHistory = (state: RootState) => state.appState.contacts[state.appState.chatId].chats
 export const selectContacts = (state: RootState) => state.appState.contacts
+export const selectWaitingAnswer = (state: RootState) => state.appState.waitingAnswer
 
 export const actionSetScreen = (screen: AppScreen) => ({type: 'appState/setScreen', payload: screen})
 export const actionSetChatId = (chatId: string) => ({type: 'appState/setChatId', payload: chatId})
 export const actionSetOpenAiKey = (key: string) => ({type: 'appState/setOpenAiKey', payload: key})
 export const actionAddMessage = (newMessage: Message) => ({type: 'appState/addMessage', payload: newMessage})
+export const actionSetWaitingAnswer = (waitingAnswer: boolean) => ({type: 'appState/setWaitingAnswer', payload: waitingAnswer})
 
 export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>, openAiKey: string) {
   listEngines(openAiKey)
@@ -149,15 +179,25 @@ export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>
 
 const debug = false;
 
-export async function dispatchTestCall(dispatch: Dispatch<AnyAction>, openAiKey: string, context: Message[], newMessage: string) {
+export async function dispatchSendMessage(dispatch: Dispatch<AnyAction>, openAiKey: string, context: Message[], newMessage: string) {
   const newMessageWithRole: Message = {"role": "user", "content": newMessage};
-  dispatch(actionAddMessage(newMessageWithRole))
+  batch(() => {
+    dispatch(actionSetWaitingAnswer(true));
+    dispatch(actionAddMessage(newMessageWithRole));
+  })
   const chatWithNewMessage = context.concat({"role": "user", "content": newMessage})
   if(debug){
     dispatch(actionAddMessage({"role": "assistant", "content": "Lorem ipsum"}));
   }else{
     chatCompletion(openAiKey, chatWithNewMessage)
-      .then(response => dispatch(actionAddMessage(response)));
+      .then(response => batch(() => {
+        dispatch(actionSetWaitingAnswer(false));
+        dispatch(actionAddMessage(response));
+        })  
+      ).catch(() => batch(() => {
+        dispatch(actionSetWaitingAnswer(false));
+        dispatch(actionAddMessage({"role": "user", "content": "Ops, I have network issues"}));
+      }));
   }
   
 }
