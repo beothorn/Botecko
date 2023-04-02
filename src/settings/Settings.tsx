@@ -6,22 +6,18 @@ import TextField from '@mui/material/TextField';
 
 import { useAppSelector, useAppDispatch } from '../hooks'
 import { actionSetScreen, actionSetSettings, selectSettings } from '../appStateSlice';
-import { makeStyles } from '@material-ui/core';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
+import { styled } from '@mui/material';
 
-const useStyles = makeStyles(() => ({
-    form: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "1rem",
-      margin: "1rem",
-    },
+const SettingsForm = styled('form')(() => ({
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
+    margin: "1rem",
 }));
 
 export default function Settings() {
-    const classes = useStyles();
-
     const settingsFromState = useAppSelector(selectSettings);
     const dispatch = useAppDispatch();
     const [settings, setSettings] = useState(settingsFromState);
@@ -44,7 +40,7 @@ export default function Settings() {
         leftItem = {<BackButton originScreen='contacts' />}
         centerItem = {<ScreenTitle title='Settings' />}
     >
-        <form className={classes.form}>
+        <SettingsForm>
             <TextField
                 value={settings.openAiKey}
                 onChange={(event) => handleChange(event, "openAiKey")}
@@ -82,6 +78,6 @@ export default function Settings() {
                 variant="outlined"
             />
             <Button sx={{marginLeft: 1}} variant="contained" onClick={updateKey}>Ok</Button>      
-        </form>
+        </SettingsForm>
     </Screen>;
 }

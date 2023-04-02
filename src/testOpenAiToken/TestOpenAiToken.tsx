@@ -4,21 +4,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { useAppSelector, useAppDispatch } from '../hooks'
 import { actionSetScreen, dispatchActionCheckOpenAiKey, selectSettings } from '../appStateSlice';
-import { AppBar, Toolbar, Typography} from '@mui/material';
-import { makeStyles } from '@material-ui/core';
-
-const useStyles = makeStyles((theme) => ({
-    title: {
-        flexGrow: 1,
-    },
-    appBar: {
-        backgroundColor: theme.palette.primary.dark,
-        color: theme.palette.primary.contrastText,
-    },
-}));
+import Screen, { ScreenTitle } from '../screens/screen';
 
 export function TestOpenAiToken() {
-    const classes = useStyles();
     const dispatch = useAppDispatch();
     const settings = useAppSelector(selectSettings);
     const openAiKeyFromStore = settings.openAiKey;
@@ -35,14 +23,9 @@ export function TestOpenAiToken() {
         }
     }, [openAiKeyFromStore, settings]);
 
-    return <>
-        <AppBar position="static" className={classes.appBar}>
-            <Toolbar>
-            <Typography variant="h6" component="div" className={classes.title}>
-                BotBook
-            </Typography>
-            </Toolbar>
-        </AppBar>
+    return (<Screen
+        centerItem={<ScreenTitle title='BotBook' />}
+    >
         <CircularProgress />
-    </>;
+    </Screen>);
 }

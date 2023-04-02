@@ -1,17 +1,19 @@
-import { makeStyles } from '@material-ui/core';
-import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
+import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography, styled } from '@mui/material';
 import React, { useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 
-const styles = makeStyles((theme) => ({
-    title: {
-        flexGrow: 1,
-    },
-    appBar: {
-      backgroundColor: theme.palette.primary.dark,
-      color: theme.palette.primary.contrastText,
-      marginBottom: "1rem",
-    }
+const AppBarStyled = styled(AppBar)(({theme}) => ({
+  backgroundColor: theme.palette.primary.dark,
+  color: theme.palette.primary.contrastText,
+  marginBottom: "1rem",
+}));
+
+function ScreenTitleRaw({title}: ScreenTitleProps){
+  return <Typography variant="h6">{title}</Typography>;
+};
+
+export const ScreenTitle = styled(ScreenTitleRaw)(() => ({
+  flexGrow: 1
 }));
 
 type Props = {
@@ -26,14 +28,7 @@ type ScreenTitleProps = {
     title: string;
 };
 
-export function ScreenTitle({title}: ScreenTitleProps){
-    const classes = styles();
-
-    return <Typography className={classes.title} variant="h6">{title}</Typography>;
-};
-
 export default function Screen({ children, menuItems, leftItem, centerItem, barPosition }: Props){
-    const classes = styles();
     // Add state for the menu
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -51,7 +46,7 @@ export default function Screen({ children, menuItems, leftItem, centerItem, barP
     };
 
     return (<>
-    <AppBar position={barPosition || "static"} className={classes.appBar}>
+    <AppBarStyled position={barPosition || "static"}>
         <Toolbar>
           {leftItem}
           {centerItem}
@@ -78,7 +73,7 @@ export default function Screen({ children, menuItems, leftItem, centerItem, barP
             </>
           )}
         </Toolbar>
-      </AppBar>
+      </AppBarStyled>
       <div>
         {children}
       </div>

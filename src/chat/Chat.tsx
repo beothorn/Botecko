@@ -1,39 +1,39 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import SendIcon from '@mui/icons-material/Send';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { selectSettings, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact } from '../appStateSlice';
-import { TextField, IconButton, Avatar } from '@mui/material';
+import { TextField, IconButton, Avatar, styled } from '@mui/material';
 import { batch } from 'react-redux';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
 import ChatBubble from './ChatBubble';
 
-const styles = makeStyles((theme) => ({
-  root: {
-    height: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    overflowY: 'scroll',
-    overflowAnchor: 'none',
-  },
-  chatWrapper: {
-    flexGrow: 1,
-  },
-  chatContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  inputContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1),
-  },
+const Root = styled('div')(({theme}) => ({
+  height: '100vh',
+  display: 'flex',
+  flexDirection: 'column',
+  overflowY: 'scroll',
+  overflowAnchor: 'none',
+  background: theme.palette.primary.contrastText
+}));
+
+const ChatWrapper = styled('div')({
+  flexGrow: 1,
+});
+
+const ChatContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+});
+
+const InputContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  paddingLeft: theme.spacing(1),
+  paddingRight: theme.spacing(1),
 }));
 
 export default function Chat() {
-  const classes = styles();
   const [message, setMessage] = useState('');
   const settings = useAppSelector(selectSettings);
   const chatHistory = useAppSelector(selectChatHistory) ?? [];
@@ -89,9 +89,9 @@ export default function Chat() {
     menuItems={menuItems}
     barPosition='absolute'
   >
-    <div className={classes.root} ref={rootRef}>
-      <div className={classes.chatWrapper}></div>
-      <div className={classes.chatContainer}>
+    <Root ref={rootRef}>
+      <ChatWrapper/>
+      <ChatContainer>
         {chatHistory.filter(m => m.role !== 'system').map((message, index) => (
           <ChatBubble
             key={index}
@@ -103,8 +103,8 @@ export default function Chat() {
           text={`${metaData.name} is typing...`}
           position={'left'}
         />}
-      </div>
-      <div className={classes.inputContainer}>
+      </ChatContainer>
+      <InputContainer>
         <TextField
           fullWidth
           value={message}
@@ -115,7 +115,7 @@ export default function Chat() {
         <IconButton onClick={() => handleSendMessage(message)}>
           <SendIcon />
         </IconButton>
-      </div>
-    </div>
+      </InputContainer>
+    </Root>
   </Screen>);
 }

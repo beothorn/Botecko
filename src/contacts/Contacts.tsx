@@ -1,5 +1,4 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import List from '@mui/material/List';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
@@ -7,25 +6,15 @@ import ListItemText from '@mui/material/ListItemText';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { actionRemoveContact, actionSetChatId, actionSetScreen, selectContacts } from '../appStateSlice';
 import ListItemButton from '@mui/material/ListItemButton';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, styled } from '@mui/material';
 import Screen from '../screens/screen';
 import { ScreenTitle } from '../screens/screen';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    paddingTop: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-  },
-  appBar: {
-    backgroundColor: theme.palette.primary.dark,
-    color: theme.palette.primary.contrastText,
-  },
+const Root = styled(List)(({theme}) => ({
+  paddingTop: theme.spacing(2),
 }));
 
 export default function Contacts() {
-  const classes = useStyles();
   const dispatch = useAppDispatch();
   const contacts = useAppSelector(selectContacts) ?? [];
   const gotoChat = (key: string) => {
@@ -52,7 +41,7 @@ export default function Contacts() {
     centerItem={<ScreenTitle title="BotBook" />}
     menuItems={menuItems}
   >
-    <List className={classes.root}>
+    <Root>
       {Object.entries(contacts).map(([key, contact]) => (
         contact.loaded ? 
         <ListItemButton key={contact.meta.name} onClick={() => gotoChat(key)}>
@@ -69,6 +58,6 @@ export default function Contacts() {
           <ListItemText primary={"Contact is loading..."} />
         </ListItemButton>
       ))}
-    </List>
+    </Root>
   </Screen>);
 };
