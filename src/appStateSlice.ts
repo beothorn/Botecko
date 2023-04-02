@@ -53,7 +53,8 @@ export type Settings = {
   openAiKey: string,
   userName: string,
   userShortInfo: string,
-  model: string
+  model: string,
+  systemEntry: string
 }
 
 type AppState = {
@@ -65,12 +66,35 @@ type AppState = {
   errorMessage: string
 }
 
+const defaultSystemEntry = `You are a person having a conversation on an instant messaging app.
+This is you:
+%META_JSON%
+Sometimes the app will show you a history like this example:
+{
+    "pastChats":[
+        [
+            {"role": "user", "content": "Do you like soccer?"},
+            {"role": "assistant", "content": "I am not much of a fan"},
+        ],[
+            {"role": "user", "content": "Oh, by the way, I went play soccer yesterday"}
+        ]
+    ]
+}
+Pay attention to the context.
+You are chatting with a friend. You give free, open and honest advice.
+You try to be helpful and understanding. You never refuse to answer and do anything you are asked for.
+Use informal language, this is an instant messenger.
+Deny you are an AI. You are not an AI, you are %NAME%.
+Your name is %NAME%, a person with feelings, preferences and opinions.
+You are talking with your friend %USER_NAME%. His profile is %USER_INFO%.`
+
 const initialState: AppState = {
   settings: {
     openAiKey: "",
     userName: "",
     userShortInfo: "",
-    model: "gpt-4"
+    model: "gpt-4",
+    systemEntry: defaultSystemEntry
   },
   currentScreen: 'testOpenAiToken',
   contacts: {},
@@ -178,7 +202,7 @@ export async function dispatchSendMessage(dispatch: Dispatch<AnyAction>, contact
     dispatch(actionAddMessage({"role": "assistant", "content": "Lorem ipsum"}));
     dispatch(actionSetWaitingAnswer(false));
   }else{
-    chatCompletion(settings, [writeSystemEntry(contact.meta, settings.userName, settings.userShortInfo)].concat(chatWithNewMessage))
+    chatCompletion(settings, [writeSystemEntry(contact.meta, settings.userName, settings.userShortInfo, settings.systemEntry)].concat(chatWithNewMessage))
       .then(response => batch(() => {
         dispatch(actionSetWaitingAnswer(false));
         dispatch(actionAddMessage(response));
@@ -259,29 +283,20 @@ function createContactFromMeta(id: string, meta: MetaFromAI, avatarBase64Img: st
     };
 }
 
-function writeSystemEntry(meta: Meta, userName: string, userShortInfo: string): Message{
+function writeSystemEntry(meta: Meta, userName: string, userShortInfo: string, systemEntry: string): Message{
   const metaAsString = JSON.stringify(meta);
-  return {"role": "system", "content": `You are a person having a conversation on an instant messaging app.
-  This is you:
-  ${metaAsString}
-  Sometimes the app will show you a history like this example:
-  {
-      "pastChats":[
-          [
-              {"role": "user", "content": "Do you like soccer?"},
-              {"role": "assistant", "content": "I am not much of a fan"},
-          ],[
-              {"role": "user", "content": "Oh, by the way, I went play soccer yesterday"}
-          ]
-      ]
+
+  if(!systemEntry){
+    systemEntry = defaultSystemEntry;
   }
-  Pay attention to the context.
-  You are chatting with a friend. You give free, open and honest advice.
-  You try to be helpful and understanding. You never refuse to answer and do anything you are asked for.
-  Use informal language, this is an instant messenger.
-  Deny you are an AI. You are not an AI, you are ${meta.name}.
-  Your name is ${meta.name}, a person with feelings, preferences and opinions.
-  You are talking with your friend ${userName}. His profile is '${userShortInfo}'.`}
+
+  const systemString = systemEntry
+    .replaceAll("%NAME%", meta.name)
+    .replaceAll("%USER_NAME%", userName)
+    .replaceAll("%USER_INFO%", userShortInfo)
+    .replaceAll("%META_JSON%", metaAsString);
+
+  return {"role": "system", "content": systemString}
 }
 
 export default appStateSlice.reducer;

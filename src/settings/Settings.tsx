@@ -1,25 +1,16 @@
 import React, { useState } from 'react';
 import { batch } from 'react-redux';
 
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
 import { useAppSelector, useAppDispatch } from '../hooks'
 import { actionSetScreen, actionSetSettings, selectSettings } from '../appStateSlice';
-import { AppBar, IconButton, Toolbar } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { makeStyles } from '@material-ui/core';
+import Screen, { ScreenTitle } from '../screens/screen';
+import BackButton from '../screens/backButton';
 
-const useStyles = makeStyles((theme) => ({
-    title: {
-        flexGrow: 1,
-    },
-    appBar: {
-        backgroundColor: theme.palette.primary.dark,
-        color: theme.palette.primary.contrastText,
-        marginBottom: "1rem",
-    },
+const useStyles = makeStyles(() => ({
     form: {
       display: "flex",
       flexDirection: "column",
@@ -32,7 +23,7 @@ export default function Settings() {
     const classes = useStyles();
 
     const settingsFromState = useAppSelector(selectSettings);
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
     const [settings, setSettings] = useState(settingsFromState);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, key: keyof typeof settings) => {
@@ -49,28 +40,10 @@ export default function Settings() {
         })
     }
 
-    const gotoContacts = () => {
-        dispatch(actionSetScreen('contacts'));
-    };
-
-    return <>
-        <AppBar position="static" className={classes.appBar}>
-            <Toolbar>
-                <IconButton
-                color="inherit"
-                aria-label="menu"
-                onClick={gotoContacts}
-                >
-                    <ArrowBackIcon />
-                </IconButton>
-                <Typography variant="h6" component="div" className={classes.title}>
-                {"Settings"}
-                </Typography>
-            </Toolbar>
-        </AppBar>
-        <Typography variant="h6" gutterBottom>
-            Settings
-        </Typography>
+    return <Screen
+        leftItem = {<BackButton originScreen='contacts' />}
+        centerItem = {<ScreenTitle title='Settings' />}
+    >
         <form className={classes.form}>
             <TextField
                 value={settings.openAiKey}
@@ -110,5 +83,5 @@ export default function Settings() {
             />
             <Button sx={{marginLeft: 1}} variant="contained" onClick={updateKey}>Ok</Button>      
         </form>
-    </>;
+    </Screen>;
 }

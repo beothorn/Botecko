@@ -73543,17 +73543,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _mui_material_Typography__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material/Typography */ "./node_modules/@mui/material/Typography/Typography.js");
-/* harmony import */ var _mui_material_Button__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @mui/material/Button */ "./node_modules/@mui/material/Button/Button.js");
-/* harmony import */ var _mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material/TextField */ "./node_modules/@mui/material/TextField/TextField.js");
+/* harmony import */ var _mui_material_Button__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material/Button */ "./node_modules/@mui/material/Button/Button.js");
+/* harmony import */ var _mui_material_TextField__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material/TextField */ "./node_modules/@mui/material/TextField/TextField.js");
 /* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hooks */ "./src/hooks.ts");
 /* harmony import */ var _appStateSlice__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../appStateSlice */ "./src/appStateSlice.ts");
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/AppBar/AppBar.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Toolbar/Toolbar.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/IconButton/IconButton.js");
-/* harmony import */ var _mui_icons_material_ArrowBack__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/icons-material/ArrowBack */ "./node_modules/@mui/icons-material/ArrowBack.js");
-/* harmony import */ var _material_ui_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @material-ui/core */ "./node_modules/@material-ui/core/esm/styles/makeStyles.js");
+/* harmony import */ var _screens_screen__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../screens/screen */ "./src/screens/screen.tsx");
+/* harmony import */ var _screens_backButton__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../screens/backButton */ "./src/screens/backButton.tsx");
 
 
 
@@ -73562,19 +73558,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-var useStyles = (0,_material_ui_core__WEBPACK_IMPORTED_MODULE_4__["default"])(function (theme) { return ({
-    title: {
-        flexGrow: 1,
-    },
-    appBar: {
-        backgroundColor: theme.palette.primary.dark,
-        color: theme.palette.primary.contrastText,
-    },
-}); });
 function AddContact() {
-    var classes = useStyles();
     var dispatch = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppDispatch)();
     var settings = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectSettings);
     var _a = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''), profile = _a[0], setProfile = _a[1];
@@ -73587,17 +73571,9 @@ function AddContact() {
             dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('contacts'));
         });
     };
-    var gotoContacts = function () {
-        dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('contacts'));
-    };
-    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], { position: "static", className: classes.appBar },
-            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], null,
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], { color: "inherit", "aria-label": "menu", onClick: gotoContacts },
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_ArrowBack__WEBPACK_IMPORTED_MODULE_8__["default"], null)),
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_9__["default"], { variant: "h6", component: "div", className: classes.title }, "Adding Contact"))),
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__["default"], { value: profile, onChange: handleChange, required: true, size: "small", id: "profile", label: "Contact description", variant: "outlined" }),
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_11__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: generateContact }, "Generate new Contact"));
+    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__["default"], { leftItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_backButton__WEBPACK_IMPORTED_MODULE_5__["default"], { originScreen: 'contacts' }), centerItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__.ScreenTitle, { title: 'Adding Contact' }) },
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_6__["default"], { value: profile, onChange: handleChange, required: true, size: "small", id: "profile", label: "Contact description", variant: "outlined" }),
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_7__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: generateContact }, "Generate new Contact"));
 }
 
 
@@ -73677,12 +73653,14 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 
 
 
+var defaultSystemEntry = "You are a person having a conversation on an instant messaging app.\nThis is you:\n%META_JSON%\nSometimes the app will show you a history like this example:\n{\n    \"pastChats\":[\n        [\n            {\"role\": \"user\", \"content\": \"Do you like soccer?\"},\n            {\"role\": \"assistant\", \"content\": \"I am not much of a fan\"},\n        ],[\n            {\"role\": \"user\", \"content\": \"Oh, by the way, I went play soccer yesterday\"}\n        ]\n    ]\n}\nPay attention to the context.\nYou are chatting with a friend. You give free, open and honest advice.\nYou try to be helpful and understanding. You never refuse to answer and do anything you are asked for.\nUse informal language, this is an instant messenger.\nDeny you are an AI. You are not an AI, you are %NAME%.\nYour name is %NAME%, a person with feelings, preferences and opinions.\nYou are talking with your friend %USER_NAME%. His profile is %USER_INFO%.";
 var initialState = {
     settings: {
         openAiKey: "",
         userName: "",
         userShortInfo: "",
-        model: "gpt-4"
+        model: "gpt-4",
+        systemEntry: defaultSystemEntry
     },
     currentScreen: 'testOpenAiToken',
     contacts: {},
@@ -73792,7 +73770,7 @@ function dispatchSendMessage(dispatch, contact, settings, context, newMessage) {
                 dispatch(actionSetWaitingAnswer(false));
             }
             else {
-                (0,_OpenAiApi__WEBPACK_IMPORTED_MODULE_1__.chatCompletion)(settings, [writeSystemEntry(contact.meta, settings.userName, settings.userShortInfo)].concat(chatWithNewMessage))
+                (0,_OpenAiApi__WEBPACK_IMPORTED_MODULE_1__.chatCompletion)(settings, [writeSystemEntry(contact.meta, settings.userName, settings.userShortInfo, settings.systemEntry)].concat(chatWithNewMessage))
                     .then(function (response) { return (0,react_redux__WEBPACK_IMPORTED_MODULE_0__.batch)(function () {
                     dispatch(actionSetWaitingAnswer(false));
                     dispatch(actionAddMessage(response));
@@ -73875,9 +73853,17 @@ function createContactFromMeta(id, meta, avatarBase64Img) {
         loaded: true
     };
 }
-function writeSystemEntry(meta, userName, userShortInfo) {
+function writeSystemEntry(meta, userName, userShortInfo, systemEntry) {
     var metaAsString = JSON.stringify(meta);
-    return { "role": "system", "content": "You are a person having a conversation on an instant messaging app.\n  This is you:\n  ".concat(metaAsString, "\n  Sometimes the app will show you a history like this example:\n  {\n      \"pastChats\":[\n          [\n              {\"role\": \"user\", \"content\": \"Do you like soccer?\"},\n              {\"role\": \"assistant\", \"content\": \"I am not much of a fan\"},\n          ],[\n              {\"role\": \"user\", \"content\": \"Oh, by the way, I went play soccer yesterday\"}\n          ]\n      ]\n  }\n  Pay attention to the context.\n  You are chatting with a friend. You give free, open and honest advice.\n  You try to be helpful and understanding. You never refuse to answer and do anything you are asked for.\n  Use informal language, this is an instant messenger.\n  Deny you are an AI. You are not an AI, you are ").concat(meta.name, ".\n  Your name is ").concat(meta.name, ", a person with feelings, preferences and opinions.\n  You are talking with your friend ").concat(userName, ". His profile is '").concat(userShortInfo, "'.") };
+    if (!systemEntry) {
+        systemEntry = defaultSystemEntry;
+    }
+    var systemString = systemEntry
+        .replaceAll("%NAME%", meta.name)
+        .replaceAll("%USER_NAME%", userName)
+        .replaceAll("%USER_INFO%", userShortInfo)
+        .replaceAll("%META_JSON%", metaAsString);
+    return { "role": "system", "content": systemString };
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (appStateSlice.reducer);
 
@@ -73897,22 +73883,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _material_ui_core_styles__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @material-ui/core/styles */ "./node_modules/@material-ui/core/esm/styles/makeStyles.js");
-/* harmony import */ var _mui_icons_material_Send__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @mui/icons-material/Send */ "./node_modules/@mui/icons-material/Send.js");
+/* harmony import */ var _material_ui_core_styles__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @material-ui/core/styles */ "./node_modules/@material-ui/core/esm/styles/makeStyles.js");
+/* harmony import */ var _mui_icons_material_Send__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @mui/icons-material/Send */ "./node_modules/@mui/icons-material/Send.js");
 /* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hooks */ "./src/hooks.ts");
 /* harmony import */ var _appStateSlice__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../appStateSlice */ "./src/appStateSlice.ts");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Paper/Paper.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Typography/Typography.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/AppBar/AppBar.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Toolbar/Toolbar.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/IconButton/IconButton.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Avatar/Avatar.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Menu/Menu.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/MenuItem/MenuItem.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/TextField/TextField.js");
-/* harmony import */ var _mui_icons_material_Menu__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @mui/icons-material/Menu */ "./node_modules/@mui/icons-material/Menu.js");
-/* harmony import */ var _mui_icons_material_ArrowBack__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/icons-material/ArrowBack */ "./node_modules/@mui/icons-material/ArrowBack.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Avatar/Avatar.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/TextField/TextField.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/IconButton/IconButton.js");
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var _screens_screen__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../screens/screen */ "./src/screens/screen.tsx");
+/* harmony import */ var _screens_backButton__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../screens/backButton */ "./src/screens/backButton.tsx");
+/* harmony import */ var _ChatBubble__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ChatBubble */ "./src/chat/ChatBubble.tsx");
 
 
 
@@ -73922,39 +73903,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var useStyles = (0,_material_ui_core_styles__WEBPACK_IMPORTED_MODULE_4__["default"])(function (theme) { return ({
-    chatBubbleLeft: {
-        backgroundColor: theme.palette.primary.light,
-        color: theme.palette.primary.contrastText,
-        padding: theme.spacing(1),
-        borderRadius: '20px 20px 20px 0px',
-        maxWidth: '100%',
-        margin: "".concat(theme.spacing(1), "px 0px ").concat(theme.spacing(1), "px ").concat(theme.spacing(1), "px"),
-    },
-    chatBubbleRight: {
-        backgroundColor: theme.palette.secondary.light,
-        color: theme.palette.secondary.contrastText,
-        padding: theme.spacing(1),
-        borderRadius: '20px 20px 0px 20px',
-        maxWidth: '100%',
-        margin: "".concat(theme.spacing(1), "px ").concat(theme.spacing(1), "px ").concat(theme.spacing(1), "px 0px"),
-        alignSelf: 'flex-end',
-    },
-    chatContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        padding: theme.spacing(2),
-        height: '100vh',
-    },
-}); });
-var ChatBubble = function (_a) {
-    var text = _a.text, position = _a.position;
-    var classes = useStyles();
-    var chatBubbleClass = position === 'left' ? classes.chatBubbleLeft : classes.chatBubbleRight;
-    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], { className: chatBubbleClass, elevation: 3 },
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], { variant: "body1" }, text)));
-};
-var styles = (0,_material_ui_core_styles__WEBPACK_IMPORTED_MODULE_4__["default"])(function (theme) { return ({
+
+var styles = (0,_material_ui_core_styles__WEBPACK_IMPORTED_MODULE_7__["default"])(function (theme) { return ({
     root: {
         height: '100vh',
         display: 'flex',
@@ -73974,13 +73924,6 @@ var styles = (0,_material_ui_core_styles__WEBPACK_IMPORTED_MODULE_4__["default"]
         alignItems: 'center',
         paddingLeft: theme.spacing(1),
         paddingRight: theme.spacing(1),
-    },
-    appBar: {
-        backgroundColor: theme.palette.primary.dark,
-        color: theme.palette.primary.contrastText,
-    },
-    title: {
-        flexGrow: 1,
     },
 }); });
 function Chat() {
@@ -74010,51 +73953,89 @@ function Chat() {
             handleSendMessage(message);
         }
     };
-    // Add state for the menu
-    var _c = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null), anchorEl = _c[0], setAnchorEl = _c[1];
-    var handleClick = function (event) {
-        setAnchorEl(event.currentTarget);
-    };
-    var handleClose = function () {
-        setAnchorEl(null);
-    };
     var contactInfo = function () {
-        setAnchorEl(null);
         dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('contacts'));
     };
     var deleteContact = function () {
-        setAnchorEl(null);
         (0,react_redux__WEBPACK_IMPORTED_MODULE_3__.batch)(function () {
             dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('contacts'));
             dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionRemoveContact)(currentContact.id));
         });
     };
-    var gotoContacts = function () {
-        setAnchorEl(null);
-        dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('contacts'));
+    var centerItem = (react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], { alt: avatarMetaData.prompt, src: "data:image/png;base64, ".concat(avatarMetaData.base64Img) }),
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__.ScreenTitle, { title: metaData.name })));
+    var menuItems = {
+        "Contact info": contactInfo,
+        "Delete Contact": deleteContact
     };
-    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], { position: "absolute", className: classes.appBar },
-            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], null,
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], { color: "inherit", "aria-label": "menu", onClick: gotoContacts },
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_ArrowBack__WEBPACK_IMPORTED_MODULE_10__["default"], null)),
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_11__["default"], { alt: avatarMetaData.prompt, src: "data:image/png;base64, ".concat(avatarMetaData.base64Img) }),
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], { variant: "h6", component: "div", className: classes.title }, metaData.name),
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], { color: "inherit", "aria-label": "menu", onClick: handleClick },
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_Menu__WEBPACK_IMPORTED_MODULE_12__["default"], null)),
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_13__["default"], { anchorEl: anchorEl, open: Boolean(anchorEl), onClose: handleClose },
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_14__["default"], { onClick: function () { return contactInfo(); } }, "Contact info"),
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_14__["default"], { onClick: function () { return deleteContact(); } }, "Delete Contact")))),
+    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__["default"], { leftItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_backButton__WEBPACK_IMPORTED_MODULE_5__["default"], { originScreen: 'contacts' }), centerItem: centerItem, menuItems: menuItems, barPosition: 'absolute' },
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.root, ref: rootRef },
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.chatWrapper }),
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.chatContainer },
-                chatHistory.filter(function (m) { return m.role !== 'system'; }).map(function (message, index) { return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(ChatBubble, { key: index, text: message.content, position: message.role === 'user' ? 'right' : 'left' })); }),
-                isWaitingAnswer && react__WEBPACK_IMPORTED_MODULE_0___default().createElement(ChatBubble, { text: "".concat(metaData.name, " is typing..."), position: 'left' })),
+                chatHistory.filter(function (m) { return m.role !== 'system'; }).map(function (message, index) { return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_ChatBubble__WEBPACK_IMPORTED_MODULE_6__["default"], { key: index, text: message.content, position: message.role === 'user' ? 'right' : 'left' })); }),
+                isWaitingAnswer && react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_ChatBubble__WEBPACK_IMPORTED_MODULE_6__["default"], { text: "".concat(metaData.name, " is typing..."), position: 'left' })),
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: classes.inputContainer },
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_15__["default"], { fullWidth: true, value: message, onChange: function (e) { return setMessage(e.target.value); }, placeholder: "Type your message", onKeyDown: handleKeyDown }),
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], { onClick: function () { return handleSendMessage(message); } },
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_Send__WEBPACK_IMPORTED_MODULE_16__["default"], null))))));
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], { fullWidth: true, value: message, onChange: function (e) { return setMessage(e.target.value); }, placeholder: "Type your message", onKeyDown: handleKeyDown }),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_10__["default"], { onClick: function () { return handleSendMessage(message); } },
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_Send__WEBPACK_IMPORTED_MODULE_11__["default"], null))))));
 }
+
+
+/***/ }),
+
+/***/ "./src/chat/ChatBubble.tsx":
+/*!*********************************!*\
+  !*** ./src/chat/ChatBubble.tsx ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ChatBubble)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Paper/Paper.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Typography/Typography.js");
+/* harmony import */ var _material_ui_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @material-ui/core */ "./node_modules/@material-ui/core/esm/styles/makeStyles.js");
+
+
+
+var useStyles = (0,_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["default"])(function (theme) { return ({
+    chatBubbleLeft: {
+        backgroundColor: theme.palette.primary.light,
+        color: theme.palette.primary.contrastText,
+        padding: theme.spacing(1),
+        borderRadius: '20px 20px 20px 0px',
+        maxWidth: '100%',
+        margin: "".concat(theme.spacing(1), "px 0px ").concat(theme.spacing(1), "px ").concat(theme.spacing(1), "px"),
+    },
+    chatBubbleRight: {
+        backgroundColor: theme.palette.secondary.light,
+        color: theme.palette.secondary.contrastText,
+        padding: theme.spacing(1),
+        borderRadius: '20px 20px 0px 20px',
+        maxWidth: '100%',
+        margin: "".concat(theme.spacing(1), "px ").concat(theme.spacing(1), "px ").concat(theme.spacing(1), "px 0px"),
+        alignSelf: 'flex-end',
+    },
+    chatContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        padding: theme.spacing(2),
+        height: '100vh',
+    },
+}); });
+function ChatBubble(_a) {
+    var text = _a.text, position = _a.position;
+    var classes = useStyles();
+    var chatBubbleClass = position === 'left' ? classes.chatBubbleLeft : classes.chatBubbleRight;
+    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_2__["default"], { className: chatBubbleClass, elevation: 3 },
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], { variant: "body1" }, text)));
+}
+;
 
 
 /***/ }),
@@ -74072,22 +74053,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _material_ui_core_styles__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @material-ui/core/styles */ "./node_modules/@material-ui/core/esm/styles/makeStyles.js");
-/* harmony import */ var _mui_material_AppBar__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material/AppBar */ "./node_modules/@mui/material/AppBar/AppBar.js");
-/* harmony import */ var _mui_material_Toolbar__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material/Toolbar */ "./node_modules/@mui/material/Toolbar/Toolbar.js");
-/* harmony import */ var _mui_material_Typography__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material/Typography */ "./node_modules/@mui/material/Typography/Typography.js");
-/* harmony import */ var _mui_material_List__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @mui/material/List */ "./node_modules/@mui/material/List/List.js");
-/* harmony import */ var _mui_material_ListItemAvatar__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @mui/material/ListItemAvatar */ "./node_modules/@mui/material/ListItemAvatar/ListItemAvatar.js");
-/* harmony import */ var _mui_material_Avatar__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @mui/material/Avatar */ "./node_modules/@mui/material/Avatar/Avatar.js");
-/* harmony import */ var _mui_material_ListItemText__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @mui/material/ListItemText */ "./node_modules/@mui/material/ListItemText/ListItemText.js");
-/* harmony import */ var _mui_material_IconButton__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material/IconButton */ "./node_modules/@mui/material/IconButton/IconButton.js");
-/* harmony import */ var _mui_icons_material_Menu__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/icons-material/Menu */ "./node_modules/@mui/icons-material/Menu.js");
-/* harmony import */ var _mui_material_Menu__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material/Menu */ "./node_modules/@mui/material/Menu/Menu.js");
-/* harmony import */ var _mui_material_MenuItem__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material/MenuItem */ "./node_modules/@mui/material/MenuItem/MenuItem.js");
+/* harmony import */ var _material_ui_core_styles__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @material-ui/core/styles */ "./node_modules/@material-ui/core/esm/styles/makeStyles.js");
+/* harmony import */ var _mui_material_List__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material/List */ "./node_modules/@mui/material/List/List.js");
+/* harmony import */ var _mui_material_ListItemAvatar__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material/ListItemAvatar */ "./node_modules/@mui/material/ListItemAvatar/ListItemAvatar.js");
+/* harmony import */ var _mui_material_Avatar__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/material/Avatar */ "./node_modules/@mui/material/Avatar/Avatar.js");
+/* harmony import */ var _mui_material_ListItemText__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material/ListItemText */ "./node_modules/@mui/material/ListItemText/ListItemText.js");
 /* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hooks */ "./src/hooks.ts");
 /* harmony import */ var _appStateSlice__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../appStateSlice */ "./src/appStateSlice.ts");
-/* harmony import */ var _mui_material_ListItemButton__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @mui/material/ListItemButton */ "./node_modules/@mui/material/ListItemButton/ListItemButton.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/CircularProgress/CircularProgress.js");
+/* harmony import */ var _mui_material_ListItemButton__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material/ListItemButton */ "./node_modules/@mui/material/ListItemButton/ListItemButton.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/CircularProgress/CircularProgress.js");
+/* harmony import */ var _screens_screen__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../screens/screen */ "./src/screens/screen.tsx");
 
 
 
@@ -74100,12 +74075,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-
-
-var useStyles = (0,_material_ui_core_styles__WEBPACK_IMPORTED_MODULE_3__["default"])(function (theme) { return ({
+var useStyles = (0,_material_ui_core_styles__WEBPACK_IMPORTED_MODULE_4__["default"])(function (theme) { return ({
     root: {
         paddingTop: theme.spacing(2),
     },
@@ -74126,47 +74096,32 @@ function Contacts() {
         dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetChatId)(key));
         dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('chat'));
     };
-    // Add state for the menu
-    var _b = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null), anchorEl = _b[0], setAnchorEl = _b[1];
-    var handleClick = function (event) {
-        setAnchorEl(event.currentTarget);
-    };
-    var handleClose = function () {
-        setAnchorEl(null);
-    };
     var addContact = function () {
-        setAnchorEl(null);
         dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('addContact'));
     };
     var removeContact = function (id) {
-        setAnchorEl(null);
         dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionRemoveContact)(id));
     };
     var gotoSettings = function () {
-        setAnchorEl(null);
         dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('settings'));
     };
-    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_AppBar__WEBPACK_IMPORTED_MODULE_4__["default"], { position: "static", className: classes.appBar },
-            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Toolbar__WEBPACK_IMPORTED_MODULE_5__["default"], null,
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_6__["default"], { variant: "h6", component: "div", className: classes.title }, "BotBook"),
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_IconButton__WEBPACK_IMPORTED_MODULE_7__["default"], { color: "inherit", "aria-label": "menu", onClick: handleClick },
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_Menu__WEBPACK_IMPORTED_MODULE_8__["default"], null)),
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Menu__WEBPACK_IMPORTED_MODULE_9__["default"], { anchorEl: anchorEl, open: Boolean(anchorEl), onClose: handleClose },
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_MenuItem__WEBPACK_IMPORTED_MODULE_10__["default"], { onClick: function () { return gotoSettings(); } }, "Settings"),
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_MenuItem__WEBPACK_IMPORTED_MODULE_10__["default"], { onClick: function () { return addContact(); } }, "Add Contact")))),
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_List__WEBPACK_IMPORTED_MODULE_11__["default"], { className: classes.root }, Object.entries(contacts).map(function (_a) {
+    var menuItems = {
+        "Settings": gotoSettings,
+        "Add Contacts": addContact
+    };
+    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__["default"], { centerItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__.ScreenTitle, { title: "BotBook" }), menuItems: menuItems },
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_List__WEBPACK_IMPORTED_MODULE_5__["default"], { className: classes.root }, Object.entries(contacts).map(function (_a) {
             var key = _a[0], contact = _a[1];
             return (contact.loaded ?
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemButton__WEBPACK_IMPORTED_MODULE_12__["default"], { key: contact.meta.name, onClick: function () { return gotoChat(key); } },
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemAvatar__WEBPACK_IMPORTED_MODULE_13__["default"], null,
-                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Avatar__WEBPACK_IMPORTED_MODULE_14__["default"], { alt: contact.avatarMeta.prompt, src: "data:image/png;base64, ".concat(contact.avatarMeta.base64Img) })),
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemText__WEBPACK_IMPORTED_MODULE_15__["default"], { primary: contact.meta.name, secondary: contact.meta.userProfile }))
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemButton__WEBPACK_IMPORTED_MODULE_6__["default"], { key: contact.meta.name, onClick: function () { return gotoChat(key); } },
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemAvatar__WEBPACK_IMPORTED_MODULE_7__["default"], null,
+                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Avatar__WEBPACK_IMPORTED_MODULE_8__["default"], { alt: contact.avatarMeta.prompt, src: "data:image/png;base64, ".concat(contact.avatarMeta.base64Img) })),
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemText__WEBPACK_IMPORTED_MODULE_9__["default"], { primary: contact.meta.name, secondary: contact.meta.userProfile }))
                 :
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemButton__WEBPACK_IMPORTED_MODULE_12__["default"], { key: contact.meta.name, onClick: function () { return removeContact(key); } },
-                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemAvatar__WEBPACK_IMPORTED_MODULE_13__["default"], null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_16__["default"], null)),
-                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemText__WEBPACK_IMPORTED_MODULE_15__["default"], { primary: "Contact is loading..." })));
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemButton__WEBPACK_IMPORTED_MODULE_6__["default"], { key: contact.meta.name, onClick: function () { return removeContact(key); } },
+                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemAvatar__WEBPACK_IMPORTED_MODULE_7__["default"], null,
+                            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_10__["default"], null)),
+                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemText__WEBPACK_IMPORTED_MODULE_9__["default"], { primary: "Contact is loading..." })));
         }))));
 }
 ;
@@ -74187,10 +74142,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _mui_material_Typography__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mui/material/Typography */ "./node_modules/@mui/material/Typography/Typography.js");
-/* harmony import */ var _mui_material_Button__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material/Button */ "./node_modules/@mui/material/Button/Button.js");
+/* harmony import */ var _mui_material_Typography__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material/Typography */ "./node_modules/@mui/material/Typography/Typography.js");
+/* harmony import */ var _mui_material_Button__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material/Button */ "./node_modules/@mui/material/Button/Button.js");
 /* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hooks */ "./src/hooks.ts");
 /* harmony import */ var _appStateSlice__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../appStateSlice */ "./src/appStateSlice.ts");
+/* harmony import */ var _screens_screen__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../screens/screen */ "./src/screens/screen.tsx");
+
 
 
 
@@ -74200,9 +74157,9 @@ function ErrorScreen() {
     var dispatch = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppDispatch)();
     var error = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectErrorMessage);
     var gotoNextScreen = function () { return dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('contacts')); };
-    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_3__["default"], { sx: { marginBottom: '1rem' }, variant: "h5", gutterBottom: true }, error),
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_4__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: gotoNextScreen }, "Continue"));
+    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__["default"], { centerItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__.ScreenTitle, { title: "Error" }) },
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_4__["default"], { sx: { marginBottom: '1rem' }, variant: "h5", gutterBottom: true }, error),
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_5__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: gotoNextScreen }, "Continue")));
 }
 
 
@@ -74249,6 +74206,116 @@ function generateContact(profileDescription) {
 
 /***/ }),
 
+/***/ "./src/screens/backButton.tsx":
+/*!************************************!*\
+  !*** ./src/screens/backButton.tsx ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ BackButton)
+/* harmony export */ });
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/IconButton/IconButton.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _mui_icons_material_ArrowBack__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/icons-material/ArrowBack */ "./node_modules/@mui/icons-material/ArrowBack.js");
+/* harmony import */ var _appStateSlice__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../appStateSlice */ "./src/appStateSlice.ts");
+/* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../hooks */ "./src/hooks.ts");
+
+
+
+
+
+function BackButton(_a) {
+    var originScreen = _a.originScreen;
+    var dispatch = (0,_hooks__WEBPACK_IMPORTED_MODULE_2__.useAppDispatch)();
+    var goBack = function () {
+        dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_1__.actionSetScreen)(originScreen));
+    };
+    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], { color: "inherit", "aria-label": "menu", onClick: goBack },
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_ArrowBack__WEBPACK_IMPORTED_MODULE_4__["default"], null));
+}
+
+
+/***/ }),
+
+/***/ "./src/screens/screen.tsx":
+/*!********************************!*\
+  !*** ./src/screens/screen.tsx ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ScreenTitle": () => (/* binding */ ScreenTitle),
+/* harmony export */   "default": () => (/* binding */ Screen)
+/* harmony export */ });
+/* harmony import */ var _material_ui_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @material-ui/core */ "./node_modules/@material-ui/core/esm/styles/makeStyles.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Typography/Typography.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/AppBar/AppBar.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Toolbar/Toolbar.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/IconButton/IconButton.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Menu/Menu.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/MenuItem/MenuItem.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _mui_icons_material_Menu__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/icons-material/Menu */ "./node_modules/@mui/icons-material/Menu.js");
+
+
+
+
+var styles = (0,_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["default"])(function (theme) { return ({
+    title: {
+        flexGrow: 1,
+    },
+    appBar: {
+        backgroundColor: theme.palette.primary.dark,
+        color: theme.palette.primary.contrastText,
+        marginBottom: "1rem",
+    }
+}); });
+function ScreenTitle(_a) {
+    var title = _a.title;
+    var classes = styles();
+    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_2__["default"], { className: classes.title, variant: "h6" }, title);
+}
+;
+function Screen(_a) {
+    var children = _a.children, menuItems = _a.menuItems, leftItem = _a.leftItem, centerItem = _a.centerItem, barPosition = _a.barPosition;
+    var classes = styles();
+    // Add state for the menu
+    var _b = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null), anchorEl = _b[0], setAnchorEl = _b[1];
+    var handleOpen = function (event) {
+        setAnchorEl(event.currentTarget);
+    };
+    var handleClose = function () {
+        setAnchorEl(null);
+    };
+    var callback = function (c) {
+        setAnchorEl(null);
+        c();
+    };
+    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], { position: barPosition || "static", className: classes.appBar },
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], null,
+                leftItem,
+                centerItem,
+                menuItems && (react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], { color: "inherit", "aria-label": "menu", onClick: handleOpen },
+                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_Menu__WEBPACK_IMPORTED_MODULE_6__["default"], null)),
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], { anchorEl: anchorEl, open: Boolean(anchorEl), onClose: handleClose }, Object.entries(menuItems).map(function (_a) {
+                        var label = _a[0], action = _a[1];
+                        return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], { key: label, onClick: function () { return callback(action); } }, label));
+                    })))))),
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, children)));
+}
+
+
+/***/ }),
+
 /***/ "./src/settings/Settings.tsx":
 /*!***********************************!*\
   !*** ./src/settings/Settings.tsx ***!
@@ -74263,16 +74330,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
-/* harmony import */ var _mui_material_Typography__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material/Typography */ "./node_modules/@mui/material/Typography/Typography.js");
-/* harmony import */ var _mui_material_Button__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @mui/material/Button */ "./node_modules/@mui/material/Button/Button.js");
-/* harmony import */ var _mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material/TextField */ "./node_modules/@mui/material/TextField/TextField.js");
+/* harmony import */ var _mui_material_Button__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/material/Button */ "./node_modules/@mui/material/Button/Button.js");
+/* harmony import */ var _mui_material_TextField__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material/TextField */ "./node_modules/@mui/material/TextField/TextField.js");
 /* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../hooks */ "./src/hooks.ts");
 /* harmony import */ var _appStateSlice__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../appStateSlice */ "./src/appStateSlice.ts");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/AppBar/AppBar.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Toolbar/Toolbar.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/IconButton/IconButton.js");
-/* harmony import */ var _mui_icons_material_ArrowBack__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/icons-material/ArrowBack */ "./node_modules/@mui/icons-material/ArrowBack.js");
-/* harmony import */ var _material_ui_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @material-ui/core */ "./node_modules/@material-ui/core/esm/styles/makeStyles.js");
+/* harmony import */ var _material_ui_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @material-ui/core */ "./node_modules/@material-ui/core/esm/styles/makeStyles.js");
+/* harmony import */ var _screens_screen__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../screens/screen */ "./src/screens/screen.tsx");
+/* harmony import */ var _screens_backButton__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../screens/backButton */ "./src/screens/backButton.tsx");
 var __assign = (undefined && undefined.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -74293,16 +74357,7 @@ var __assign = (undefined && undefined.__assign) || function () {
 
 
 
-
-var useStyles = (0,_material_ui_core__WEBPACK_IMPORTED_MODULE_4__["default"])(function (theme) { return ({
-    title: {
-        flexGrow: 1,
-    },
-    appBar: {
-        backgroundColor: theme.palette.primary.dark,
-        color: theme.palette.primary.contrastText,
-        marginBottom: "1rem",
-    },
+var useStyles = (0,_material_ui_core__WEBPACK_IMPORTED_MODULE_6__["default"])(function () { return ({
     form: {
         display: "flex",
         flexDirection: "column",
@@ -74327,22 +74382,13 @@ function Settings() {
             dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_3__.actionSetScreen)('testOpenAiToken'));
         });
     };
-    var gotoContacts = function () {
-        dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_3__.actionSetScreen)('contacts'));
-    };
-    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], { position: "static", className: classes.appBar },
-            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], null,
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], { color: "inherit", "aria-label": "menu", onClick: gotoContacts },
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_ArrowBack__WEBPACK_IMPORTED_MODULE_8__["default"], null)),
-                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_9__["default"], { variant: "h6", component: "div", className: classes.title }, "Settings"))),
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_9__["default"], { variant: "h6", gutterBottom: true }, "Settings"),
+    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__["default"], { leftItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_backButton__WEBPACK_IMPORTED_MODULE_5__["default"], { originScreen: 'contacts' }), centerItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__.ScreenTitle, { title: 'Settings' }) },
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement("form", { className: classes.form },
-            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__["default"], { value: settings.openAiKey, onChange: function (event) { return handleChange(event, "openAiKey"); }, required: true, size: "small", id: "open-ai-key", label: "OpenAi key", variant: "outlined" }),
-            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__["default"], { value: settings.userName, onChange: function (event) { return handleChange(event, "userName"); }, required: true, size: "small", id: "user-name", label: "User name", variant: "outlined" }),
-            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__["default"], { value: settings.userShortInfo, onChange: function (event) { return handleChange(event, "userShortInfo"); }, required: true, size: "small", id: "user-short-info", label: "User short info", variant: "outlined" }),
-            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_10__["default"], { value: settings.model, onChange: function (event) { return handleChange(event, "model"); }, required: true, size: "small", id: "model", label: "Model", variant: "outlined" }),
-            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_11__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: updateKey }, "Ok")));
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_7__["default"], { value: settings.openAiKey, onChange: function (event) { return handleChange(event, "openAiKey"); }, required: true, size: "small", id: "open-ai-key", label: "OpenAi key", variant: "outlined" }),
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_7__["default"], { value: settings.userName, onChange: function (event) { return handleChange(event, "userName"); }, required: true, size: "small", id: "user-name", label: "User name", variant: "outlined" }),
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_7__["default"], { value: settings.userShortInfo, onChange: function (event) { return handleChange(event, "userShortInfo"); }, required: true, size: "small", id: "user-short-info", label: "User short info", variant: "outlined" }),
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_7__["default"], { value: settings.model, onChange: function (event) { return handleChange(event, "model"); }, required: true, size: "small", id: "model", label: "Model", variant: "outlined" }),
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_8__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: updateKey }, "Ok")));
 }
 
 
