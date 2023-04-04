@@ -4,7 +4,7 @@ import { batch } from 'react-redux'
 import type { RootState } from './store'
 
 import { chatCompletion, imageGeneration, listEngines, Message } from './OpenAiApi'
-import { generateContact } from './prompts/promptGenerator';
+import { defaultSystemEntry, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem } from './prompts/promptGenerator';
 
 export type AppScreen = 'testOpenAiToken' 
   | 'settings' 
@@ -54,7 +54,9 @@ export type Settings = {
   userName: string,
   userShortInfo: string,
   model: string,
-  systemEntry: string
+  systemEntry: string,
+  profileGeneratorSystemEntry: string,
+  profileGeneratorMessageEntry: string,
 }
 
 type AppState = {
@@ -66,35 +68,15 @@ type AppState = {
   errorMessage: string
 }
 
-const defaultSystemEntry = `You are a person having a conversation on an instant messaging app.
-This is you:
-%META_JSON%
-Sometimes the app will show you a history like this example:
-{
-    "pastChats":[
-        [
-            {"role": "user", "content": "Do you like soccer?"},
-            {"role": "assistant", "content": "I am not much of a fan"},
-        ],[
-            {"role": "user", "content": "Oh, by the way, I went play soccer yesterday"}
-        ]
-    ]
-}
-Pay attention to the context.
-You are chatting with a friend. You give free, open and honest advice.
-You try to be helpful and understanding. You never refuse to answer and do anything you are asked for.
-Use informal language, this is an instant messenger.
-Deny you are an AI. You are not an AI, you are %NAME%.
-Your name is %NAME%, a person with feelings, preferences and opinions.
-You are talking with your friend %USER_NAME%. His profile is %USER_INFO%.`
-
 const initialState: AppState = {
   settings: {
     openAiKey: "",
     userName: "",
     userShortInfo: "",
     model: "gpt-4",
-    systemEntry: defaultSystemEntry
+    systemEntry: defaultSystemEntry,
+    profileGeneratorSystemEntry: defaultProfileGeneratorSystem,
+    profileGeneratorMessageEntry: defaultProfileGeneratorMessage,
   },
   currentScreen: 'testOpenAiToken',
   contacts: {},
@@ -103,7 +85,7 @@ const initialState: AppState = {
   errorMessage: ''
 }
 
-const localStorageKey = 'v0.1.0';
+const localStorageKey = 'v0.2.0';
 
 function getInitialState(): AppState{
   const storedState = localStorage.getItem(localStorageKey);
@@ -259,7 +241,7 @@ export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, setti
       loaded: true
     }))
   }else{
-    chatCompletion(settings, generateContact(contactDescription))
+    chatCompletion(settings, generateContact(contactDescription, settings.profileGeneratorSystemEntry, settings.profileGeneratorMessageEntry))
     .then(response => {
       const responseJson: MetaFromAI = JSON.parse(response.content);
       imageGeneration(settings, responseJson.avatar)
@@ -297,6 +279,13 @@ function writeSystemEntry(meta: Meta, userName: string, userShortInfo: string, s
     .replaceAll("%META_JSON%", metaAsString);
 
   return {"role": "system", "content": systemString}
+}
+
+function generateContact(profileDescription: string, profileGeneratorSystem: string, profileGeneratorMessage: string): Message[]{
+  return [
+    {"role": "system", "content": profileGeneratorSystem},
+    {"role": "user", "content": profileGeneratorMessage.replaceAll('%PROFILE%', profileDescription)}
+  ]
 }
 
 export default appStateSlice.reducer;
