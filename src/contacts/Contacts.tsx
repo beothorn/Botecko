@@ -14,6 +14,10 @@ const Root = styled(List)(({theme}) => ({
   paddingTop: theme.spacing(2),
 }));
 
+const StyledListItemText = styled(ListItemText)(({theme}) => ({
+  color: theme.palette.text.primary
+}));
+
 export default function Contacts() {
   const dispatch = useAppDispatch();
   const contacts = useAppSelector(selectContacts) ?? [];
@@ -38,7 +42,7 @@ export default function Contacts() {
   };
 
   return (<Screen
-    centerItem={<ScreenTitle title="BotBook" />}
+    centerItem={<ScreenTitle title="Botecko" />}
     menuItems={menuItems}
   >
     <Root>
@@ -48,14 +52,14 @@ export default function Contacts() {
           <ListItemAvatar>
             <Avatar alt={contact.avatarMeta.prompt} src={`data:image/png;base64, ${contact.avatarMeta.base64Img}`} />
           </ListItemAvatar>
-          <ListItemText primary={contact.meta.name} secondary={contact.meta.userProfile} />
+          <StyledListItemText primary={contact.meta.name} secondary={contact.meta.userProfile} />
         </ListItemButton>
         :
         <ListItemButton key={contact.meta.name} onClick={() => removeContact(key)}>
           <ListItemAvatar>
             <CircularProgress />
           </ListItemAvatar>
-          <ListItemText primary={"Contact is loading..."} />
+          <StyledListItemText primary={"Contact is loading..."} />
         </ListItemButton>
       ))}
     </Root>

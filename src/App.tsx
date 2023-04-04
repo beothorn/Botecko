@@ -11,6 +11,7 @@ import { selectScreen, AppScreen } from './appStateSlice';
 
 import Box from '@mui/material/Box';
 import { AddContact } from './addContact/AddContact';
+import { styled } from '@mui/material';
 
 function assertUnreachable(_x: never): never {
     throw new Error("Didn't expect to get here");
@@ -34,13 +35,21 @@ function getCurrentScreenComponent(currentScreen: AppScreen): JSX.Element {
     return assertUnreachable(currentScreen);
 }
 
+export const StyledBox = styled(Box)(({theme}) => ({
+    background: theme.palette.background.default
+}));
+
 export default function App() {
 
     const currentScreen = useAppSelector(selectScreen);
 
     let currentScreenComponent = getCurrentScreenComponent(currentScreen);
 
-    return <Box sx={{ bgcolor: 'background.paper'}}>
-            {currentScreenComponent}
-        </Box>;
+    return <StyledBox height="100vh" display="flex" flexDirection="column">
+    <Box flex={1} overflow="auto">
+    {currentScreenComponent}
+    </Box>
+  </StyledBox>
+  
+    //<Box>{currentScreenComponent}</Box>;
 }

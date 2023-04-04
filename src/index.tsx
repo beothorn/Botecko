@@ -12,15 +12,10 @@ if(!rootElement){
 }
 
 const theme = createTheme({
-    palette: {
-      primary: {
-        main: 'rgb(51, 51, 51)',
-      },
-      secondary: {
-        main: 'rgb(51, 51, 51)',
-      },
-    },
-  });
+  palette: {
+    mode: 'dark',
+  },
+});
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(<React.StrictMode>

@@ -7,6 +7,7 @@ import { batch } from 'react-redux';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
 import ChatBubble from './ChatBubble';
+import { Message } from '../OpenAiApi';
 
 const Root = styled('div')(({theme}) => ({
   height: '100vh',
@@ -92,16 +93,32 @@ export default function Chat() {
     <Root ref={rootRef}>
       <ChatWrapper/>
       <ChatContainer>
-        {chatHistory.filter(m => m.role !== 'system').map((message, index) => (
+        {chatHistory
+          .filter(m => m.role !== 'system')
+          .flatMap((m): Message[] => {
+            if(m.role === "assistant"){
+              const messageWithPlan = JSON.parse(m.content)
+              if(settings.showThought){
+                return [
+                  {"role": "thought", "content": messageWithPlan.plan},
+                  {"role": "assistant", "content": messageWithPlan.answer},
+                ];
+              }else{
+                return [{"role": "assistant", "content": messageWithPlan.answer}];
+              }
+            }
+            return [{"role": "user", "content": m.content}];
+          })
+          .map((message, index) => (
           <ChatBubble
             key={index}
-            text={message.content}
-            position={message.role === 'user' ? 'right' : 'left'}
+            content={message.content}
+            role={message.role}
           />
         ))}
         {isWaitingAnswer && <ChatBubble
-          text={`${metaData.name} is typing...`}
-          position={'left'}
+          content={`${metaData.name} is typing...`}
+          role={'assistant'}
         />}
       </ChatContainer>
       <InputContainer>

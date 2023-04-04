@@ -5,7 +5,7 @@ const openAiUrl = 'https://api.openai.com/v1';
 const model = "gpt-4";
 
 export type Message = {
-    role: 'user' | 'system' | 'assistant';
+    role: 'user' | 'system' | 'assistant' | 'thought';
     content: string;
 };
 

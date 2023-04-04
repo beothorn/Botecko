@@ -8,8 +8,8 @@ const AppBarStyled = styled(AppBar)(({theme}) => ({
   marginBottom: "1rem",
 }));
 
-function ScreenTitleRaw({title}: ScreenTitleProps){
-  return <Typography variant="h6">{title}</Typography>;
+function ScreenTitleRaw({title, className}: ScreenTitleProps){
+  return <Typography className={className} variant="h6">{title}</Typography>;
 };
 
 export const ScreenTitle = styled(ScreenTitleRaw)(() => ({
@@ -25,6 +25,7 @@ type Props = {
 };
 
 type ScreenTitleProps = {
+    className?: string;
     title: string;
 };
 

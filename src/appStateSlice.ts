@@ -57,6 +57,7 @@ export type Settings = {
   systemEntry: string,
   profileGeneratorSystemEntry: string,
   profileGeneratorMessageEntry: string,
+  showThought: boolean
 }
 
 type AppState = {
@@ -77,6 +78,7 @@ const initialState: AppState = {
     systemEntry: defaultSystemEntry,
     profileGeneratorSystemEntry: defaultProfileGeneratorSystem,
     profileGeneratorMessageEntry: defaultProfileGeneratorMessage,
+    showThought: false
   },
   currentScreen: 'testOpenAiToken',
   contacts: {},
@@ -85,7 +87,7 @@ const initialState: AppState = {
   errorMessage: ''
 }
 
-const localStorageKey = 'v0.2.0';
+const localStorageKey = 'v0.3.0';
 
 function getInitialState(): AppState{
   const storedState = localStorage.getItem(localStorageKey);

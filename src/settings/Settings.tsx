@@ -8,7 +8,7 @@ import { useAppSelector, useAppDispatch } from '../hooks'
 import { actionSetScreen, actionSetSettings, selectSettings } from '../appStateSlice';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
-import { styled } from '@mui/material';
+import { Checkbox, FormControlLabel, styled } from '@mui/material';
 
 const SettingsForm = styled('form')(() => ({
     display: "flex",
@@ -46,7 +46,7 @@ export default function Settings() {
                 onChange={(event) => handleChange(event, "openAiKey")}
                 required
                 size="small"
-                id="open-ai-key"
+                id="openAiKey"
                 label="OpenAi key"
                 variant="outlined"
             />
@@ -55,7 +55,7 @@ export default function Settings() {
                 onChange={(event) => handleChange(event, "userName")}
                 required
                 size="small"
-                id="user-name"
+                id="userName"
                 label="User name"
                 variant="outlined"
             />
@@ -64,7 +64,7 @@ export default function Settings() {
                 onChange={(event) => handleChange(event, "userShortInfo")}
                 required
                 size="small"
-                id="user-short-info"
+                id="userShortInfo"
                 label="User short info"
                 variant="outlined"
             />
@@ -77,6 +77,39 @@ export default function Settings() {
                 label="Model"
                 variant="outlined"
             />
+            <TextField
+                value={settings.systemEntry}
+                onChange={(event) => handleChange(event, "systemEntry")}
+                required
+                size="small"
+                id="systemEntry"
+                label="System Entry"
+                variant="outlined"
+            />
+            <TextField
+                value={settings.profileGeneratorSystemEntry}
+                onChange={(event) => handleChange(event, "profileGeneratorSystemEntry")}
+                required
+                size="small"
+                id="profileGeneratorSystemEntry"
+                label="Profile Generator System Entry"
+                variant="outlined"
+            />
+            <TextField
+                value={settings.profileGeneratorMessageEntry}
+                onChange={(event) => handleChange(event, "profileGeneratorMessageEntry")}
+                required
+                size="small"
+                id="profileGeneratorMessageEntry"
+                label="Profile Generator Message Entry"
+                variant="outlined"
+            />
+            <FormControlLabel control={<Checkbox 
+                checked={settings.showThought}
+                onChange={(event) => handleChange(event, "showThought")}
+                required
+                size="small"
+                id="Show Thoughts" />} label="showThought" />
             <Button sx={{marginLeft: 1}} variant="contained" onClick={updateKey}>Ok</Button>      
         </SettingsForm>
     </Screen>;
