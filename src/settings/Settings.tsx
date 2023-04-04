@@ -10,11 +10,12 @@ import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
 import { Checkbox, FormControlLabel, styled } from '@mui/material';
 
-const SettingsForm = styled('form')(() => ({
+const SettingsForm = styled('form')(({theme}) => ({
     display: "flex",
     flexDirection: "column",
     gap: "1rem",
     margin: "1rem",
+    color: theme.palette.primary.dark
 }));
 
 export default function Settings() {
@@ -26,6 +27,13 @@ export default function Settings() {
         setSettings((prevState) => ({
             ...prevState,
             [key]: event.target.value,
+        }));
+    };
+
+    const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>, key: keyof typeof settings) => {
+        setSettings((prevState) => ({
+            ...prevState,
+            [key]: event.target.checked,
         }));
     };
 
@@ -106,11 +114,11 @@ export default function Settings() {
             />
             <FormControlLabel control={<Checkbox 
                 checked={settings.showThought}
-                onChange={(event) => handleChange(event, "showThought")}
+                onChange={(event) => handleCheckboxChange(event, "showThought")}
                 required
                 size="small"
                 id="Show Thoughts" />} label="showThought" />
-            <Button sx={{marginLeft: 1}} variant="contained" onClick={updateKey}>Ok</Button>      
+            <Button onClick={updateKey}>Ok</Button>      
         </SettingsForm>
     </Screen>;
 }
