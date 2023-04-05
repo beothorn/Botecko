@@ -9,13 +9,12 @@ import BackButton from '../screens/backButton';
 import ChatBubble from './ChatBubble';
 import { Message } from '../OpenAiApi';
 
-const Root = styled('div')(({theme}) => ({
+const Root = styled('div')(() => ({
   height: '100vh',
   display: 'flex',
   flexDirection: 'column',
   overflowY: 'scroll',
   overflowAnchor: 'none',
-  background: theme.palette.primary.contrastText
 }));
 
 const ChatWrapper = styled('div')({

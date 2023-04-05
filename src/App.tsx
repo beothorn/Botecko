@@ -46,10 +46,8 @@ export default function App() {
     let currentScreenComponent = getCurrentScreenComponent(currentScreen);
 
     return <StyledBox height="100vh" display="flex" flexDirection="column">
-    <Box flex={1} overflow="auto">
-    {currentScreenComponent}
-    </Box>
-  </StyledBox>
-  
-    //<Box>{currentScreenComponent}</Box>;
+        <Box flex={1} overflow="auto">
+        {currentScreenComponent}
+        </Box>
+    </StyledBox>
 }

@@ -1,11 +1,10 @@
-import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography, styled } from '@mui/material';
+import { AppBar, IconButton, Menu, MenuItem, MenuProps, Toolbar, Typography, styled } from '@mui/material';
 import React, { useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 
-const AppBarStyled = styled(AppBar)(({theme}) => ({
-  backgroundColor: theme.palette.primary.dark,
-  color: theme.palette.primary.contrastText,
-  marginBottom: "1rem",
+const AppBarStyled = styled(AppBar)(() => ({
+  backgroundColor: '#000',
+  color: '#eee',
 }));
 
 function ScreenTitleRaw({title, className}: ScreenTitleProps){
@@ -28,6 +27,37 @@ type ScreenTitleProps = {
     className?: string;
     title: string;
 };
+
+const StyledMenu = styled((props: MenuProps) => (
+  <Menu
+    elevation={0}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'right',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'right',
+    }}
+    {...props}
+  />
+))(({ theme }) => ({
+  '& .MuiPaper-root': {
+    backgroundColor: theme.palette.secondary.contrastText,
+    '& .MuiMenuItem-root': {
+      '& .MuiSvgIcon-root': {
+        backgroundColor: theme.palette.secondary.contrastText,
+      },
+      '&:active': {
+        backgroundColor: theme.palette.secondary.contrastText,
+      },
+      '&:hover': {
+        color: theme.palette.secondary.contrastText,
+        backgroundColor: theme.palette.secondary.main,
+      },
+    },
+  },
+}));
 
 export default function Screen({ children, menuItems, leftItem, centerItem, barPosition }: Props){
     // Add state for the menu
@@ -60,7 +90,7 @@ export default function Screen({ children, menuItems, leftItem, centerItem, barP
               >
                 <MenuIcon />
               </IconButton>
-              <Menu
+              <StyledMenu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
@@ -70,7 +100,7 @@ export default function Screen({ children, menuItems, leftItem, centerItem, barP
                     {label}
                   </MenuItem>
                 ))}
-              </Menu>
+              </StyledMenu>
             </>
           )}
         </Toolbar>

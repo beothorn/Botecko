@@ -13,7 +13,19 @@ if(!rootElement){
 
 const theme = createTheme({
   palette: {
-    mode: 'dark',
+    primary: {
+      main: '#fff',
+    },
+    secondary: {
+      main: '#eee',
+    },
+    background: {
+      default: '#222',
+    },
+    text: {
+      primary: '#eee',
+      secondary: '#666',
+    }
   },
 });
 
@@ -22,5 +34,4 @@ root.render(<React.StrictMode>
     <ThemeProvider theme={theme}>
         <Provider store={store}><App /></Provider>
     </ThemeProvider>
-</React.StrictMode>
-);
+</React.StrictMode>);

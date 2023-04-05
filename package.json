@@ -1,9 +1,9 @@
 {
-  "name": "botbook",
+  "name": "botecko",
   "version": "0.0.1",
   "description": "Fake people, real talk.",
   "main": "index.tsx",
-  "repository": "git@github.com:beothorn/BotBook.git",
+  "repository": "git@github.com:beothorn/Botecko.git",
   "author": "beothorn",
   "license": "Apache-2.0",
   "scripts": {

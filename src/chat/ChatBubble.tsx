@@ -17,29 +17,29 @@ function ChatBubbleStyled({ className, text }: ChatBubbleStyledProps){
 }
 
 const ChatBubbleUser = styled(ChatBubbleStyled)(({ theme }) => ({
-    backgroundColor: theme.palette.primary.light,
-    color: theme.palette.primary.contrastText,
+    backgroundColor: '#00008a',
+    color: 'd7d7d7',
     padding: theme.spacing(1),
-    borderRadius: '20px 20px 20px 0px',
-    maxWidth: '100%',
+    borderRadius: '15px 15px 15px 0px',
+    maxWidth: '60%',
     margin: `${theme.spacing(1)} 0px ${theme.spacing(1)} ${theme.spacing(1)}`,
 }));
 
 const ChatBubbleAssistant = styled(ChatBubbleStyled)(({ theme }) => ({
-    backgroundColor: theme.palette.secondary.light,
-    color: theme.palette.secondary.contrastText,
+    backgroundColor: '#007312',
+    color: 'd7d7d7',
     padding: theme.spacing(1),
-    borderRadius: '20px 20px 0px 20px',
-    maxWidth: '100%',
+    borderRadius: '15px 15px 0px 15px',
+    maxWidth: '60%',
     margin: `${theme.spacing(1)} ${theme.spacing(1)} ${theme.spacing(1)} 0px`,
     alignSelf: 'flex-end',
 }));
 
 const ChatBubbleThought = styled(ChatBubbleStyled)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
-  color: theme.palette.primary.dark,
+  backgroundColor: '#3a3a3a',
+  color: theme.palette.info.contrastText,
   padding: theme.spacing(1),
-  borderRadius: '20px 20px 0px 20px',
+  borderRadius: '5px 5px 0px 5px',
   maxWidth: '100%',
   margin: `${theme.spacing(1)} ${theme.spacing(1)} ${theme.spacing(1)} 0px`,
   alignSelf: 'flex-end',

@@ -67598,7 +67598,6 @@ function App() {
     var currentScreenComponent = getCurrentScreenComponent(currentScreen);
     return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(StyledBox, { height: "100vh", display: "flex", flexDirection: "column" },
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Box__WEBPACK_IMPORTED_MODULE_10__["default"], { flex: 1, overflow: "auto" }, currentScreenComponent));
-    //<Box>{currentScreenComponent}</Box>;
 }
 
 
@@ -68041,17 +68040,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var Root = (0,_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"])('div')(function (_a) {
-    var theme = _a.theme;
-    return ({
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        overflowY: 'scroll',
-        overflowAnchor: 'none',
-        background: theme.palette.primary.contrastText
-    });
-});
+var Root = (0,_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"])('div')(function () { return ({
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    overflowY: 'scroll',
+    overflowAnchor: 'none',
+}); });
 var ChatWrapper = (0,_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"])('div')({
     flexGrow: 1,
 });
@@ -68169,22 +68164,22 @@ function ChatBubbleStyled(_a) {
 var ChatBubbleUser = (0,_mui_material_styles__WEBPACK_IMPORTED_MODULE_3__["default"])(ChatBubbleStyled)(function (_a) {
     var theme = _a.theme;
     return ({
-        backgroundColor: theme.palette.primary.light,
-        color: theme.palette.primary.contrastText,
+        backgroundColor: '#00008a',
+        color: 'd7d7d7',
         padding: theme.spacing(1),
-        borderRadius: '20px 20px 20px 0px',
-        maxWidth: '100%',
+        borderRadius: '15px 15px 15px 0px',
+        maxWidth: '60%',
         margin: "".concat(theme.spacing(1), " 0px ").concat(theme.spacing(1), " ").concat(theme.spacing(1)),
     });
 });
 var ChatBubbleAssistant = (0,_mui_material_styles__WEBPACK_IMPORTED_MODULE_3__["default"])(ChatBubbleStyled)(function (_a) {
     var theme = _a.theme;
     return ({
-        backgroundColor: theme.palette.secondary.light,
-        color: theme.palette.secondary.contrastText,
+        backgroundColor: '#007312',
+        color: 'd7d7d7',
         padding: theme.spacing(1),
-        borderRadius: '20px 20px 0px 20px',
-        maxWidth: '100%',
+        borderRadius: '15px 15px 0px 15px',
+        maxWidth: '60%',
         margin: "".concat(theme.spacing(1), " ").concat(theme.spacing(1), " ").concat(theme.spacing(1), " 0px"),
         alignSelf: 'flex-end',
     });
@@ -68192,10 +68187,10 @@ var ChatBubbleAssistant = (0,_mui_material_styles__WEBPACK_IMPORTED_MODULE_3__["
 var ChatBubbleThought = (0,_mui_material_styles__WEBPACK_IMPORTED_MODULE_3__["default"])(ChatBubbleStyled)(function (_a) {
     var theme = _a.theme;
     return ({
-        backgroundColor: theme.palette.background.paper,
-        color: theme.palette.primary.dark,
+        backgroundColor: '#3a3a3a',
+        color: theme.palette.info.contrastText,
         padding: theme.spacing(1),
-        borderRadius: '20px 20px 0px 20px',
+        borderRadius: '5px 5px 0px 5px',
         maxWidth: '100%',
         margin: "".concat(theme.spacing(1), " ").concat(theme.spacing(1), " ").concat(theme.spacing(1), " 0px"),
         alignSelf: 'flex-end',
@@ -68231,10 +68226,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _mui_material_List__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material/List */ "./node_modules/@mui/material/List/List.js");
+/* harmony import */ var _mui_material_List__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material/List */ "./node_modules/@mui/material/List/List.js");
 /* harmony import */ var _mui_material_ListItemAvatar__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/material/ListItemAvatar */ "./node_modules/@mui/material/ListItemAvatar/ListItemAvatar.js");
 /* harmony import */ var _mui_material_Avatar__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material/Avatar */ "./node_modules/@mui/material/Avatar/Avatar.js");
-/* harmony import */ var _mui_material_ListItemText__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material/ListItemText */ "./node_modules/@mui/material/ListItemText/ListItemText.js");
+/* harmony import */ var _mui_material_ListItemText__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material/ListItemText */ "./node_modules/@mui/material/ListItemText/ListItemText.js");
 /* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hooks */ "./src/hooks.ts");
 /* harmony import */ var _appStateSlice__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../appStateSlice */ "./src/appStateSlice.ts");
 /* harmony import */ var _mui_material_ListItemButton__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material/ListItemButton */ "./node_modules/@mui/material/ListItemButton/ListItemButton.js");
@@ -68252,13 +68247,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var Root = (0,_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"])(_mui_material_List__WEBPACK_IMPORTED_MODULE_5__["default"])(function (_a) {
-    var theme = _a.theme;
-    return ({
-        paddingTop: theme.spacing(2),
-    });
-});
-var StyledListItemText = (0,_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"])(_mui_material_ListItemText__WEBPACK_IMPORTED_MODULE_6__["default"])(function (_a) {
+var StyledListItemText = (0,_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"])(_mui_material_ListItemText__WEBPACK_IMPORTED_MODULE_5__["default"])(function (_a) {
     var theme = _a.theme;
     return ({
         color: theme.palette.text.primary
@@ -68286,7 +68275,7 @@ function Contacts() {
         "Add Contacts": addContact
     };
     return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__["default"], { centerItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__.ScreenTitle, { title: "Botecko" }), menuItems: menuItems },
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Root, null, Object.entries(contacts).map(function (_a) {
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_List__WEBPACK_IMPORTED_MODULE_6__["default"], null, Object.entries(contacts).map(function (_a) {
             var key = _a[0], contact = _a[1];
             return (contact.loaded ?
                 react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemButton__WEBPACK_IMPORTED_MODULE_7__["default"], { key: contact.meta.name, onClick: function () { return gotoChat(key); } },
@@ -68431,24 +68420,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/styles/styled.js");
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/AppBar/AppBar.js");
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Typography/Typography.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Toolbar/Toolbar.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/IconButton/IconButton.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Menu/Menu.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Menu/Menu.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Toolbar/Toolbar.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/IconButton/IconButton.js");
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/MenuItem/MenuItem.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _mui_icons_material_Menu__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/icons-material/Menu */ "./node_modules/@mui/icons-material/Menu.js");
+/* harmony import */ var _mui_icons_material_Menu__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/icons-material/Menu */ "./node_modules/@mui/icons-material/Menu.js");
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 
 
 
-var AppBarStyled = (0,_mui_material__WEBPACK_IMPORTED_MODULE_1__["default"])(_mui_material__WEBPACK_IMPORTED_MODULE_2__["default"])(function (_a) {
-    var theme = _a.theme;
-    return ({
-        backgroundColor: theme.palette.primary.dark,
-        color: theme.palette.primary.contrastText,
-        marginBottom: "1rem",
-    });
-});
+var AppBarStyled = (0,_mui_material__WEBPACK_IMPORTED_MODULE_1__["default"])(_mui_material__WEBPACK_IMPORTED_MODULE_2__["default"])(function () { return ({
+    backgroundColor: '#000',
+    color: '#eee',
+}); });
 function ScreenTitleRaw(_a) {
     var title = _a.title, className = _a.className;
     return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], { className: className, variant: "h6" }, title);
@@ -68457,6 +68453,32 @@ function ScreenTitleRaw(_a) {
 var ScreenTitle = (0,_mui_material__WEBPACK_IMPORTED_MODULE_1__["default"])(ScreenTitleRaw)(function () { return ({
     flexGrow: 1
 }); });
+var StyledMenu = (0,_mui_material__WEBPACK_IMPORTED_MODULE_1__["default"])(function (props) { return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], __assign({ elevation: 0, anchorOrigin: {
+        vertical: 'bottom',
+        horizontal: 'right',
+    }, transformOrigin: {
+        vertical: 'top',
+        horizontal: 'right',
+    } }, props))); })(function (_a) {
+    var theme = _a.theme;
+    return ({
+        '& .MuiPaper-root': {
+            backgroundColor: theme.palette.secondary.contrastText,
+            '& .MuiMenuItem-root': {
+                '& .MuiSvgIcon-root': {
+                    backgroundColor: theme.palette.secondary.contrastText,
+                },
+                '&:active': {
+                    backgroundColor: theme.palette.secondary.contrastText,
+                },
+                '&:hover': {
+                    color: theme.palette.secondary.contrastText,
+                    backgroundColor: theme.palette.secondary.main,
+                },
+            },
+        },
+    });
+});
 function Screen(_a) {
     var children = _a.children, menuItems = _a.menuItems, leftItem = _a.leftItem, centerItem = _a.centerItem, barPosition = _a.barPosition;
     // Add state for the menu
@@ -68473,13 +68495,13 @@ function Screen(_a) {
     };
     return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(AppBarStyled, { position: barPosition || "static" },
-            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], null,
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], null,
                 leftItem,
                 centerItem,
                 menuItems && (react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], { color: "inherit", "aria-label": "menu", onClick: handleOpen },
-                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_Menu__WEBPACK_IMPORTED_MODULE_6__["default"], null)),
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], { anchorEl: anchorEl, open: Boolean(anchorEl), onClose: handleClose }, Object.entries(menuItems).map(function (_a) {
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], { color: "inherit", "aria-label": "menu", onClick: handleOpen },
+                        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_Menu__WEBPACK_IMPORTED_MODULE_7__["default"], null)),
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(StyledMenu, { anchorEl: anchorEl, open: Boolean(anchorEl), onClose: handleClose }, Object.entries(menuItems).map(function (_a) {
                         var label = _a[0], action = _a[1];
                         return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], { key: label, onClick: function () { return callback(action); } }, label));
                     })))))),
@@ -70579,7 +70601,19 @@ if (!rootElement) {
 }
 var theme = (0,_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"])({
     palette: {
-        mode: 'dark',
+        primary: {
+            main: '#fff',
+        },
+        secondary: {
+            main: '#eee',
+        },
+        background: {
+            default: '#222',
+        },
+        text: {
+            primary: '#eee',
+            secondary: '#666',
+        }
     },
 });
 var root = react_dom_client__WEBPACK_IMPORTED_MODULE_1__.createRoot(rootElement);

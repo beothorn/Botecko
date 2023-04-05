@@ -10,10 +10,6 @@ import { CircularProgress, styled } from '@mui/material';
 import Screen from '../screens/screen';
 import { ScreenTitle } from '../screens/screen';
 
-const Root = styled(List)(({theme}) => ({
-  paddingTop: theme.spacing(2),
-}));
-
 const StyledListItemText = styled(ListItemText)(({theme}) => ({
   color: theme.palette.text.primary
 }));
@@ -45,7 +41,7 @@ export default function Contacts() {
     centerItem={<ScreenTitle title="Botecko" />}
     menuItems={menuItems}
   >
-    <Root>
+    <List>
       {Object.entries(contacts).map(([key, contact]) => (
         contact.loaded ? 
         <ListItemButton key={contact.meta.name} onClick={() => gotoChat(key)}>
@@ -62,6 +58,6 @@ export default function Contacts() {
           <StyledListItemText primary={"Contact is loading..."} />
         </ListItemButton>
       ))}
-    </Root>
+    </List>
   </Screen>);
 };
