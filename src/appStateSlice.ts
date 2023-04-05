@@ -112,6 +112,10 @@ export const appStateSlice = createSlice({
       state.settings = action.payload;
       saveStateToLocalStorage(state);
     },
+    toggleShowPlanning: (state: AppState) => {
+      state.settings.showThought = !state.settings.showThought;
+      saveStateToLocalStorage(state);
+    },
     setScreen: (state: AppState, action: PayloadAction<AppScreen>) => {
       state.currentScreen = action.payload;
       saveStateToLocalStorage(state);
@@ -153,6 +157,7 @@ export const selectWaitingAnswer = (state: RootState) => state.appState.waitingA
 export const actionSetScreen = (screen: AppScreen) => ({type: 'appState/setScreen', payload: screen})
 export const actionSetChatId = (chatId: string) => ({type: 'appState/setChatId', payload: chatId})
 export const actionSetSettings = (settings: Settings) => ({type: 'appState/setSettings', payload: settings})
+export const actionToggleShowPlanning = () => ({type: 'appState/toggleShowPlanning'})
 export const actionSetErrorMessage = (error: string) => ({type: 'appState/setErrorMessage', payload: error})
 export const actionAddMessage = (newMessage: Message) => ({type: 'appState/addMessage', payload: newMessage})
 export const actionAddContact = (newContact: Contact) => ({type: 'appState/addContact', payload: newContact})

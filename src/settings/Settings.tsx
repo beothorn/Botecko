@@ -93,6 +93,8 @@ export default function Settings() {
                 id="systemEntry"
                 label="System Entry"
                 variant="outlined"
+                multiline
+                maxRows={4}
             />
             <TextField
                 value={settings.profileGeneratorSystemEntry}
@@ -102,6 +104,8 @@ export default function Settings() {
                 id="profileGeneratorSystemEntry"
                 label="Profile Generator System Entry"
                 variant="outlined"
+                multiline
+                maxRows={4}
             />
             <TextField
                 value={settings.profileGeneratorMessageEntry}
@@ -111,6 +115,8 @@ export default function Settings() {
                 id="profileGeneratorMessageEntry"
                 label="Profile Generator Message Entry"
                 variant="outlined"
+                multiline
+                maxRows={4}
             />
             <FormControlLabel control={<Checkbox 
                 checked={settings.showThought}
