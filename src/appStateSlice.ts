@@ -46,6 +46,7 @@ type Contact = {
   meta: Meta,
   avatarMeta: AvatarMeta,
   chats: Message[],
+  lastMessage: string,
   loaded: boolean
 }
 
@@ -87,7 +88,7 @@ const initialState: AppState = {
   errorMessage: ''
 }
 
-const localStorageKey = 'v0.3.0';
+const localStorageKey = 'v1.0.0';
 
 function getInitialState(): AppState{
   const storedState = localStorage.getItem(localStorageKey);
@@ -129,6 +130,17 @@ export const appStateSlice = createSlice({
     },
     addMessage: (state: AppState, action: PayloadAction<Message>) => {
       state.contacts[state.chatId].chats = state.contacts[state.chatId].chats?.concat(action.payload) ?? [];
+      if(action.payload.role === 'assistant'){
+        const maxMessageSizeOnContactList = 40;
+        const lastMessageFull:string = JSON.parse(action.payload.content).answer;
+        if(lastMessageFull.length > maxMessageSizeOnContactList){
+          state.contacts[state.chatId].lastMessage = JSON.parse(action.payload.content).answer.slice(0, maxMessageSizeOnContactList)+"...";  
+        }else{
+          state.contacts[state.chatId].lastMessage = JSON.parse(action.payload.content).answer;  
+        }
+      }else{
+        state.contacts[state.chatId].lastMessage = action.payload.content;
+      }
       saveStateToLocalStorage(state);
     },
     addContact: (state: AppState, action: PayloadAction<Contact>) => {
@@ -224,7 +236,8 @@ export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, setti
       base64Img: ''
     },
     chats: [],
-    loaded: false
+    loaded: false,
+    lastMessage: ''
   }))
 
   if(settings.model === "debug"){
@@ -245,7 +258,8 @@ export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, setti
         base64Img: ''
       },
       chats: [],
-      loaded: true
+      loaded: true,
+      lastMessage: ''
     }))
   }else{
     chatCompletion(settings, generateContact(contactDescription, settings.profileGeneratorSystemEntry, settings.profileGeneratorMessageEntry))
@@ -268,7 +282,8 @@ function createContactFromMeta(id: string, meta: MetaFromAI, avatarBase64Img: st
         base64Img: avatarBase64Img
       },
       chats: [],
-      loaded: true
+      loaded: true,
+      lastMessage: meta.userProfile
     };
 }
 

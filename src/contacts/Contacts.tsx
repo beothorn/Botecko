@@ -6,7 +6,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { actionRemoveContact, actionSetChatId, actionSetScreen, selectContacts } from '../appStateSlice';
 import ListItemButton from '@mui/material/ListItemButton';
-import { CircularProgress, styled } from '@mui/material';
+import { Button, CircularProgress, styled } from '@mui/material';
 import Screen from '../screens/screen';
 import { ScreenTitle } from '../screens/screen';
 
@@ -34,7 +34,7 @@ export default function Contacts() {
 
   const menuItems = {
     "Settings": gotoSettings,
-    "Add Contacts": addContact
+    "Add Contact": addContact
   };
 
   return (<Screen
@@ -48,7 +48,7 @@ export default function Contacts() {
           <ListItemAvatar>
             <Avatar alt={contact.avatarMeta.prompt} src={`data:image/png;base64, ${contact.avatarMeta.base64Img}`} />
           </ListItemAvatar>
-          <StyledListItemText primary={contact.meta.name} secondary={contact.meta.userProfile} />
+          <StyledListItemText primary={contact.meta.name} secondary={contact.lastMessage} />
         </ListItemButton>
         :
         <ListItemButton key={contact.meta.name} onClick={() => removeContact(key)}>
@@ -59,5 +59,6 @@ export default function Contacts() {
         </ListItemButton>
       ))}
     </List>
+    {Object.entries(contacts).length === 0 && <Button onClick={() => addContact()}>Add Contact</Button>}
   </Screen>);
 };

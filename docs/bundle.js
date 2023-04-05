@@ -67813,7 +67813,7 @@ var initialState = {
     waitingAnswer: false,
     errorMessage: ''
 };
-var localStorageKey = 'v0.3.0';
+var localStorageKey = 'v1.0.0';
 function getInitialState() {
     var storedState = localStorage.getItem(localStorageKey);
     if (storedState) {
@@ -67853,6 +67853,19 @@ var appStateSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_3__.createSlice
         addMessage: function (state, action) {
             var _a, _b;
             state.contacts[state.chatId].chats = (_b = (_a = state.contacts[state.chatId].chats) === null || _a === void 0 ? void 0 : _a.concat(action.payload)) !== null && _b !== void 0 ? _b : [];
+            if (action.payload.role === 'assistant') {
+                var maxMessageSizeOnContactList = 40;
+                var lastMessageFull = JSON.parse(action.payload.content).answer;
+                if (lastMessageFull.length > maxMessageSizeOnContactList) {
+                    state.contacts[state.chatId].lastMessage = JSON.parse(action.payload.content).answer.slice(0, maxMessageSizeOnContactList) + "...";
+                }
+                else {
+                    state.contacts[state.chatId].lastMessage = JSON.parse(action.payload.content).answer;
+                }
+            }
+            else {
+                state.contacts[state.chatId].lastMessage = action.payload.content;
+            }
             saveStateToLocalStorage(state);
         },
         addContact: function (state, action) {
@@ -67955,7 +67968,8 @@ function dispatchCreateContact(dispatch, settings, contactDescription) {
                     base64Img: ''
                 },
                 chats: [],
-                loaded: false
+                loaded: false,
+                lastMessage: ''
             }));
             if (settings.model === "debug") {
                 dispatch(actionAddContact({
@@ -67975,7 +67989,8 @@ function dispatchCreateContact(dispatch, settings, contactDescription) {
                         base64Img: ''
                     },
                     chats: [],
-                    loaded: true
+                    loaded: true,
+                    lastMessage: ''
                 }));
             }
             else {
@@ -68000,7 +68015,8 @@ function createContactFromMeta(id, meta, avatarBase64Img) {
             base64Img: avatarBase64Img
         },
         chats: [],
-        loaded: true
+        loaded: true,
+        lastMessage: meta.userProfile
     };
 }
 function writeSystemEntry(meta, userName, userShortInfo, systemEntry) {
@@ -68258,6 +68274,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mui_material_ListItemButton__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material/ListItemButton */ "./node_modules/@mui/material/ListItemButton/ListItemButton.js");
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/styles/styled.js");
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/CircularProgress/CircularProgress.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Button/Button.js");
 /* harmony import */ var _screens_screen__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../screens/screen */ "./src/screens/screen.tsx");
 
 
@@ -68295,7 +68312,7 @@ function Contacts() {
     };
     var menuItems = {
         "Settings": gotoSettings,
-        "Add Contacts": addContact
+        "Add Contact": addContact
     };
     return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__["default"], { centerItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__.ScreenTitle, { title: "Botecko" }), menuItems: menuItems },
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_List__WEBPACK_IMPORTED_MODULE_6__["default"], null, Object.entries(contacts).map(function (_a) {
@@ -68304,13 +68321,14 @@ function Contacts() {
                 react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemButton__WEBPACK_IMPORTED_MODULE_7__["default"], { key: contact.meta.name, onClick: function () { return gotoChat(key); } },
                     react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemAvatar__WEBPACK_IMPORTED_MODULE_8__["default"], null,
                         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Avatar__WEBPACK_IMPORTED_MODULE_9__["default"], { alt: contact.avatarMeta.prompt, src: "data:image/png;base64, ".concat(contact.avatarMeta.base64Img) })),
-                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(StyledListItemText, { primary: contact.meta.name, secondary: contact.meta.userProfile }))
+                    react__WEBPACK_IMPORTED_MODULE_0___default().createElement(StyledListItemText, { primary: contact.meta.name, secondary: contact.lastMessage }))
                 :
                     react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemButton__WEBPACK_IMPORTED_MODULE_7__["default"], { key: contact.meta.name, onClick: function () { return removeContact(key); } },
                         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_ListItemAvatar__WEBPACK_IMPORTED_MODULE_8__["default"], null,
                             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_10__["default"], null)),
                         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(StyledListItemText, { primary: "Contact is loading..." })));
-        }))));
+        })),
+        Object.entries(contacts).length === 0 && react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_11__["default"], { onClick: function () { return addContact(); } }, "Add Contact")));
 }
 ;
 
