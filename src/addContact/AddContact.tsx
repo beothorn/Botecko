@@ -8,6 +8,15 @@ import { actionSetScreen, dispatchCreateContact, selectSettings } from '../appSt
 import { batch } from 'react-redux';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
+import { styled } from '@mui/material';
+
+const AddContactForm = styled('form')(({theme}) => ({
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
+    margin: "1rem",
+    color: theme.palette.primary.dark
+}));
 
 export function AddContact() {
     const dispatch = useAppDispatch();
@@ -29,14 +38,16 @@ export function AddContact() {
         leftItem = {<BackButton originScreen='contacts' ></BackButton>}
         centerItem = {<ScreenTitle title='Adding Contact' />}
     >
-        <TextField 
-            value={profile}
-            onChange={handleChange}
-            required size="small" 
-            id="profile" 
-            label="Contact description" 
-            variant="outlined" 
-        />
-        <Button sx={{marginLeft: 1}} variant="contained" onClick={generateContact}>Generate new Contact</Button>  
+        <AddContactForm>
+            <TextField 
+                value={profile}
+                onChange={handleChange}
+                required size="small" 
+                id="profile" 
+                label="Contact description" 
+                variant="outlined" 
+            />
+            <Button sx={{marginLeft: 1}} variant="contained" onClick={generateContact}>Generate new Contact</Button>  
+        </AddContactForm>
     </Screen>;
 }

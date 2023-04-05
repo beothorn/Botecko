@@ -79,7 +79,7 @@ export default function Chat() {
   };
 
   const centerItem = (<>
-    <Avatar alt={avatarMetaData.prompt} src={`data:image/png;base64, ${avatarMetaData.base64Img}`} />
+    <Avatar alt={avatarMetaData.prompt} src={`data:image/png;base64, ${avatarMetaData.base64Img}`} sx={{mr: 2}}/>
     <ScreenTitle title={metaData.name} />
   </>)
 

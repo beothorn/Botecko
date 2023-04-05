@@ -24,7 +24,7 @@ export function TestOpenAiToken() {
     }, [openAiKeyFromStore, settings]);
 
     return (<Screen
-        centerItem={<ScreenTitle title='BotBook' />}
+        centerItem={<ScreenTitle title='Botecko' />}
     >
         <CircularProgress />
     </Screen>);
