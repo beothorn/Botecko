@@ -35,7 +35,7 @@ export function AddContact() {
     };
 
     return <Screen
-        leftItem = {<BackButton originScreen='contacts' ></BackButton>}
+        leftItem = {<BackButton/>}
         centerItem = {<ScreenTitle title='Adding Contact' />}
     >
         <AddContactForm>

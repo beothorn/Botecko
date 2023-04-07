@@ -11,7 +11,8 @@ export type AppScreen = 'testOpenAiToken'
   | 'contacts'
   | 'chat' 
   | 'addContact'
-  | 'error';
+  | 'error'
+  | 'profile';
 
 type MetaFromAI = {
   userProfile: string,
@@ -67,7 +68,8 @@ type AppState = {
   contacts: Record<string, Contact>,
   chatId: string,
   waitingAnswer: boolean,
-  errorMessage: string
+  errorMessage: string,
+  previousScreen: AppScreen
 }
 
 const initialState: AppState = {
@@ -85,7 +87,8 @@ const initialState: AppState = {
   contacts: {},
   chatId: '',
   waitingAnswer: false,
-  errorMessage: ''
+  errorMessage: '',
+  previousScreen: 'contacts'
 }
 
 const localStorageKey = 'v1.0.0';
@@ -118,7 +121,12 @@ export const appStateSlice = createSlice({
       saveStateToLocalStorage(state);
     },
     setScreen: (state: AppState, action: PayloadAction<AppScreen>) => {
+      state.previousScreen = state.currentScreen; 
       state.currentScreen = action.payload;
+      saveStateToLocalStorage(state);
+    },
+    goToPreviousScreen: (state: AppState) => {
+      state.currentScreen = state.previousScreen;
       saveStateToLocalStorage(state);
     },
     setChatId: (state: AppState, action: PayloadAction<string>) => {
@@ -167,6 +175,7 @@ export const selectContacts = (state: RootState) => state.appState.contacts
 export const selectWaitingAnswer = (state: RootState) => state.appState.waitingAnswer
 
 export const actionSetScreen = (screen: AppScreen) => ({type: 'appState/setScreen', payload: screen})
+export const actionGoToPreviousScreen = () => ({type: 'appState/goToPreviousScreen'})
 export const actionSetChatId = (chatId: string) => ({type: 'appState/setChatId', payload: chatId})
 export const actionSetSettings = (settings: Settings) => ({type: 'appState/setSettings', payload: settings})
 export const actionToggleShowPlanning = () => ({type: 'appState/toggleShowPlanning'})

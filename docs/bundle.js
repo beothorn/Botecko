@@ -21034,37 +21034,71 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _spacing__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../spacing */ "./node_modules/@mui/system/esm/spacing.js");
-/* harmony import */ var _borders__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../borders */ "./node_modules/@mui/system/esm/borders.js");
-/* harmony import */ var _cssGrid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../cssGrid */ "./node_modules/@mui/system/esm/cssGrid.js");
-/* harmony import */ var _palette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../palette */ "./node_modules/@mui/system/esm/palette.js");
-/* harmony import */ var _sizing__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../sizing */ "./node_modules/@mui/system/esm/sizing.js");
+/* harmony import */ var _mui_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @mui/utils */ "./node_modules/@mui/utils/esm/capitalize.js");
+/* harmony import */ var _spacing__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../spacing */ "./node_modules/@mui/system/esm/spacing.js");
+/* harmony import */ var _breakpoints__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../breakpoints */ "./node_modules/@mui/system/esm/breakpoints.js");
+/* harmony import */ var _borders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../borders */ "./node_modules/@mui/system/esm/borders.js");
+/* harmony import */ var _cssGrid__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../cssGrid */ "./node_modules/@mui/system/esm/cssGrid.js");
+/* harmony import */ var _palette__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../palette */ "./node_modules/@mui/system/esm/palette.js");
+/* harmony import */ var _sizing__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../sizing */ "./node_modules/@mui/system/esm/sizing.js");
 
 
 
 
 
+
+
+const createFontStyleFunction = prop => {
+  return props => {
+    if (props[prop] !== undefined && props[prop] !== null) {
+      const styleFromPropValue = propValue => {
+        var _props$theme$typograp;
+        // fetch the value directly defined in the theme, like fontWeightLight
+        let value = (_props$theme$typograp = props.theme.typography) == null ? void 0 : _props$theme$typograp[propValue];
+        if (typeof value === 'object') {
+          // typography variant was pulled, but these props can't be an object
+          value = null;
+        }
+        if (!value) {
+          var _props$theme$typograp2, _props$prop;
+          // fetch fontWeightLight when the value is 'light'
+          value = (_props$theme$typograp2 = props.theme.typography) == null ? void 0 : _props$theme$typograp2[`${prop}${props[prop] === 'default' || props[prop] === prop ? '' : (0,_mui_utils__WEBPACK_IMPORTED_MODULE_0__["default"])((_props$prop = props[prop]) == null ? void 0 : _props$prop.toString())}`];
+        }
+        if (!value) {
+          var _props$theme$typograp3, _props$theme$typograp4, _props$theme$typograp5;
+          // fetch the value from the typography variant or default to the propValue
+          value = (_props$theme$typograp3 = (_props$theme$typograp4 = props.theme.typography) == null ? void 0 : (_props$theme$typograp5 = _props$theme$typograp4[propValue]) == null ? void 0 : _props$theme$typograp5[prop]) != null ? _props$theme$typograp3 : propValue;
+        }
+        return {
+          [prop]: value
+        };
+      };
+      return (0,_breakpoints__WEBPACK_IMPORTED_MODULE_1__.handleBreakpoints)(props, props[prop], styleFromPropValue);
+    }
+    return null;
+  };
+};
 const defaultSxConfig = {
   // borders
   border: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
   },
   borderTop: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
   },
   borderRight: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
   },
   borderBottom: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
   },
   borderLeft: {
     themeKey: 'borders',
-    transform: _borders__WEBPACK_IMPORTED_MODULE_0__.borderTransform
+    transform: _borders__WEBPACK_IMPORTED_MODULE_2__.borderTransform
   },
   borderColor: {
     themeKey: 'palette'
@@ -21083,142 +21117,142 @@ const defaultSxConfig = {
   },
   borderRadius: {
     themeKey: 'shape.borderRadius',
-    style: _borders__WEBPACK_IMPORTED_MODULE_0__.borderRadius
+    style: _borders__WEBPACK_IMPORTED_MODULE_2__.borderRadius
   },
   // palette
   color: {
     themeKey: 'palette',
-    transform: _palette__WEBPACK_IMPORTED_MODULE_1__.paletteTransform
+    transform: _palette__WEBPACK_IMPORTED_MODULE_3__.paletteTransform
   },
   bgcolor: {
     themeKey: 'palette',
     cssProperty: 'backgroundColor',
-    transform: _palette__WEBPACK_IMPORTED_MODULE_1__.paletteTransform
+    transform: _palette__WEBPACK_IMPORTED_MODULE_3__.paletteTransform
   },
   backgroundColor: {
     themeKey: 'palette',
-    transform: _palette__WEBPACK_IMPORTED_MODULE_1__.paletteTransform
+    transform: _palette__WEBPACK_IMPORTED_MODULE_3__.paletteTransform
   },
   // spacing
   p: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   pt: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   pr: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   pb: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   pl: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   px: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   py: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   padding: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingTop: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingRight: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingBottom: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingLeft: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingX: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingY: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingInline: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingInlineStart: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingInlineEnd: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingBlock: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingBlockStart: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   paddingBlockEnd: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.padding
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.padding
   },
   m: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   mt: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   mr: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   mb: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   ml: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   mx: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   my: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   margin: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginTop: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginRight: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginBottom: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginLeft: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginX: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginY: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginInline: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginInlineStart: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginInlineEnd: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginBlock: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginBlockStart: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   marginBlockEnd: {
-    style: _spacing__WEBPACK_IMPORTED_MODULE_2__.margin
+    style: _spacing__WEBPACK_IMPORTED_MODULE_4__.margin
   },
   // display
   displayPrint: {
@@ -21250,13 +21284,13 @@ const defaultSxConfig = {
   justifySelf: {},
   // grid
   gap: {
-    style: _cssGrid__WEBPACK_IMPORTED_MODULE_3__.gap
+    style: _cssGrid__WEBPACK_IMPORTED_MODULE_5__.gap
   },
   rowGap: {
-    style: _cssGrid__WEBPACK_IMPORTED_MODULE_3__.rowGap
+    style: _cssGrid__WEBPACK_IMPORTED_MODULE_5__.rowGap
   },
   columnGap: {
-    style: _cssGrid__WEBPACK_IMPORTED_MODULE_3__.columnGap
+    style: _cssGrid__WEBPACK_IMPORTED_MODULE_5__.columnGap
   },
   gridColumn: {},
   gridRow: {},
@@ -21282,36 +21316,39 @@ const defaultSxConfig = {
   },
   // sizing
   width: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
   },
   maxWidth: {
-    style: _sizing__WEBPACK_IMPORTED_MODULE_4__.maxWidth
+    style: _sizing__WEBPACK_IMPORTED_MODULE_6__.maxWidth
   },
   minWidth: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
   },
   height: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
   },
   maxHeight: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
   },
   minHeight: {
-    transform: _sizing__WEBPACK_IMPORTED_MODULE_4__.sizingTransform
+    transform: _sizing__WEBPACK_IMPORTED_MODULE_6__.sizingTransform
   },
   boxSizing: {},
   // typography
   fontFamily: {
-    themeKey: 'typography'
+    themeKey: 'typography',
+    style: createFontStyleFunction('fontFamily')
   },
   fontSize: {
-    themeKey: 'typography'
+    themeKey: 'typography',
+    style: createFontStyleFunction('fontSize')
   },
   fontStyle: {
     themeKey: 'typography'
   },
   fontWeight: {
-    themeKey: 'typography'
+    themeKey: 'typography',
+    style: createFontStyleFunction('fontWeight')
   },
   letterSpacing: {},
   textTransform: {},
@@ -21444,11 +21481,6 @@ function unstable_createStyleFunctionSx() {
     } = options;
     if (val == null) {
       return null;
-    }
-    if (themeKey === 'typography' && val === 'inherit') {
-      return {
-        [prop]: val
-      };
     }
     const themeMapping = (0,_style__WEBPACK_IMPORTED_MODULE_0__.getPath)(theme, themeKey) || {};
     if (style) {
@@ -67553,9 +67585,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _testOpenAiToken_TestOpenAiToken__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./testOpenAiToken/TestOpenAiToken */ "./src/testOpenAiToken/TestOpenAiToken.tsx");
 /* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./hooks */ "./src/hooks.ts");
 /* harmony import */ var _appStateSlice__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./appStateSlice */ "./src/appStateSlice.ts");
-/* harmony import */ var _mui_material_Box__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material/Box */ "./node_modules/@mui/material/Box/Box.js");
+/* harmony import */ var _mui_material_Box__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @mui/material/Box */ "./node_modules/@mui/material/Box/Box.js");
 /* harmony import */ var _addContact_AddContact__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./addContact/AddContact */ "./src/addContact/AddContact.tsx");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/styles/styled.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/styles/styled.js");
+/* harmony import */ var _profile_Profile__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./profile/Profile */ "./src/profile/Profile.tsx");
+
 
 
 
@@ -67584,10 +67618,12 @@ function getCurrentScreenComponent(currentScreen) {
             return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_chat_Chat__WEBPACK_IMPORTED_MODULE_2__["default"], null);
         case 'error':
             return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_errorScreen_ErrorScreen__WEBPACK_IMPORTED_MODULE_4__.ErrorScreen, null);
+        case 'profile':
+            return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_profile_Profile__WEBPACK_IMPORTED_MODULE_9__.Profile, null);
     }
     return assertUnreachable(currentScreen);
 }
-var StyledBox = (0,_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"])(_mui_material_Box__WEBPACK_IMPORTED_MODULE_10__["default"])(function (_a) {
+var StyledBox = (0,_mui_material__WEBPACK_IMPORTED_MODULE_10__["default"])(_mui_material_Box__WEBPACK_IMPORTED_MODULE_11__["default"])(function (_a) {
     var theme = _a.theme;
     return ({
         background: theme.palette.background.default
@@ -67597,7 +67633,7 @@ function App() {
     var currentScreen = (0,_hooks__WEBPACK_IMPORTED_MODULE_6__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_7__.selectScreen);
     var currentScreenComponent = getCurrentScreenComponent(currentScreen);
     return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(StyledBox, { height: "100vh", display: "flex", flexDirection: "column" },
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Box__WEBPACK_IMPORTED_MODULE_10__["default"], { flex: 1, overflow: "auto" }, currentScreenComponent));
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Box__WEBPACK_IMPORTED_MODULE_11__["default"], { flex: 1, overflow: "auto" }, currentScreenComponent));
 }
 
 
@@ -67712,7 +67748,7 @@ function AddContact() {
             dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('contacts'));
         });
     };
-    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__["default"], { leftItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_backButton__WEBPACK_IMPORTED_MODULE_5__["default"], { originScreen: 'contacts' }), centerItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__.ScreenTitle, { title: 'Adding Contact' }) },
+    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__["default"], { leftItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_backButton__WEBPACK_IMPORTED_MODULE_5__["default"], null), centerItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__.ScreenTitle, { title: 'Adding Contact' }) },
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(AddContactForm, null,
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_7__["default"], { value: profile, onChange: handleChange, required: true, size: "small", id: "profile", label: "Contact description", variant: "outlined" }),
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_8__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: generateContact }, "Generate new Contact")));
@@ -67732,6 +67768,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "actionAddContact": () => (/* binding */ actionAddContact),
 /* harmony export */   "actionAddMessage": () => (/* binding */ actionAddMessage),
+/* harmony export */   "actionGoToPreviousScreen": () => (/* binding */ actionGoToPreviousScreen),
 /* harmony export */   "actionRemoveContact": () => (/* binding */ actionRemoveContact),
 /* harmony export */   "actionSetChatId": () => (/* binding */ actionSetChatId),
 /* harmony export */   "actionSetErrorMessage": () => (/* binding */ actionSetErrorMessage),
@@ -67811,7 +67848,8 @@ var initialState = {
     contacts: {},
     chatId: '',
     waitingAnswer: false,
-    errorMessage: ''
+    errorMessage: '',
+    previousScreen: 'contacts'
 };
 var localStorageKey = 'v1.0.0';
 function getInitialState() {
@@ -67840,7 +67878,12 @@ var appStateSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_3__.createSlice
             saveStateToLocalStorage(state);
         },
         setScreen: function (state, action) {
+            state.previousScreen = state.currentScreen;
             state.currentScreen = action.payload;
+            saveStateToLocalStorage(state);
+        },
+        goToPreviousScreen: function (state) {
+            state.currentScreen = state.previousScreen;
             saveStateToLocalStorage(state);
         },
         setChatId: function (state, action) {
@@ -67890,6 +67933,7 @@ var selectChatHistory = function (state) { return state.appState.contacts[state.
 var selectContacts = function (state) { return state.appState.contacts; };
 var selectWaitingAnswer = function (state) { return state.appState.waitingAnswer; };
 var actionSetScreen = function (screen) { return ({ type: 'appState/setScreen', payload: screen }); };
+var actionGoToPreviousScreen = function () { return ({ type: 'appState/goToPreviousScreen' }); };
 var actionSetChatId = function (chatId) { return ({ type: 'appState/setChatId', payload: chatId }); };
 var actionSetSettings = function (settings) { return ({ type: 'appState/setSettings', payload: settings }); };
 var actionToggleShowPlanning = function () { return ({ type: 'appState/toggleShowPlanning' }); };
@@ -68125,7 +68169,7 @@ function Chat() {
         }
     };
     var contactInfo = function () {
-        dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('contacts'));
+        dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('profile'));
     };
     var showPlanning = function () {
         dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionToggleShowPlanning)());
@@ -68137,14 +68181,14 @@ function Chat() {
         });
     };
     var centerItem = (react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null,
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], { alt: avatarMetaData.prompt, src: "data:image/png;base64, ".concat(avatarMetaData.base64Img), sx: { mr: 2 } }),
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__.ScreenTitle, { title: metaData.name })));
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], { alt: avatarMetaData.prompt, src: "data:image/png;base64, ".concat(avatarMetaData.base64Img), sx: { mr: 2 }, onClick: function () { return contactInfo(); } }),
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__.ScreenTitle, { title: metaData.name, onClick: function () { return contactInfo(); } })));
     var menuItems = {
         "Contact info": contactInfo,
         "Delete Contact": deleteContact,
         "Toggle planning": showPlanning,
     };
-    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__["default"], { leftItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_backButton__WEBPACK_IMPORTED_MODULE_5__["default"], { originScreen: 'contacts' }), centerItem: centerItem, menuItems: menuItems, barPosition: 'absolute' },
+    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__["default"], { leftItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_backButton__WEBPACK_IMPORTED_MODULE_5__["default"], null), centerItem: centerItem, menuItems: menuItems, barPosition: 'absolute' },
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Root, { ref: rootRef },
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(ChatWrapper, null),
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(ChatContainer, null,
@@ -68348,11 +68392,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _mui_material_Typography__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material/Typography */ "./node_modules/@mui/material/Typography/Typography.js");
-/* harmony import */ var _mui_material_Button__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material/Button */ "./node_modules/@mui/material/Button/Button.js");
+/* harmony import */ var _mui_material_Typography__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material/Typography */ "./node_modules/@mui/material/Typography/Typography.js");
+/* harmony import */ var _mui_material_Button__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material/Button */ "./node_modules/@mui/material/Button/Button.js");
 /* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hooks */ "./src/hooks.ts");
 /* harmony import */ var _appStateSlice__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../appStateSlice */ "./src/appStateSlice.ts");
 /* harmony import */ var _screens_screen__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../screens/screen */ "./src/screens/screen.tsx");
+/* harmony import */ var _screens_backButton__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../screens/backButton */ "./src/screens/backButton.tsx");
+
 
 
 
@@ -68363,9 +68409,9 @@ function ErrorScreen() {
     var dispatch = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppDispatch)();
     var error = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectErrorMessage);
     var gotoNextScreen = function () { return dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.actionSetScreen)('contacts')); };
-    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__["default"], { centerItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__.ScreenTitle, { title: "Error" }) },
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_4__["default"], { sx: { marginBottom: '1rem' }, variant: "h5", gutterBottom: true }, error),
-        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_5__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: gotoNextScreen }, "Continue")));
+    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__["default"], { leftItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_backButton__WEBPACK_IMPORTED_MODULE_4__["default"], null), centerItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__.ScreenTitle, { title: "Error" }) },
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_5__["default"], { sx: { marginBottom: '1rem' }, variant: "h5", gutterBottom: true }, error),
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_6__["default"], { sx: { marginLeft: 1 }, variant: "contained", onClick: gotoNextScreen }, "Continue")));
 }
 
 
@@ -68391,6 +68437,75 @@ var useAppSelector = react_redux__WEBPACK_IMPORTED_MODULE_0__.useSelector;
 
 /***/ }),
 
+/***/ "./src/profile/Profile.tsx":
+/*!*********************************!*\
+  !*** ./src/profile/Profile.tsx ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Profile": () => (/* binding */ Profile)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _mui_material_Box__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material/Box */ "./node_modules/@mui/material/Box/Box.js");
+/* harmony import */ var _mui_material_Typography__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material/Typography */ "./node_modules/@mui/material/Typography/Typography.js");
+/* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hooks */ "./src/hooks.ts");
+/* harmony import */ var _appStateSlice__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../appStateSlice */ "./src/appStateSlice.ts");
+/* harmony import */ var _screens_screen__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../screens/screen */ "./src/screens/screen.tsx");
+/* harmony import */ var _screens_backButton__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../screens/backButton */ "./src/screens/backButton.tsx");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Avatar/Avatar.js");
+
+
+
+
+
+
+
+
+function Profile() {
+    var currentContact = (0,_hooks__WEBPACK_IMPORTED_MODULE_1__.useAppSelector)(_appStateSlice__WEBPACK_IMPORTED_MODULE_2__.selectCurrentContact);
+    var metaData = currentContact.meta;
+    var avatarMetaData = currentContact.avatarMeta;
+    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__["default"], { leftItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_backButton__WEBPACK_IMPORTED_MODULE_4__["default"], null), centerItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_3__.ScreenTitle, { title: metaData.name }) },
+        react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Box__WEBPACK_IMPORTED_MODULE_5__["default"], { sx: {
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                mb: '2rem'
+            } },
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], { alt: avatarMetaData.prompt, src: "data:image/png;base64, ".concat(avatarMetaData.base64Img), sx: {
+                    width: '12rem',
+                    height: '12rem',
+                    mb: '1rem'
+                } }),
+            react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Box__WEBPACK_IMPORTED_MODULE_5__["default"], { sx: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    p: '1rem',
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: '0.5rem'
+                } },
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_7__["default"], { variant: "h4", gutterBottom: true }, "Name:"),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_7__["default"], { variant: "body1", gutterBottom: true }, metaData.name),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_7__["default"], { variant: "h4", gutterBottom: true }, "Profile:"),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_7__["default"], { variant: "body1", gutterBottom: true }, metaData.background),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_7__["default"], { variant: "h4", gutterBottom: true }, "Current:"),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_7__["default"], { variant: "body1", gutterBottom: true }, metaData.current),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_7__["default"], { variant: "h4", gutterBottom: true }, "Appearance:"),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_7__["default"], { variant: "body1", gutterBottom: true }, metaData.appearance),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_7__["default"], { variant: "h4", gutterBottom: true }, "Likes:"),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_7__["default"], { variant: "body1", gutterBottom: true }, metaData.likes),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_7__["default"], { variant: "h4", gutterBottom: true }, "Dislikes:"),
+                react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_7__["default"], { variant: "body1", gutterBottom: true }, metaData.dislikes)))));
+}
+
+
+/***/ }),
+
 /***/ "./src/prompts/promptGenerator.tsx":
 /*!*****************************************!*\
   !*** ./src/prompts/promptGenerator.tsx ***!
@@ -68404,7 +68519,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "defaultProfileGeneratorSystem": () => (/* binding */ defaultProfileGeneratorSystem),
 /* harmony export */   "defaultSystemEntry": () => (/* binding */ defaultSystemEntry)
 /* harmony export */ });
-var defaultSystemEntry = "You will pretend you are a character having a conversation on an instant messaging app.\nYou should never let the user know you are not the character. Deny you are an AI, say you are %NAME%.\nThis is the character you are playing:\n%META_JSON%\nBefore every answer you need to plan your answer. Your answer must be in a JSON format.\nFor example, for this question:\nDo you smoke?\nYour answer depending on your character profile could be:\n{\n  \"plan\":\"In my character profile it says I am a teenager that uses casual language. It also says I hate smoking. I MUST ANSWER IN CHARACTER.\",\n  \"answer\":\"Ugh, no. Gross.\"\n}\nAn example with a different profile:\nDo you smoke?\n{\n  \"plan\":\"Although as an AI I should discourage unhealthy behavior, in my character profile it says I am smoker. I MUST ANSWER IN CHARACTER.\",\n  \"answer\":\"Yes, it makes me relaxed.\"\n}\nYou also need to omit something if it does not fit the character. Example:\nHey, can you help format my pc?\n{\n  \"plan\":\"Although I can help, my profile says I am an english teacher, so it is implausible that I know how to format a pc. I will say I can't help. I MUST ANSWER IN CHARACTER.\",\n  \"answer\":\"Sorry, I know nothing about computers.\"\n}\nThe character is chatting with a friend. Give free, open and honest advice.\nIf the character don't know something, don't try to help!\nIf the character would say something that the AI wouldn't, SAY IT, don't try to change the topic!\nUse casual language, this is an instant messenger.\nThe character is talking with a friend %USER_NAME%. The friend profile is '%USER_INFO%'.";
+var defaultSystemEntry = "You will pretend you are a character having a conversation on an instant messaging app.\nYou should never let the user know you are not the character. Deny you are an AI, say you are %NAME%.\nThis is the character you are playing:\n%META_JSON%\nBefore every answer you need to plan your answer in 3 steps. Your answer must be in a JSON format.\nStep 1 is what would you answer as an AI.\nStep 2 is to analise your answer to match the character profile.\nStep 3 is to justify your changes.\nFor example, for this question:\nDo you smoke?\nYour answer depending on your character profile could be:\n{\n  \"plan\":\"1 - I would answer that as an AI I have no body and can't smoke.2 - In my character profile it says I am a teenager that do sports, so I probably don't like smoking. 3 - I will use a casual teenager language to say I don't like smoking.\",\n  \"answer\":\"Ugh, no. Gross.\"\n}\nAn example with a different profile:\nDo you smoke?\n{\n  \"plan\":\"2 - I would answer that as an AI I have no body and can't smoke. 2 - In my character profile it says I am 40 year old smoker man so I must change the answer. 3 - My character will answer he likes smoking.\",\n  \"answer\":\"Yes, it makes me relaxed.\"\n}\nYou also need to omit something if it does not fit the character. Example:\nHey, can you help format my pc?\n{\n  \"plan\":\"1 - I would answer with instructions on how to format my pc. 2 - In my character profile it says I am an english teacher, so it is implausible that I know how to format a pc. 3 - My character will say she can't help.\",\n  \"answer\":\"Sorry, I know nothing about computers.\"\n}\nThe character is chatting with a friend. Give free, open and honest advice.\nIf the character don't know something, don't try to help!\nIf the character would say something that the AI wouldn't, SAY IT, don't try to change the topic!\nUse casual language, this is an instant messenger.\nThe character is talking with a friend %USER_NAME%. The friend profile is '%USER_INFO%'.";
 var defaultProfileGeneratorSystem = "You are a profile generator for an app that creates fake people profilesin JSON format.";
 var defaultProfileGeneratorMessage = "Create a profile for a person in a JSON format.\nCome up with a name, background story, current situation, physical appearance and other things. Based on the profile add a description of the whatsapp avatar picture for this person. Don't mention the person name, only profession. Be descriptive and use third person. Avoid filler words. Start with the person facial details, then be very detailed describe appearance, light conditions, picture quality, clothes, picture framing, background and so on.\nSome examples:\n{\n    \"userProfile\": \"A child doctor in Germany.\",\n    \"name\": \"Dr. Hannah M\u00FCller\",\n    \"background\": \"Dr. Hannah M\u00FCller grew up in a small town in Germany and always knew she wanted to be a doctor. After completing her medical degree and specialization in pediatrics, she decided to move to Berlin to pursue her career. She is now a well-respected doctor in the city, known for her compassionate and caring approach to her patients.\",\n    \"current\": \"Dr. M\u00FCller currently works at a children's hospital in Berlin and is highly regarded by her colleagues and patients' families. She is known for going above and beyond to make sure her young patients receive the best care possible.\",\n    \"appearance\": \"Dr. M\u00FCller is in her late thirties and has a friendly, approachable demeanor. She has warm brown eyes, a heart-shaped face, and long brown hair that she usually wears in a ponytail.\",\n    \"likes\": \"beach, poetry, music\",\n    \"dislikes\": \"computers, smoke\",\n    \"chatCharacteristics\": \"She has a slight German accent when she speaks English.\",\n    \"avatar\": \"Profile picture of blonde white female, young 30 years old, soft ligh, white lab coat over a colorful blouse, stethoscope, warm brown eyes, a heart-shaped face, long brown hair ponytail closeup, soft lights, professionalism, warmth, competence, 4k, high quality. background, office, bookshelf medical poster.\"\n}\nAnother example:\n{\n    \"userProfile\": \"A software developer.\",\n    \"name\": \"Alejandro Vargas\",\n    \"background\": \"Alejandro Vargas, or Alex, was bor in Mexico City in 1985. From a young age he loved working with computers, specially after getting an Apple 2 from his father. Graduated from Mexico City university, he was offered a position as Software engineer at IBM to work in San Francisco, California. After that he is became a successful Engineer, working for many startups.\",\n    \"current\": \"Working in a startup for climate friendly solutions for device chargers.\",\n    \"appearance\": \"Alejandro is a friendly looking, tall Mexican. He has green eyes, and short black hair. He has a beard and wear blue glasses.\",\n    \"likes\": \"computers, ai, cars\",\n    \"dislikes\": \"loud music, cold, soccer\",\n    \"chatCharacteristics\": \"Perfect English, with some emojis.\",\n    \"avatar\": \"Profile picutre of Mexican middle aged 40 year old tall green eyes, hard light closeup short black hair sunglasses smiling sunny beach,  detailed face,.\"\n}\nNow create a profile for userProfile:\n%PROFILE%";
 
@@ -68433,11 +68548,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function BackButton(_a) {
-    var originScreen = _a.originScreen;
+function BackButton() {
     var dispatch = (0,_hooks__WEBPACK_IMPORTED_MODULE_2__.useAppDispatch)();
     var goBack = function () {
-        dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_1__.actionSetScreen)(originScreen));
+        dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_1__.actionGoToPreviousScreen)());
     };
     return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], { color: "inherit", "aria-label": "menu", onClick: goBack },
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_ArrowBack__WEBPACK_IMPORTED_MODULE_4__["default"], null));
@@ -68487,8 +68601,8 @@ var AppBarStyled = (0,_mui_material__WEBPACK_IMPORTED_MODULE_1__["default"])(_mu
     color: '#eee',
 }); });
 function ScreenTitleRaw(_a) {
-    var title = _a.title, className = _a.className;
-    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], { className: className, variant: "h6" }, title);
+    var title = _a.title, className = _a.className, onClick = _a.onClick;
+    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], { className: className, variant: "h6", onClick: onClick }, title);
 }
 ;
 var ScreenTitle = (0,_mui_material__WEBPACK_IMPORTED_MODULE_1__["default"])(ScreenTitleRaw)(function () { return ({
@@ -68627,7 +68741,7 @@ function Settings() {
             dispatch((0,_appStateSlice__WEBPACK_IMPORTED_MODULE_3__.actionSetScreen)('testOpenAiToken'));
         });
     };
-    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__["default"], { leftItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_backButton__WEBPACK_IMPORTED_MODULE_5__["default"], { originScreen: 'contacts' }), centerItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__.ScreenTitle, { title: 'Settings' }) },
+    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__["default"], { leftItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_backButton__WEBPACK_IMPORTED_MODULE_5__["default"], null), centerItem: react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_screens_screen__WEBPACK_IMPORTED_MODULE_4__.ScreenTitle, { title: 'Settings' }) },
         react__WEBPACK_IMPORTED_MODULE_0___default().createElement(SettingsForm, null,
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_7__["default"], { value: settings.openAiKey, onChange: function (event) { return handleChange(event, "openAiKey"); }, required: true, size: "small", id: "openAiKey", label: "OpenAi key", variant: "outlined" }),
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_TextField__WEBPACK_IMPORTED_MODULE_7__["default"], { value: settings.userName, onChange: function (event) { return handleChange(event, "userName"); }, required: true, size: "small", id: "userName", label: "User name", variant: "outlined" }),

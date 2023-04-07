@@ -1,18 +1,14 @@
 import { IconButton } from '@mui/material';
 import React from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { actionSetScreen, AppScreen } from '../appStateSlice';
+import { actionGoToPreviousScreen } from '../appStateSlice';
 import { useAppDispatch } from '../hooks';
 
-type Props = {
-    originScreen: AppScreen
-}
-
-export default function BackButton({originScreen}: Props){
+export default function BackButton(){
     const dispatch = useAppDispatch()
 
     const goBack = () => {
-        dispatch(actionSetScreen(originScreen));
+        dispatch(actionGoToPreviousScreen());
     };
 
     return <IconButton

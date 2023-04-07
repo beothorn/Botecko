@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import { useAppDispatch, useAppSelector } from '../hooks'
 import { actionSetScreen, selectErrorMessage } from '../appStateSlice';
 import Screen, { ScreenTitle } from '../screens/screen';
+import BackButton from '../screens/backButton';
 
 export function ErrorScreen() {
     const dispatch = useAppDispatch()
@@ -15,6 +16,7 @@ export function ErrorScreen() {
     const gotoNextScreen = () => dispatch(actionSetScreen('contacts'));
 
     return (<Screen
+        leftItem={<BackButton/>}
         centerItem={<ScreenTitle title="Error" />}
     >
         <Typography sx={{marginBottom: '1rem'}} variant="h5" gutterBottom>

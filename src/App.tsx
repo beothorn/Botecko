@@ -12,6 +12,7 @@ import { selectScreen, AppScreen } from './appStateSlice';
 import Box from '@mui/material/Box';
 import { AddContact } from './addContact/AddContact';
 import { styled } from '@mui/material';
+import { Profile } from './profile/Profile';
 
 function assertUnreachable(_x: never): never {
     throw new Error("Didn't expect to get here");
@@ -31,6 +32,8 @@ function getCurrentScreenComponent(currentScreen: AppScreen): JSX.Element {
             return <Chat />;
         case 'error':
             return <ErrorScreen />;
+        case 'profile':
+            return <Profile />;
     }
     return assertUnreachable(currentScreen);
 }

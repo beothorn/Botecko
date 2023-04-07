@@ -64,7 +64,7 @@ export default function Chat() {
   }
 
   const contactInfo = () => {
-    dispatch(actionSetScreen('contacts'));
+    dispatch(actionSetScreen('profile'));
   };
 
   const showPlanning = () => {
@@ -79,8 +79,13 @@ export default function Chat() {
   };
 
   const centerItem = (<>
-    <Avatar alt={avatarMetaData.prompt} src={`data:image/png;base64, ${avatarMetaData.base64Img}`} sx={{mr: 2}}/>
-    <ScreenTitle title={metaData.name} />
+    <Avatar alt={avatarMetaData.prompt} 
+      src={`data:image/png;base64, ${avatarMetaData.base64Img}`} 
+      sx={{mr: 2}}
+      onClick={() => contactInfo()}
+    />
+    <ScreenTitle title={metaData.name} 
+      onClick={() => contactInfo()}/>
   </>)
 
   const menuItems = {
@@ -90,7 +95,7 @@ export default function Chat() {
   }
 
   return (<Screen
-    leftItem={<BackButton originScreen='contacts'/>}
+    leftItem={<BackButton/>}
     centerItem={centerItem}
     menuItems={menuItems}
     barPosition='absolute'

@@ -7,8 +7,8 @@ const AppBarStyled = styled(AppBar)(() => ({
   color: '#eee',
 }));
 
-function ScreenTitleRaw({title, className}: ScreenTitleProps){
-  return <Typography className={className} variant="h6">{title}</Typography>;
+function ScreenTitleRaw({title, className, onClick}: ScreenTitleProps){
+  return <Typography className={className} variant="h6" onClick={onClick}>{title}</Typography>;
 };
 
 export const ScreenTitle = styled(ScreenTitleRaw)(() => ({
@@ -25,6 +25,7 @@ type Props = {
 
 type ScreenTitleProps = {
     className?: string;
+    onClick?: () => void;
     title: string;
 };
 

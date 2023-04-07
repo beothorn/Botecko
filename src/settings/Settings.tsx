@@ -45,7 +45,7 @@ export default function Settings() {
     }
 
     return <Screen
-        leftItem = {<BackButton originScreen='contacts' />}
+        leftItem = {<BackButton/>}
         centerItem = {<ScreenTitle title='Settings' />}
     >
         <SettingsForm>
