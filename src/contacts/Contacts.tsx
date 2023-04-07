@@ -61,4 +61,4 @@ export default function Contacts() {
     </List>
     {Object.entries(contacts).length === 0 && <Button onClick={() => addContact()}>Add Contact</Button>}
   </Screen>);
-};
+}

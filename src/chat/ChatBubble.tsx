@@ -55,4 +55,4 @@ export default function ChatBubble({ content, role }: Message){
     case 'thought':
       return <ChatBubbleThought text={content} />;
   }
-};
+}

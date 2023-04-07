@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import SendIcon from '@mui/icons-material/Send';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { selectSettings, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning } from '../appStateSlice';
+import { selectSettings, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning, actionSetErrorMessage } from '../appStateSlice';
 import { TextField, IconButton, Avatar, styled } from '@mui/material';
 import { batch } from 'react-redux';
 import Screen, { ScreenTitle } from '../screens/screen';
@@ -71,6 +71,13 @@ export default function Chat() {
     dispatch(actionToggleShowPlanning());
   };
 
+  const notImplemented = () => {
+    batch(() => {
+      dispatch(actionSetErrorMessage("Not available yet"));
+      dispatch(actionSetScreen('error'));
+    })
+  };
+
   const deleteContact = () => {
     batch(() => {
       dispatch(actionSetScreen('contacts'));
@@ -91,6 +98,7 @@ export default function Chat() {
   const menuItems = {
     "Contact info": contactInfo,
     "Delete Contact": deleteContact,
+    "Delete History": notImplemented,
     "Toggle planning": showPlanning,
   }
 

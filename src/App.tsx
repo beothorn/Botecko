@@ -46,7 +46,7 @@ export default function App() {
 
     const currentScreen = useAppSelector(selectScreen);
 
-    let currentScreenComponent = getCurrentScreenComponent(currentScreen);
+    const currentScreenComponent = getCurrentScreenComponent(currentScreen);
 
     return <StyledBox height="100vh" display="flex" flexDirection="column">
         <Box flex={1} overflow="auto">

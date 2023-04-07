@@ -9,7 +9,8 @@
   "scripts": {
     "build": "rm -rf dist && yarn webpack --config webpack.config.js",
     "start": "webpack serve --config webpack.config.js --hot",
-    "deploy": "yarn build && cp dist/bundle.js docs/bundle.js && cp index.html docs/index.html"
+    "deploy": "yarn build && cp dist/bundle.js docs/bundle.js && cp index.html docs/index.html",
+    "lint": "eslint . --ext ts --ext .tsx"
   },
   "devDependencies": {
     "@types/node": "^17.0.35",
@@ -28,7 +29,10 @@
     "@reduxjs/toolkit": "^1.8.2",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
     "axios": "^0.27.2",
+    "eslint": "^8.37.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-redux": "^8.0.2",

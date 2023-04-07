@@ -9,7 +9,7 @@ const AppBarStyled = styled(AppBar)(() => ({
 
 function ScreenTitleRaw({title, className, onClick}: ScreenTitleProps){
   return <Typography className={className} variant="h6" onClick={onClick}>{title}</Typography>;
-};
+}
 
 export const ScreenTitle = styled(ScreenTitleRaw)(() => ({
   flexGrow: 1
