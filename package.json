@@ -7,10 +7,11 @@
   "author": "beothorn",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "rm -rf dist && yarn webpack --config webpack.config.js",
+    "build": "rm -rf dist && yarn lint && yarn webpack --config webpack.config.js --mode production",
     "start": "webpack serve --config webpack.config.js --hot",
     "deploy": "yarn build && cp dist/bundle.js docs/bundle.js && cp index.html docs/index.html",
-    "lint": "eslint . --ext ts --ext .tsx"
+    "lint": "eslint . --ext ts --ext .tsx",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
     "@types/node": "^17.0.35",
@@ -23,7 +24,6 @@
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
-    "@fontsource/roboto": "^4.5.7",
     "@mui/icons-material": "^5.8.0",
     "@mui/material": "^5.8.1",
     "@reduxjs/toolkit": "^1.8.2",

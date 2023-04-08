@@ -44,6 +44,10 @@ export default function Settings() {
         })
     }
 
+    const gotoStateEditor = () => {
+        dispatch(actionSetScreen('stateEditor'));
+    }
+
     return <Screen
         leftItem = {<BackButton/>}
         centerItem = {<ScreenTitle title='Settings' />}
@@ -85,46 +89,14 @@ export default function Settings() {
                 label="Model"
                 variant="outlined"
             />
-            <TextField
-                value={settings.systemEntry}
-                onChange={(event) => handleChange(event, "systemEntry")}
-                required
-                size="small"
-                id="systemEntry"
-                label="System Entry"
-                variant="outlined"
-                multiline
-                maxRows={4}
-            />
-            <TextField
-                value={settings.profileGeneratorSystemEntry}
-                onChange={(event) => handleChange(event, "profileGeneratorSystemEntry")}
-                required
-                size="small"
-                id="profileGeneratorSystemEntry"
-                label="Profile Generator System Entry"
-                variant="outlined"
-                multiline
-                maxRows={4}
-            />
-            <TextField
-                value={settings.profileGeneratorMessageEntry}
-                onChange={(event) => handleChange(event, "profileGeneratorMessageEntry")}
-                required
-                size="small"
-                id="profileGeneratorMessageEntry"
-                label="Profile Generator Message Entry"
-                variant="outlined"
-                multiline
-                maxRows={4}
-            />
             <FormControlLabel control={<Checkbox 
                 checked={settings.showThought}
                 onChange={(event) => handleCheckboxChange(event, "showThought")}
                 required
                 size="small"
                 id="Show Thoughts" />} label="showThought" />
-            <Button onClick={updateKey}>Ok</Button>      
+            <Button onClick={updateKey}>Save settings</Button>      
         </SettingsForm>
+        <Button onClick={gotoStateEditor}>State Editor (Advanced)</Button>   
     </Screen>;
 }

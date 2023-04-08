@@ -6,13 +6,16 @@ import type { RootState } from './store'
 import { chatCompletion, imageGeneration, listEngines, Message } from './OpenAiApi'
 import { defaultSystemEntry, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem } from './prompts/promptGenerator';
 
+const currentVersion = 'v1.0.0';
+
 export type AppScreen = 'testOpenAiToken' 
   | 'settings' 
   | 'contacts'
   | 'chat' 
   | 'addContact'
   | 'error'
-  | 'profile';
+  | 'profile'
+  | 'stateEditor';
 
 type MetaFromAI = {
   userProfile: string,
@@ -63,6 +66,7 @@ export type Settings = {
 }
 
 type AppState = {
+  version: string,
   settings: Settings,
   currentScreen: AppScreen,
   contacts: Record<string, Contact>,
@@ -73,6 +77,7 @@ type AppState = {
 }
 
 const initialState: AppState = {
+  version: currentVersion,
   settings: {
     openAiKey: "",
     userName: "",
@@ -91,10 +96,8 @@ const initialState: AppState = {
   previousScreen: 'contacts'
 }
 
-const localStorageKey = 'v1.0.0';
-
 function getInitialState(): AppState{
-  const storedState = localStorage.getItem(localStorageKey);
+  const storedState = localStorage.getItem(currentVersion);
   if (storedState) {
     const loadedInitialState = JSON.parse(storedState);
     loadedInitialState.currentScreen = 'testOpenAiToken';
@@ -105,13 +108,27 @@ function getInitialState(): AppState{
 }
 
 function saveStateToLocalStorage(state: AppState) {
-  localStorage.setItem(localStorageKey, JSON.stringify(state));
+  localStorage.setItem(state.version, JSON.stringify(state));
 }
 
 export const appStateSlice = createSlice({
   name: 'appState',
   initialState: getInitialState(),
   reducers: {
+    reloadState: (state: AppState, action: PayloadAction<string>) => {
+      const storedState = localStorage.getItem(action.payload);
+      if (storedState) {
+        const reloadedState = JSON.parse(storedState);
+        state.version = reloadedState.version;
+        state.settings = reloadedState.settings;
+        state.currentScreen = reloadedState.currentScreen;
+        state.contacts = reloadedState.contacts;
+        state.chatId = reloadedState.chatId;
+        state.waitingAnswer = reloadedState.waitingAnswer;
+        state.errorMessage = reloadedState.errorMessage;
+        state.previousScreen = reloadedState.previousScreen;
+      }
+    },
     setSettings: (state: AppState, action: PayloadAction<Settings>) => {
       state.settings = action.payload;
       saveStateToLocalStorage(state);
@@ -168,12 +185,14 @@ export const appStateSlice = createSlice({
 
 export const selectScreen = (state: RootState) => state.appState.currentScreen
 export const selectSettings = (state: RootState) => state.appState.settings
+export const selectVersion = (state: RootState) => state.appState.version
 export const selectErrorMessage = (state: RootState) => state.appState.errorMessage
 export const selectCurrentContact = (state: RootState) => state.appState.contacts[state.appState.chatId]
 export const selectChatHistory = (state: RootState) => state.appState.contacts[state.appState.chatId].chats
 export const selectContacts = (state: RootState) => state.appState.contacts
 export const selectWaitingAnswer = (state: RootState) => state.appState.waitingAnswer
 
+export const actionReloadState = (version: string) => ({type: 'appState/reloadState', payload: version})
 export const actionSetScreen = (screen: AppScreen) => ({type: 'appState/setScreen', payload: screen})
 export const actionGoToPreviousScreen = () => ({type: 'appState/goToPreviousScreen'})
 export const actionSetChatId = (chatId: string) => ({type: 'appState/setChatId', payload: chatId})

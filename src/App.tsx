@@ -13,6 +13,7 @@ import Box from '@mui/material/Box';
 import { AddContact } from './addContact/AddContact';
 import { styled } from '@mui/material';
 import { Profile } from './profile/Profile';
+import StateEditor from './settings/StateEditor';
 
 function assertUnreachable(_x: never): never {
     throw new Error("Didn't expect to get here");
@@ -34,6 +35,8 @@ function getCurrentScreenComponent(currentScreen: AppScreen): JSX.Element {
             return <ErrorScreen />;
         case 'profile':
             return <Profile />;
+        case 'stateEditor':
+            return <StateEditor />
     }
     return assertUnreachable(currentScreen);
 }
