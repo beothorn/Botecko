@@ -1,7 +1,6 @@
 import React from 'react';
 import List from '@mui/material/List';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
 import ListItemText from '@mui/material/ListItemText';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { actionRemoveContact, actionSetChatId, actionSetScreen, selectContacts } from '../appStateSlice';
@@ -9,6 +8,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { Button, CircularProgress, styled } from '@mui/material';
 import Screen from '../screens/screen';
 import { ScreenTitle } from '../screens/screen';
+import LocalAvatar from '../components/LocalAvatar';
 
 const StyledListItemText = styled(ListItemText)(({theme}) => ({
   color: theme.palette.text.primary
@@ -46,7 +46,7 @@ export default function Contacts() {
         contact.loaded ? 
         <ListItemButton key={contact.meta.name} onClick={() => gotoChat(key)}>
           <ListItemAvatar>
-            <Avatar alt={contact.avatarMeta.prompt} src={`data:image/png;base64, ${contact.avatarMeta.base64Img}`} />
+            <LocalAvatar id={contact.avatarMeta.id} />
           </ListItemAvatar>
           <StyledListItemText primary={contact.meta.name} secondary={contact.lastMessage} />
         </ListItemButton>

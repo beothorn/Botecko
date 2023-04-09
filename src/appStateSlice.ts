@@ -42,7 +42,7 @@ type Meta = {
 
 type AvatarMeta = {
   prompt: string,
-  base64Img: string
+  id: string
 }
 
 type Contact = {
@@ -261,7 +261,7 @@ export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, setti
     },
     avatarMeta: {
       prompt: '',
-      base64Img: ''
+      id: ''
     },
     chats: [],
     loaded: false,
@@ -283,7 +283,7 @@ export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, setti
       },
       avatarMeta: {
         prompt: '',
-        base64Img: ''
+        id: ''
       },
       chats: [],
       loaded: true,
@@ -302,12 +302,14 @@ export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, setti
 }
 
 function createContactFromMeta(id: string, meta: MetaFromAI, avatarBase64Img: string): Contact{
+  const avatarId = Math.floor(Math.random() * 10000) + 'bot';
+  localStorage.setItem(avatarId, avatarBase64Img);
   return {
       id,
       meta,
       avatarMeta: {
         prompt: meta.avatar,
-        base64Img: avatarBase64Img
+        id: avatarId
       },
       chats: [],
       loaded: true,

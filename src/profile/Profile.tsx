@@ -5,7 +5,7 @@ import { useAppSelector } from '../hooks'
 import { selectCurrentContact } from '../appStateSlice';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
-import { Avatar } from '@mui/material';
+import LocalAvatar from '../components/LocalAvatar';
 
 export function Profile() {
     const currentContact = useAppSelector(selectCurrentContact);
@@ -22,9 +22,8 @@ export function Profile() {
                 alignItems: 'center',
                 mb: '2rem'
             }}>
-                <Avatar
-                    alt={avatarMetaData.prompt}
-                    src={`data:image/png;base64, ${avatarMetaData.base64Img}`}
+                <LocalAvatar
+                    id={avatarMetaData.id}
                     sx={{
                         width: '12rem',
                         height: '12rem',

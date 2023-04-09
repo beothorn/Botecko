@@ -24,6 +24,11 @@ export default function StateEditor() {
         }
     }
 
+    const stateFromStorage = (currentVersion: string) => {
+        const fromStorage = localStorage.getItem(currentVersion) || '{}';
+        return JSON.stringify(JSON.parse(fromStorage), null, 2);
+    }
+
     return (
         <Screen
             leftItem={<BackButton />}
@@ -31,7 +36,7 @@ export default function StateEditor() {
         >
             <TextField
                 label="State"
-                defaultValue={localStorage.getItem(currentVersion)}
+                defaultValue={stateFromStorage(currentVersion)}
                 onChange={(event) => {
                     stateRef.current = event.target.value;
                 }}

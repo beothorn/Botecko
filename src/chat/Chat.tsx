@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import SendIcon from '@mui/icons-material/Send';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { selectSettings, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning, actionSetErrorMessage } from '../appStateSlice';
-import { TextField, IconButton, Avatar, styled } from '@mui/material';
+import { TextField, IconButton, styled } from '@mui/material';
 import { batch } from 'react-redux';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
 import ChatBubble from './ChatBubble';
 import { Message } from '../OpenAiApi';
+import LocalAvatar from '../components/LocalAvatar';
 
 const Root = styled('div')(() => ({
   height: '100vh',
@@ -86,8 +87,7 @@ export default function Chat() {
   };
 
   const centerItem = (<>
-    <Avatar alt={avatarMetaData.prompt} 
-      src={`data:image/png;base64, ${avatarMetaData.base64Img}`} 
+    <LocalAvatar id={avatarMetaData.id} 
       sx={{mr: 2}}
       onClick={() => contactInfo()}
     />

@@ -5,8 +5,8 @@ import { Message } from '../OpenAiApi';
 
 type ChatBubbleStyledProps = {
   className?: string;
-    text: string;
-  };
+  text: string;
+};
 
 function ChatBubbleStyled({ className, text }: ChatBubbleStyledProps){
     return (
