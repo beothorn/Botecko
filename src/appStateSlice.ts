@@ -17,6 +17,7 @@ export type AppScreen = 'testOpenAiToken'
   | 'profile'
   | 'stateEditor';
 
+// If any value is changed here, a new version and migration is needed 
 type MetaFromAI = {
   userProfile: string,
   name: string,
@@ -29,6 +30,7 @@ type MetaFromAI = {
   avatar: string
 }
 
+// If any value is changed here, a new version and migration is needed
 type Meta = {
   userProfile: string,
   name: string,
@@ -40,11 +42,13 @@ type Meta = {
   chatCharacteristics: string,
 }
 
+// If any value is changed here, a new version and migration is needed
 type AvatarMeta = {
   prompt: string,
   id: string
 }
 
+// If any value is changed here, a new version and migration is needed
 type Contact = {
   id: string,
   meta: Meta,
@@ -54,6 +58,7 @@ type Contact = {
   loaded: boolean
 }
 
+// If any value is changed here, a new version and migration is needed
 export type Settings = {
   openAiKey: string,
   userName: string,
@@ -65,6 +70,7 @@ export type Settings = {
   showThought: boolean
 }
 
+// If any value is changed here, a new version and migration is needed
 type AppState = {
   version: string,
   settings: Settings,
@@ -99,12 +105,17 @@ const initialState: AppState = {
 function getInitialState(): AppState{
   const storedState = localStorage.getItem(currentVersion);
   if (storedState) {
+    const storedStateVersion = localStorage.getItem("currentVersion");
+    if(storedStateVersion !== currentVersion){
+      console.log(`Migration from version '${storedStateVersion}' to '${currentVersion}' needed.`);
+    }
     const loadedInitialState = JSON.parse(storedState);
     loadedInitialState.screenStack.push('testOpenAiToken');
     loadedInitialState.currentScreen = 'testOpenAiToken';
     loadedInitialState.waitingAnswer = false;
     return loadedInitialState;
   }
+  localStorage.setItem("currentVersion", currentVersion);
   return initialState;
 }
 
