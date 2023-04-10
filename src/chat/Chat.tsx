@@ -88,6 +88,7 @@ export default function Chat() {
 
   const centerItem = (<>
     <LocalAvatar id={avatarMetaData.id} 
+      prompt={avatarMetaData.prompt}
       sx={{mr: 2}}
       onClick={() => contactInfo()}
     />

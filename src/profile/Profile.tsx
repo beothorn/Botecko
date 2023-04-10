@@ -24,6 +24,7 @@ export function Profile() {
             }}>
                 <LocalAvatar
                     id={avatarMetaData.id}
+                    prompt={avatarMetaData.prompt}
                     sx={{
                         width: '12rem',
                         height: '12rem',

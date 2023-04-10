@@ -46,7 +46,7 @@ export default function Contacts() {
         contact.loaded ? 
         <ListItemButton key={contact.meta.name} onClick={() => gotoChat(key)}>
           <ListItemAvatar>
-            <LocalAvatar id={contact.avatarMeta.id} />
+            <LocalAvatar id={contact.avatarMeta.id} prompt={contact.avatarMeta.prompt} />
           </ListItemAvatar>
           <StyledListItemText primary={contact.meta.name} secondary={contact.lastMessage} />
         </ListItemButton>
