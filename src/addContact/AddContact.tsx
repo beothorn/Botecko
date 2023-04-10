@@ -34,6 +34,12 @@ export function AddContact() {
         })
     };
 
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.keyCode === 13) {
+            generateContact();
+        }
+    };
+
     return <Screen
         leftItem = {<BackButton/>}
         centerItem = {<ScreenTitle title='Adding Contact' />}
@@ -42,6 +48,7 @@ export function AddContact() {
             <TextField 
                 value={profile}
                 onChange={handleChange}
+                onKeyDown={handleKeyDown}
                 required size="small" 
                 id="profile" 
                 label="Contact description" 
