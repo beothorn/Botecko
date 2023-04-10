@@ -21,7 +21,7 @@ export function TestOpenAiToken() {
                 dispatchActionCheckOpenAiKey(dispatch, settings)
             }
         }
-    }, [openAiKeyFromStore, settings]);
+    }, [settings]);
 
     return (<Screen
         centerItem={<ScreenTitle title='Botecko' />}

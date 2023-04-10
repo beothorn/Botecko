@@ -6,7 +6,7 @@ import type { RootState } from './store'
 import { chatCompletion, imageGeneration, listEngines, Message } from './OpenAiApi'
 import { defaultSystemEntry, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem } from './prompts/promptGenerator';
 
-const currentVersion = 'v1.0.0';
+const currentVersion = 'v1';
 
 export type AppScreen = 'testOpenAiToken' 
   | 'settings' 
@@ -73,7 +73,7 @@ type AppState = {
   chatId: string,
   waitingAnswer: boolean,
   errorMessage: string,
-  previousScreen: AppScreen
+  screenStack: AppScreen[]
 }
 
 const initialState: AppState = {
@@ -93,13 +93,14 @@ const initialState: AppState = {
   chatId: '',
   waitingAnswer: false,
   errorMessage: '',
-  previousScreen: 'contacts'
+  screenStack: ['contacts']
 }
 
 function getInitialState(): AppState{
   const storedState = localStorage.getItem(currentVersion);
   if (storedState) {
     const loadedInitialState = JSON.parse(storedState);
+    loadedInitialState.screenStack.push('testOpenAiToken');
     loadedInitialState.currentScreen = 'testOpenAiToken';
     loadedInitialState.waitingAnswer = false;
     return loadedInitialState;
@@ -126,7 +127,7 @@ export const appStateSlice = createSlice({
         state.chatId = reloadedState.chatId;
         state.waitingAnswer = reloadedState.waitingAnswer;
         state.errorMessage = reloadedState.errorMessage;
-        state.previousScreen = reloadedState.previousScreen;
+        state.screenStack = reloadedState.screenStack;
       }
     },
     setSettings: (state: AppState, action: PayloadAction<Settings>) => {
@@ -138,12 +139,20 @@ export const appStateSlice = createSlice({
       saveStateToLocalStorage(state);
     },
     setScreen: (state: AppState, action: PayloadAction<AppScreen>) => {
-      state.previousScreen = state.currentScreen; 
+      if(action.payload === 'contacts'){
+        state.currentScreen = action.payload;
+        state.screenStack = ['contacts'];
+      }
+      if(action.payload === state.currentScreen){
+        return;
+      }
       state.currentScreen = action.payload;
+      state.screenStack.push(action.payload);
       saveStateToLocalStorage(state);
     },
     goToPreviousScreen: (state: AppState) => {
-      state.currentScreen = state.previousScreen;
+      state.screenStack.pop();
+      state.currentScreen = state.screenStack.at(-1) || 'contacts';
       saveStateToLocalStorage(state);
     },
     setChatId: (state: AppState, action: PayloadAction<string>) => {
