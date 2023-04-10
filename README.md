@@ -12,3 +12,8 @@ Add a contact using an one sentence description and it will create:
 - A new entry on your contact list 
 
 Chat with your contact, lok behind the curtains to see why they answered the way they did.  
+
+![Chat without plan](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/profile.png)
+![Chat without plan](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/chatNotPlan.png)
+![Chat without plan](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/planMenu.png)
+![Chat without plan](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/chatWithPlan.png)
