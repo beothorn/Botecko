@@ -3,12 +3,12 @@ import {
   Paper,
   Typography,
   IconButton,
-  Menu,
   MenuItem,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Message } from '../OpenAiApi';
+import StyledMenu from '../components/StyledMenu';
 
 type ChatBubbleStyledProps = {
   className?: string;
@@ -37,7 +37,7 @@ function ChatBubbleStyled({ className, text }: ChatBubbleStyledProps) {
       >
         <MoreVertIcon  fontSize="small" />
       </IconButton>
-      <Menu
+      <StyledMenu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleClose}
@@ -46,7 +46,7 @@ function ChatBubbleStyled({ className, text }: ChatBubbleStyledProps) {
         <MenuItem onClick={() => {console.log("TO BE IMPLEMENTED")}}>Delete message</MenuItem>
         <MenuItem onClick={() => {console.log("TO BE IMPLEMENTED")}}>Edit Message</MenuItem>
         <MenuItem onClick={() => {console.log("TO BE IMPLEMENTED")}}>Copy message</MenuItem>
-      </Menu>
+      </StyledMenu>
       <Typography variant="body1">{text}</Typography>
     </Paper>
   );

@@ -43,7 +43,9 @@ export default function Contacts() {
   const menuItems = {
     "Settings": gotoSettings,
     "Add Contact": addContact,
-    "Import Contact": notImplemented
+    "Import Contact": notImplemented,
+    "New Group Chat": notImplemented,
+    "About": notImplemented
   };
 
   return (<Screen
