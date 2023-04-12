@@ -3,12 +3,13 @@ import List from '@mui/material/List';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { actionRemoveContact, actionSetChatId, actionSetScreen, selectContacts } from '../appStateSlice';
+import { actionRemoveContact, actionSetChatId, actionSetErrorMessage, actionSetScreen, selectContacts } from '../appStateSlice';
 import ListItemButton from '@mui/material/ListItemButton';
 import { Button, CircularProgress, styled } from '@mui/material';
 import Screen from '../screens/screen';
 import { ScreenTitle } from '../screens/screen';
 import LocalAvatar from '../components/LocalAvatar';
+import { batch } from 'react-redux';
 
 const StyledListItemText = styled(ListItemText)(({theme}) => ({
   color: theme.palette.text.primary
@@ -32,9 +33,17 @@ export default function Contacts() {
     dispatch(actionSetScreen('settings'));
   };
 
+  const notImplemented = () => {
+    batch(() => {
+      dispatch(actionSetErrorMessage("Not available yet"));
+      dispatch(actionSetScreen('error'));
+    })
+  };
+
   const menuItems = {
     "Settings": gotoSettings,
-    "Add Contact": addContact
+    "Add Contact": addContact,
+    "Import Contact": notImplemented
   };
 
   return (<Screen

@@ -100,6 +100,7 @@ export default function Chat() {
     "Contact info": contactInfo,
     "Delete Contact": deleteContact,
     "Delete History": notImplemented,
+    "Export Contact": notImplemented,
     "Toggle planning": showPlanning,
   }
 
@@ -113,7 +114,6 @@ export default function Chat() {
       <ChatWrapper/>
       <ChatContainer>
         {chatHistory
-          .filter(m => m.role !== 'system')
           .flatMap((m): Message[] => {
             if(m.role === "assistant"){
               const messageWithPlan = JSON.parse(m.content)
@@ -125,6 +125,11 @@ export default function Chat() {
               }else{
                 return [{"role": "assistant", "content": messageWithPlan.answer}];
               }
+            }
+            if(m.role === "system"){
+              return [
+                {"role": "system", "content": m.content}
+              ];
             }
             return [{"role": "user", "content": m.content}];
           })

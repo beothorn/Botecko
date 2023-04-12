@@ -1,6 +1,13 @@
-import React from 'react';
-import { Paper, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import {
+  Paper,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Message } from '../OpenAiApi';
 
 type ChatBubbleStyledProps = {
@@ -8,12 +15,41 @@ type ChatBubbleStyledProps = {
   text: string;
 };
 
-function ChatBubbleStyled({ className, text }: ChatBubbleStyledProps){
-    return (
-        <Paper className={className} elevation={3}>
-            <Typography variant="body1">{text}</Typography>
-        </Paper>
-    );
+function ChatBubbleStyled({ className, text }: ChatBubbleStyledProps) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <Paper className={className} elevation={3} 
+    style={{ position: 'relative', display: 'inline-block' }}>
+      <IconButton
+        edge="end"
+        color="inherit"
+        onClick={handleClick}
+        style={{ position: 'absolute', top: '-0.2rem', right: '0.2rem' }}
+      >
+        <MoreVertIcon  fontSize="small" />
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        onClick={handleClose}
+      >
+        <MenuItem onClick={() => {console.log("TO BE IMPLEMENTED")}}>Delete message</MenuItem>
+        <MenuItem onClick={() => {console.log("TO BE IMPLEMENTED")}}>Edit Message</MenuItem>
+        <MenuItem onClick={() => {console.log("TO BE IMPLEMENTED")}}>Copy message</MenuItem>
+      </Menu>
+      <Typography variant="body1">{text}</Typography>
+    </Paper>
+  );
 }
 
 const ChatBubbleUser = styled(ChatBubbleStyled)(({ theme }) => ({
@@ -45,6 +81,16 @@ const ChatBubbleThought = styled(ChatBubbleStyled)(({ theme }) => ({
   alignSelf: 'flex-end',
 }));
 
+const ChatBubbleSystem = styled(ChatBubbleStyled)(({ theme }) => ({
+  backgroundColor: '#3a3a3a',
+  color: theme.palette.info.contrastText,
+  padding: theme.spacing(1),
+  borderRadius: '5px 5px 5px 5px',
+  maxWidth: '100%',
+  margin: `${theme.spacing(1)} ${theme.spacing(1)} ${theme.spacing(1)} 0px`,
+  alignSelf: 'flex-end',
+}));
+
 export default function ChatBubble({ content, role }: Message){
   switch(role){
     case 'assistant':
@@ -52,6 +98,7 @@ export default function ChatBubble({ content, role }: Message){
     case 'user':
       return <ChatBubbleUser text={content} />;
     case 'system':
+      return <ChatBubbleSystem text={content} />;
     case 'thought':
       return <ChatBubbleThought text={content} />;
   }

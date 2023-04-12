@@ -6,7 +6,7 @@ import type { RootState } from './store'
 import { chatCompletion, imageGeneration, listEngines, Message } from './OpenAiApi'
 import { defaultSystemEntry, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem } from './prompts/promptGenerator';
 
-const currentVersion = 'v1';
+const currentVersion = '1';
 
 export type AppScreen = 'testOpenAiToken' 
   | 'settings' 
@@ -55,7 +55,8 @@ type Contact = {
   avatarMeta: AvatarMeta,
   chats: Message[],
   lastMessage: string,
-  loaded: boolean
+  loaded: boolean,
+  contactSystemEntry: Message
 }
 
 // If any value is changed here, a new version and migration is needed
@@ -251,7 +252,7 @@ export async function dispatchSendMessage(dispatch: Dispatch<AnyAction>, contact
     dispatch(actionAddMessage({"role": "assistant", "content": "Lorem ipsum"}));
     dispatch(actionSetWaitingAnswer(false));
   }else{
-    chatCompletion(settings, [writeSystemEntry(contact.meta, settings.userName, settings.userShortInfo, settings.systemEntry)].concat(chatWithNewMessage))
+    chatCompletion(settings, [contact.contactSystemEntry].concat(chatWithNewMessage))
       .then(response => batch(() => {
         dispatch(actionSetWaitingAnswer(false));
         dispatch(actionAddMessage(response));
@@ -285,7 +286,8 @@ export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, setti
     },
     chats: [],
     loaded: false,
-    lastMessage: ''
+    lastMessage: '',
+    contactSystemEntry: {"role": "system", "content": ''}
   }))
 
   if(settings.model === "debug"){
@@ -307,21 +309,26 @@ export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, setti
       },
       chats: [],
       loaded: true,
-      lastMessage: ''
+      lastMessage: '',
+      contactSystemEntry: {"role": "system", "content": ''}
     }))
   }else{
     chatCompletion(settings, generateContact(contactDescription, settings.profileGeneratorSystemEntry, settings.profileGeneratorMessageEntry))
     .then(response => {
       const responseJson: MetaFromAI = JSON.parse(response.content);
       imageGeneration(settings, responseJson.avatar)
-      .then(img => dispatch(actionAddContact(createContactFromMeta(id, responseJson, img))))
-      .catch(() => dispatch(actionAddContact(createContactFromMeta(id, responseJson, ""))));
+      .then(img => dispatch(actionAddContact(createContactFromMeta(id, settings, responseJson, img))))
+      .catch(() => dispatch(actionAddContact(createContactFromMeta(id, settings, responseJson, ""))));
     }).catch(() => dispatch(actionRemoveContact(id)));
   }
-  
 }
 
-function createContactFromMeta(id: string, meta: MetaFromAI, avatarBase64Img: string): Contact{
+function createContactFromMeta(
+    id: string, 
+    settings: Settings,
+    meta: MetaFromAI, 
+    avatarBase64Img: string
+): Contact{
   const avatarId = Math.floor(Math.random() * 10000) + 'bot';
   localStorage.setItem(avatarId, avatarBase64Img);
   return {
@@ -333,11 +340,22 @@ function createContactFromMeta(id: string, meta: MetaFromAI, avatarBase64Img: st
       },
       chats: [],
       loaded: true,
-      lastMessage: meta.userProfile
+      lastMessage: meta.userProfile,
+      contactSystemEntry: writeSystemEntry(
+        meta, 
+        settings.userName, 
+        settings.userShortInfo,
+        settings.systemEntry
+      )
     };
 }
 
-function writeSystemEntry(meta: Meta, userName: string, userShortInfo: string, systemEntry: string): Message{
+function writeSystemEntry(
+  meta: Meta, 
+  userName: string, 
+  userShortInfo: string, 
+  systemEntry: string
+): Message{
   const metaAsString = JSON.stringify(meta);
 
   if(!systemEntry){
