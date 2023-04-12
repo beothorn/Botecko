@@ -13,7 +13,9 @@ Add a contact using an one sentence description and it will create:
 
 Chat with your contact, lok behind the curtains to see why they answered the way they did.  
 
-![Chat without plan](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/profile.png)
+![Add Contact](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/addContact.png)
+![Profile](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/profile.png)
+![Profile2](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/profile2.png)
 ![Chat without plan](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/chatNotPlan.png)
-![Chat without plan](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/planMenu.png)
-![Chat without plan](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/chatWithPlan.png)
+![PlanMenu](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/planMenu.png)
+![Chat with plan](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/chatWithPlan.png)
