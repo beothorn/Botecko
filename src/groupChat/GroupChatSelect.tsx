@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import List from '@mui/material/List';
-import { useAppSelector } from '../hooks';
-import { selectContacts } from '../appStateSlice';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { actionSetScreen, dispatchCreateGroupChat, selectContacts } from '../appStateSlice';
 import Screen from '../screens/screen';
 import { ScreenTitle } from '../screens/screen';
 import AvatarWithDetails from '../components/AvatarWithDetails';
 import BackButton from '../screens/backButton';
-import { Button, Checkbox, ListItem } from '@mui/material';
+import { Button, Checkbox, ListItem, TextField } from '@mui/material';
+import { batch } from 'react-redux';
 
 export default function GroupChatSelect() {
   const contacts = useAppSelector(selectContacts) ?? [];
-  const [selected, setSelected] = React.useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [groupName, setGroupName] = useState<string>('');
+
+  const dispatch = useAppDispatch();
 
   const select = (key: string,  checked: boolean) => {
     console.log(selected);
@@ -23,7 +27,13 @@ export default function GroupChatSelect() {
     console.log(selected);
   };
 
-  const printSelected = () => {
+  const createChat = () => {
+    if (groupName !== '' && selected.length > 0) { 
+      batch(() => {
+        dispatchCreateGroupChat(dispatch, groupName);
+        dispatch(actionSetScreen('contacts'));
+      })
+    }
     console.log(selected);
   }
 
@@ -33,7 +43,18 @@ export default function GroupChatSelect() {
   >
     <List>
       <ListItem> 
-        <Button onClick={() => printSelected()}>Start Chat</Button>
+        <TextField
+            required
+            value={groupName}
+            onChange={e => setGroupName(e.target.value)}
+            size="small"
+            id="groupName"
+            label="Group Name"
+            variant="outlined"
+        />
+      </ListItem>
+      <ListItem> 
+        <Button onClick={() => createChat()}>Start Chat</Button>
       </ListItem>
       {Object.entries(contacts).map(([key, contact]) => (
         <ListItem 

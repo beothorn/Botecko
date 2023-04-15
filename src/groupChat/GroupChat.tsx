@@ -1,18 +1,19 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { selectSettings, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning, actionSetErrorMessage, BotContact } from '../appStateSlice';
+import { selectSettings, selectChatHistory, selectWaitingAnswer, 
+  actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning, 
+  actionSetErrorMessage, GroupChatContact, actionAddMessage } from '../appStateSlice';
 import { batch } from 'react-redux';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
 import ChatBubble, { ChatBubbleProps } from '../components/ChatBubble';
 import LocalAvatar from '../components/LocalAvatar';
 import ChatEntry from '../components/ChatEntry';
-import { singleUserChatContext } from '../prompts/promptGenerator';
 
-export default function Chat() {
+export default function GroupChat() {
   const settings = useAppSelector(selectSettings);
   const chatHistory = useAppSelector(selectChatHistory) ?? [];
-  const currentContact = useAppSelector(selectCurrentContact) as BotContact;
+  const currentContact = useAppSelector(selectCurrentContact) as GroupChatContact;
   const metaData = currentContact.meta;
   const avatarMetaData = currentContact.avatarMeta;
   const isWaitingAnswer = useAppSelector(selectWaitingAnswer);
@@ -20,18 +21,16 @@ export default function Chat() {
   const dispatch = useAppDispatch();
 
   const handleSendMessage = (msg: string) => {
+    dispatch(actionAddMessage({"role": "user", "content": msg}));
+    /* When asking a bot to talk 
     dispatchSendMessage(
       dispatch, 
       currentContact, 
       settings, 
       chatHistory, 
-      msg,
-      singleUserChatContext
-    );
-  };
-
-  const contactInfo = () => {
-    dispatch(actionSetScreen('profile'));
+      msg, 
+      '');
+    */
   };
 
   const showPlanning = () => {
@@ -56,17 +55,14 @@ export default function Chat() {
     <LocalAvatar id={avatarMetaData.id} 
       prompt={avatarMetaData.prompt}
       sx={{mr: 2}}
-      onClick={() => contactInfo()}
     />
-    <ScreenTitle title={metaData.name} 
-      onClick={() => contactInfo()}/>
+    <ScreenTitle title={metaData.name}/>
   </>)
 
   const menuItems = {
-    "Contact info": contactInfo,
-    "Delete Contact": deleteContact,
+    "Group info": notImplemented,
+    "Delete Group": deleteContact,
     "Delete History": notImplemented,
-    "Export Contact": notImplemented,
     "Toggle planning": showPlanning,
   }
 

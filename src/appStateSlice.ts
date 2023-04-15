@@ -7,7 +7,7 @@ import { chatCompletion, imageGeneration, listEngines, Message } from './OpenAiA
 import { defaultSystemEntry, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem } from './prompts/promptGenerator';
 import migrations from './migrations';
 
-const currentVersion = '2';
+const currentVersion = '3';
 
 export type AppScreen = 'testOpenAiToken' 
   | 'settings' 
@@ -65,7 +65,7 @@ export type BotContact = {
   chats: ChatMessage[],
   lastMessage: string,
   loaded: boolean,
-  contactSystemEntry: Message
+  contactSystemEntryTemplate: string
 }
 
 // If any value is changed here, a new version and migration is needed
@@ -278,7 +278,8 @@ export async function dispatchSendMessage(
   contact: BotContact, 
   settings: Settings, 
   context: Message[], 
-  newMessage: string
+  newMessage: string,
+  promptContext: string
 ) {
   const newMessageWithRole: Message = {"role": "user", "content": newMessage};
   batch(() => {
@@ -290,16 +291,51 @@ export async function dispatchSendMessage(
     dispatch(actionAddMessage({"role": "assistant", "content": "Lorem ipsum"}));
     dispatch(actionSetWaitingAnswer(false));
   }else{
-    chatCompletion(settings, [contact.contactSystemEntry].concat(chatWithNewMessage))
+    const sysEntry = writeSystemEntry(
+      contact.meta, 
+      settings.userName, 
+      settings.userShortInfo, 
+      contact.contactSystemEntryTemplate,
+      promptContext
+    );
+    chatCompletion(settings, [sysEntry].concat(chatWithNewMessage))
       .then(response => batch(() => {
         dispatch(actionSetWaitingAnswer(false));
         dispatch(actionAddMessage(response));
         })  
-      ).catch(() => batch(() => {
+      ).catch((e) => batch(() => {
         dispatch(actionSetWaitingAnswer(false));
-        dispatch(actionAddMessage({"role": "user", "content": "Ops, I have network issues"}));
+        dispatch(actionAddMessage({"role": "assistant", "content": `{"plan": "${e.message}", "answer": "..."}`}));
       }));
   }  
+}
+
+export async function dispatchCreateGroupChat(
+  dispatch: Dispatch<AnyAction>,
+  groupName: string
+) {
+  const id = Math.floor(Math.random() * 10000) + 'groupChat'
+
+  dispatch(actionAddContact({
+    id: id,
+    meta: {
+      userProfile: '',
+      name: groupName,
+      background: '',
+      current: '',
+      appearance: '',
+      likes: '',
+      dislikes: '',
+      chatCharacteristics: '',
+    },
+    avatarMeta: {
+      prompt: '',
+      id: ''
+    },
+    chats: [],
+    loaded: true,
+    lastMessage: "Foo bar"
+  }));
 }
 
 export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, settings: Settings, contactDescription: string) {
@@ -325,7 +361,7 @@ export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, setti
     chats: [],
     loaded: false,
     lastMessage: '',
-    contactSystemEntry: {"role": "system", "content": ''}
+    contactSystemEntryTemplate: ''
   }))
 
   if(settings.model === "debug"){
@@ -348,7 +384,7 @@ export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, setti
       chats: [],
       loaded: true,
       lastMessage: '',
-      contactSystemEntry: {"role": "system", "content": ''}
+      contactSystemEntryTemplate: ''
     }))
   }else{
     chatCompletion(settings, generateContact(contactDescription, settings.profileGeneratorSystemEntry, settings.profileGeneratorMessageEntry))
@@ -379,12 +415,7 @@ function createContactFromMeta(
       chats: [],
       loaded: true,
       lastMessage: meta.userProfile,
-      contactSystemEntry: writeSystemEntry(
-        meta, 
-        settings.userName, 
-        settings.userShortInfo,
-        settings.systemEntry
-      )
+      contactSystemEntryTemplate: settings.systemEntry
     };
 }
 
@@ -392,7 +423,8 @@ function writeSystemEntry(
   meta: Meta, 
   userName: string, 
   userShortInfo: string, 
-  systemEntry: string
+  systemEntry: string,
+  promptContext: string
 ): Message{
   const metaAsString = JSON.stringify(meta);
 
@@ -404,7 +436,8 @@ function writeSystemEntry(
     .replaceAll("%NAME%", meta.name)
     .replaceAll("%USER_NAME%", userName)
     .replaceAll("%USER_INFO%", userShortInfo)
-    .replaceAll("%META_JSON%", metaAsString);
+    .replaceAll("%META_JSON%", metaAsString)
+    .replaceAll("%CONTEXT%", promptContext);
 
   return {"role": "system", "content": systemString}
 }
