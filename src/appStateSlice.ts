@@ -5,8 +5,9 @@ import type { RootState } from './store'
 
 import { chatCompletion, imageGeneration, listEngines, Message } from './OpenAiApi'
 import { defaultSystemEntry, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem } from './prompts/promptGenerator';
+import migrations from './migrations';
 
-const currentVersion = '1';
+const currentVersion = '2';
 
 export type AppScreen = 'testOpenAiToken' 
   | 'settings' 
@@ -50,15 +51,34 @@ type AvatarMeta = {
 }
 
 // If any value is changed here, a new version and migration is needed
-export type Contact = {
+type ChatMessage = {
+  contactId: string;
+  role: 'user' | 'system' | 'assistant' | 'thought';
+  content: string;
+}
+
+// If any value is changed here, a new version and migration is needed
+export type BotContact = {
   id: string,
   meta: Meta,
   avatarMeta: AvatarMeta,
-  chats: Message[],
+  chats: ChatMessage[],
   lastMessage: string,
   loaded: boolean,
   contactSystemEntry: Message
 }
+
+// If any value is changed here, a new version and migration is needed
+export type GroupChatContact = {
+  id: string,
+  meta: Meta,
+  avatarMeta: AvatarMeta,
+  chats: ChatMessage[],
+  loaded: boolean,
+  lastMessage: string
+}
+
+export type Contact = BotContact | GroupChatContact
 
 // If any value is changed here, a new version and migration is needed
 export type Settings = {
@@ -105,20 +125,31 @@ const initialState: AppState = {
 }
 
 function getInitialState(): AppState{
-  const storedState = localStorage.getItem(currentVersion);
-  if (storedState) {
-    const storedStateVersion = localStorage.getItem("currentVersion");
-    if(storedStateVersion !== currentVersion){
-      console.log(`Migration from version '${storedStateVersion}' to '${currentVersion}' needed.`);
-    }
-    const loadedInitialState = JSON.parse(storedState);
-    loadedInitialState.screenStack.push('testOpenAiToken');
-    loadedInitialState.currentScreen = 'testOpenAiToken';
-    loadedInitialState.waitingAnswer = false;
-    return loadedInitialState;
+
+  const currentInstalledVersion = localStorage.getItem("currentVersion");
+  const isFirstTime = currentInstalledVersion === null;
+  if(isFirstTime){
+    localStorage.setItem("currentVersion", currentVersion);
+    return initialState;
   }
-  localStorage.setItem("currentVersion", currentVersion);
-  return initialState;
+
+  const isUpToDate = currentInstalledVersion === currentVersion;
+  if(isUpToDate){
+    const storedState = localStorage.getItem(currentVersion) || JSON.stringify(initialState);
+    return JSON.parse(storedState);
+  }
+
+  const storedStateVersion =  Number(localStorage.getItem("currentVersion"));
+  const currentVersionNumber = Number(currentVersion);
+  if(storedStateVersion > currentVersionNumber){
+    console.error(`Stored state version '${storedStateVersion}' is higher than current version '${currentVersion}'`); 
+  }
+  for(let i = storedStateVersion; i < currentVersionNumber; i++){
+    console.log(`Applying migration ${i}`);
+    migrations[i]();
+  }
+  const storedState = localStorage.getItem(currentVersion) || JSON.stringify(initialState);
+  return JSON.parse(storedState);
 }
 
 function saveStateToLocalStorage(state: AppState) {
@@ -175,7 +206,7 @@ export const appStateSlice = createSlice({
     setErrorMessage: (state: AppState, action: PayloadAction<string>) => {
       state.errorMessage = action.payload;
     },
-    addMessage: (state: AppState, action: PayloadAction<Message>) => {
+    addMessage: (state: AppState, action: PayloadAction<ChatMessage>) => {
       state.contacts[state.chatId].chats = state.contacts[state.chatId].chats?.concat(action.payload) ?? [];
       if(action.payload.role === 'assistant'){
         const maxMessageSizeOnContactList = 40;
@@ -242,7 +273,13 @@ export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>
     });
 }
 
-export async function dispatchSendMessage(dispatch: Dispatch<AnyAction>, contact: Contact, settings: Settings, context: Message[], newMessage: string) {
+export async function dispatchSendMessage(
+  dispatch: Dispatch<AnyAction>, 
+  contact: BotContact, 
+  settings: Settings, 
+  context: Message[], 
+  newMessage: string
+) {
   const newMessageWithRole: Message = {"role": "user", "content": newMessage};
   batch(() => {
     dispatch(actionSetWaitingAnswer(true));

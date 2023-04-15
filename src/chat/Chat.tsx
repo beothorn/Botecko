@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { selectSettings, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning, actionSetErrorMessage } from '../appStateSlice';
+import { selectSettings, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning, actionSetErrorMessage, BotContact } from '../appStateSlice';
 import { batch } from 'react-redux';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
@@ -11,7 +11,7 @@ import ChatEntry from '../components/ChatEntry';
 export default function Chat() {
   const settings = useAppSelector(selectSettings);
   const chatHistory = useAppSelector(selectChatHistory) ?? [];
-  const currentContact = useAppSelector(selectCurrentContact);
+  const currentContact = useAppSelector(selectCurrentContact) as BotContact;
   const metaData = currentContact.meta;
   const avatarMetaData = currentContact.avatarMeta;
   const isWaitingAnswer = useAppSelector(selectWaitingAnswer);
