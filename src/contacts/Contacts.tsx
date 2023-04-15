@@ -1,19 +1,12 @@
 import React from 'react';
 import List from '@mui/material/List';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { actionRemoveContact, actionSetChatId, actionSetErrorMessage, actionSetScreen, selectContacts } from '../appStateSlice';
-import ListItemButton from '@mui/material/ListItemButton';
-import { Button, CircularProgress, styled } from '@mui/material';
+import { Button, ListItemButton } from '@mui/material';
 import Screen from '../screens/screen';
 import { ScreenTitle } from '../screens/screen';
-import LocalAvatar from '../components/LocalAvatar';
 import { batch } from 'react-redux';
-
-const StyledListItemText = styled(ListItemText)(({theme}) => ({
-  color: theme.palette.text.primary
-}));
+import AvatarWithDetails from '../components/AvatarWithDetails';
 
 export default function Contacts() {
   const dispatch = useAppDispatch();
@@ -25,6 +18,9 @@ export default function Contacts() {
 
   const addContact = () => {
     dispatch(actionSetScreen('addContact'));
+  };
+  const createGroupChat = () => {
+    dispatch(actionSetScreen('groupChatSelect'));
   };
   const removeContact = (id: string) => {
     dispatch(actionRemoveContact(id));
@@ -44,7 +40,7 @@ export default function Contacts() {
     "Settings": gotoSettings,
     "Add Contact": addContact,
     "Import Contact": notImplemented,
-    "New Group Chat": notImplemented,
+    "New Group Chat": createGroupChat,
     "About": notImplemented
   };
 
@@ -54,19 +50,11 @@ export default function Contacts() {
   >
     <List>
       {Object.entries(contacts).map(([key, contact]) => (
-        contact.loaded ? 
-        <ListItemButton key={contact.meta.name} onClick={() => gotoChat(key)}>
-          <ListItemAvatar>
-            <LocalAvatar id={contact.avatarMeta.id} prompt={contact.avatarMeta.prompt} />
-          </ListItemAvatar>
-          <StyledListItemText primary={contact.meta.name} secondary={contact.lastMessage} />
-        </ListItemButton>
-        :
-        <ListItemButton key={contact.meta.name} onClick={() => removeContact(key)}>
-          <ListItemAvatar>
-            <CircularProgress />
-          </ListItemAvatar>
-          <StyledListItemText primary={"Contact is loading..."} />
+        <ListItemButton 
+          key={contact.meta.name} 
+          onClick={() => contact.loaded ? gotoChat(key) : removeContact(key)}
+        >
+          <AvatarWithDetails contact={contact}/>  
         </ListItemButton>
       ))}
     </List>

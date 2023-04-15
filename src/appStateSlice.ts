@@ -12,6 +12,7 @@ export type AppScreen = 'testOpenAiToken'
   | 'settings' 
   | 'contacts'
   | 'chat' 
+  | 'groupChatSelect' 
   | 'addContact'
   | 'error'
   | 'profile'
@@ -49,7 +50,7 @@ type AvatarMeta = {
 }
 
 // If any value is changed here, a new version and migration is needed
-type Contact = {
+export type Contact = {
   id: string,
   meta: Meta,
   avatarMeta: AvatarMeta,
