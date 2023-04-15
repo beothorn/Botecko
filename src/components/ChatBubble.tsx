@@ -7,15 +7,21 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Message } from '../OpenAiApi';
-import StyledMenu from '../components/StyledMenu';
+import StyledMenu from './StyledMenu';
+import LocalAvatar from './LocalAvatar';
 
 type ChatBubbleStyledProps = {
   className?: string;
-  text: string;
+  children?: React.ReactNode;
 };
 
-function ChatBubbleStyled({ className, text }: ChatBubbleStyledProps) {
+export type ChatBubbleProps = {
+  role: 'user' | 'system' | 'assistant' | 'thought';
+  content: string;
+  avatarId?: string;
+};
+
+function ChatBubbleStyled({ className, children }: ChatBubbleStyledProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -47,35 +53,35 @@ function ChatBubbleStyled({ className, text }: ChatBubbleStyledProps) {
         <MenuItem onClick={() => {console.log("TO BE IMPLEMENTED")}}>Edit Message</MenuItem>
         <MenuItem onClick={() => {console.log("TO BE IMPLEMENTED")}}>Copy message</MenuItem>
       </StyledMenu>
-      <Typography variant="body1">{text}</Typography>
+      {children}
     </Paper>
   );
 }
 
-const ChatBubbleUser = styled(ChatBubbleStyled)(({ theme }) => ({
-    backgroundColor: '#00008a',
-    color: 'd7d7d7',
-    padding: theme.spacing(1),
-    borderRadius: '15px 15px 15px 0px',
-    maxWidth: '60%',
-    margin: `${theme.spacing(1)} 0px ${theme.spacing(1)} ${theme.spacing(1)}`,
+const ChatBubbleAssistant = styled(ChatBubbleStyled)(({ theme }) => ({
+  backgroundColor: '#007312',
+  color: 'd7d7d7',
+  padding: theme.spacing(1),
+  borderRadius: '15px 15px 15px 0px',
+  maxWidth: '60%',
+  margin: `${theme.spacing(1)} 0px ${theme.spacing(1)} ${theme.spacing(1)}`,
 }));
 
-const ChatBubbleAssistant = styled(ChatBubbleStyled)(({ theme }) => ({
-    backgroundColor: '#007312',
-    color: 'd7d7d7',
-    padding: theme.spacing(1),
-    borderRadius: '15px 15px 0px 15px',
-    maxWidth: '60%',
-    margin: `${theme.spacing(1)} ${theme.spacing(1)} ${theme.spacing(1)} 0px`,
-    alignSelf: 'flex-end',
+const ChatBubbleUser = styled(ChatBubbleStyled)(({ theme }) => ({
+  backgroundColor: '#00008a',
+  color: 'd7d7d7',
+  padding: theme.spacing(1),
+  borderRadius: '15px 15px 0px 15px',
+  maxWidth: '60%',
+  margin: `${theme.spacing(1)} ${theme.spacing(1)} ${theme.spacing(1)} 0px`,
+  alignSelf: 'flex-end',
 }));
 
 const ChatBubbleThought = styled(ChatBubbleStyled)(({ theme }) => ({
   backgroundColor: '#3a3a3a',
   color: theme.palette.info.contrastText,
   padding: theme.spacing(1),
-  borderRadius: '5px 5px 0px 5px',
+  borderRadius: '5px 5px 5px 0px',
   maxWidth: '100%',
   margin: `${theme.spacing(1)} ${theme.spacing(1)} ${theme.spacing(1)} 0px`,
   alignSelf: 'flex-end',
@@ -91,15 +97,21 @@ const ChatBubbleSystem = styled(ChatBubbleStyled)(({ theme }) => ({
   alignSelf: 'flex-end',
 }));
 
-export default function ChatBubble({ content, role }: Message){
-  switch(role){
-    case 'assistant':
-      return <ChatBubbleAssistant text={content} />;
-    case 'user':
-      return <ChatBubbleUser text={content} />;
-    case 'system':
-      return <ChatBubbleSystem text={content} />;
-    case 'thought':
-      return <ChatBubbleThought text={content} />;
-  }
+export default function ChatBubble({ content, role, avatarId }: ChatBubbleProps){
+
+  const message = <>
+    {avatarId && <LocalAvatar sx={{float: "left", marginRight: "0.2rem",}} id={avatarId} />}
+    <div>
+      <Typography variant="body1">
+        {content}
+      </Typography>
+    </div>
+  </>;
+
+  return (<>
+    {role === 'user' && <ChatBubbleUser>{message}</ChatBubbleUser>}
+    {role === 'system' && <ChatBubbleSystem>{message}</ChatBubbleSystem>}
+    {role === 'assistant' && <ChatBubbleAssistant>{message}</ChatBubbleAssistant>}
+    {role === 'thought' && <ChatBubbleThought>{message}</ChatBubbleThought>}
+  </>);
 }

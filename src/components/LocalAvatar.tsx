@@ -6,7 +6,7 @@ import { imageGeneration } from '../OpenAiApi';
 
 type LocalAvatarProps = {
   id: string;
-  prompt: string;
+  prompt?: string;
   sx?: SxProps<Theme> | undefined;
   onClick?: React.MouseEventHandler<HTMLDivElement> | undefined
 };
@@ -19,11 +19,13 @@ export default function LocalAvatar({ id, prompt, sx, onClick }: LocalAvatarProp
       if (imgFromLocal !== null) {
           setBase64ImgFromLocalStorage(imgFromLocal)
       }else{
+        if(prompt){
           imageGeneration(settings, prompt)
             .then(img => {
               localStorage.setItem(id, img);
               setBase64ImgFromLocalStorage(img);
             } );
+        }
       }
   }, [id]);
 
