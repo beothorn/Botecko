@@ -7,12 +7,13 @@ import { chatCompletion, imageGeneration, listEngines, Message } from './OpenAiA
 import { defaultSystemEntry, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem } from './prompts/promptGenerator';
 import migrations from './migrations';
 
-const currentVersion = '3';
+const currentVersion = '5';
 
 export type AppScreen = 'testOpenAiToken' 
   | 'settings' 
   | 'contacts'
   | 'chat' 
+  | 'groupChat' 
   | 'groupChatSelect' 
   | 'addContact'
   | 'error'
@@ -59,6 +60,7 @@ type ChatMessage = {
 
 // If any value is changed here, a new version and migration is needed
 export type BotContact = {
+  type: 'bot',
   id: string,
   meta: Meta,
   avatarMeta: AvatarMeta,
@@ -70,6 +72,7 @@ export type BotContact = {
 
 // If any value is changed here, a new version and migration is needed
 export type GroupChatContact = {
+  type: 'group',
   id: string,
   meta: Meta,
   avatarMeta: AvatarMeta,
@@ -98,6 +101,7 @@ type AppState = {
   settings: Settings,
   currentScreen: AppScreen,
   contacts: Record<string, Contact>,
+  groupChatsParticipants: Record<string, string[]>,
   chatId: string,
   waitingAnswer: boolean,
   errorMessage: string,
@@ -119,6 +123,7 @@ const initialState: AppState = {
   currentScreen: 'testOpenAiToken',
   contacts: {},
   chatId: '',
+  groupChatsParticipants: {},
   waitingAnswer: false,
   errorMessage: '',
   screenStack: ['contacts']
@@ -225,6 +230,9 @@ export const appStateSlice = createSlice({
       state.contacts[action.payload.id] = action.payload;
       saveStateToLocalStorage(state);
     },
+    addGroupChat: (state: AppState, action: PayloadAction<any>) => {
+      //TODO: add group chat
+    },
     removeContact: (state: AppState, action: PayloadAction<string>) => {
       delete state.contacts[action.payload];
       saveStateToLocalStorage(state);
@@ -254,6 +262,7 @@ export const actionToggleShowPlanning = () => ({type: 'appState/toggleShowPlanni
 export const actionSetErrorMessage = (error: string) => ({type: 'appState/setErrorMessage', payload: error})
 export const actionAddMessage = (newMessage: Message) => ({type: 'appState/addMessage', payload: newMessage})
 export const actionAddContact = (newContact: Contact) => ({type: 'appState/addContact', payload: newContact})
+export const actionAddGroupChat = (id: string, participants: string[]) => ({type: 'appState/addGroupChat', payload: {id, participants}})
 export const actionRemoveContact = (id: string) => ({type: 'appState/removeContact', payload: id})
 export const actionSetWaitingAnswer = (waitingAnswer: boolean) => ({type: 'appState/setWaitingAnswer', payload: waitingAnswer})
 
@@ -317,6 +326,7 @@ export async function dispatchCreateGroupChat(
   const id = Math.floor(Math.random() * 10000) + 'groupChat'
 
   dispatch(actionAddContact({
+    type: 'group',
     id: id,
     meta: {
       userProfile: '',
@@ -343,6 +353,7 @@ export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, setti
   const id = Math.floor(Math.random() * 10000) + 'bot'
 
   dispatch(actionAddContact({
+    type: 'bot',
     id,
     meta: {
       userProfile: '',
@@ -366,6 +377,7 @@ export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, setti
 
   if(settings.model === "debug"){
     dispatch(actionAddContact({
+    type: 'bot',
       id,
       meta: {
         userProfile: 'BarBaz',
@@ -406,6 +418,7 @@ function createContactFromMeta(
   const avatarId = Math.floor(Math.random() * 10000) + 'bot';
   localStorage.setItem(avatarId, avatarBase64Img);
   return {
+      type: 'bot',
       id,
       meta,
       avatarMeta: {

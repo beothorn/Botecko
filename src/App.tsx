@@ -15,6 +15,7 @@ import { styled } from '@mui/material';
 import { Profile } from './profile/Profile';
 import StateEditor from './settings/StateEditor';
 import GroupChatSelect from './groupChat/GroupChatSelect';
+import GroupChat from './groupChat/GroupChat';
 
 function assertUnreachable(_x: never): never {
     throw new Error("Didn't expect to get here");
@@ -32,6 +33,8 @@ function getCurrentScreenComponent(currentScreen: AppScreen): JSX.Element {
             return <AddContact />;
         case 'chat':
             return <Chat />;
+        case 'groupChat':
+            return <GroupChat />;
         case 'error':
             return <ErrorScreen />;
         case 'profile':
