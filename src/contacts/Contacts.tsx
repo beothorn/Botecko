@@ -1,7 +1,7 @@
 import React from 'react';
 import List from '@mui/material/List';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { actionRemoveContact, actionSetChatId, actionSetErrorMessage, actionSetScreen, Contact, selectContacts } from '../appStateSlice';
+import { actionRemoveContact, actionSetChatId, actionSetErrorMessage, actionSetScreen, Contact, currentVersion, selectContacts } from '../appStateSlice';
 import { Button, ListItemButton } from '@mui/material';
 import Screen from '../screens/screen';
 import { ScreenTitle } from '../screens/screen';
@@ -41,12 +41,19 @@ export default function Contacts() {
     })
   };
 
+  const notImplementedAbout = () => {
+    batch(() => {
+      dispatch(actionSetErrorMessage(`Add about here. version ${currentVersion}`));
+      dispatch(actionSetScreen('error'));
+    })
+  };
+
   const menuItems = {
     "Settings": gotoSettings,
     "Add Contact": addContact,
     "Import Contact": notImplemented,
     "New Group Chat": createGroupChat,
-    "About": notImplemented
+    "About": notImplementedAbout
   };
 
   return (<Screen

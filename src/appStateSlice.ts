@@ -9,7 +9,7 @@ import { defaultSystemEntry, defaultProfileGeneratorMessage,
   defaultSingleUserChatContext } from './prompts/promptGenerator';
 import migrations from './migrations';
 
-const currentVersion = '6';
+export const currentVersion = '6';
 
 export type AppScreen = 'testOpenAiToken' 
   | 'settings' 
