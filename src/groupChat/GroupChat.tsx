@@ -2,35 +2,39 @@ import React from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { selectSettings, selectChatHistory, selectWaitingAnswer, 
   actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning, 
-  actionSetErrorMessage, GroupChatContact, actionAddMessage } from '../appStateSlice';
+  actionSetErrorMessage, GroupChatContact, actionAddMessage, selectCurrentContactsInGroupChat } from '../appStateSlice';
 import { batch } from 'react-redux';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
 import ChatBubble, { ChatBubbleProps } from '../components/ChatBubble';
 import LocalAvatar from '../components/LocalAvatar';
 import ChatEntry from '../components/ChatEntry';
+import { styled } from '@mui/material';
+
+const Participants = styled('div')({
+  display: 'flex'
+});
 
 export default function GroupChat() {
   const settings = useAppSelector(selectSettings);
   const chatHistory = useAppSelector(selectChatHistory) ?? [];
-  const currentContact = useAppSelector(selectCurrentContact) as GroupChatContact;
-  const metaData = currentContact.meta;
-  const avatarMetaData = currentContact.avatarMeta;
+  const groupContact = useAppSelector(selectCurrentContact) as GroupChatContact;
+  const contacts = useAppSelector(selectCurrentContactsInGroupChat);
+  const groupAvatarMetaData = groupContact.avatarMeta;
   const isWaitingAnswer = useAppSelector(selectWaitingAnswer);
 
   const dispatch = useAppDispatch();
 
   const handleSendMessage = (msg: string) => {
     dispatch(actionAddMessage({"role": "user", "content": msg}));
-    /* When asking a bot to talk 
-    dispatchSendMessage(
-      dispatch, 
-      currentContact, 
-      settings, 
-      chatHistory, 
-      msg, 
-      '');
-    */
+  };
+  
+  const askBotToSpeak = (id: string) => {
+    dispatch(actionAddMessage({"role": "user", "content": `Bot ${id} will speak`}));
+  };
+
+  const groupInfo = () => {
+    dispatch(actionSetScreen('groupChatProfile'));
   };
 
   const showPlanning = () => {
@@ -47,20 +51,20 @@ export default function GroupChat() {
   const deleteContact = () => {
     batch(() => {
       dispatch(actionSetScreen('contacts'));
-      dispatch(actionRemoveContact(currentContact.id));
+      dispatch(actionRemoveContact(groupContact.id));
     });
   };
 
   const centerItem = (<>
-    <LocalAvatar id={avatarMetaData.id} 
-      prompt={avatarMetaData.prompt}
+    <LocalAvatar id={groupAvatarMetaData.id} 
+      prompt={groupAvatarMetaData.prompt}
       sx={{mr: 2}}
     />
-    <ScreenTitle title={metaData.name}/>
+    <ScreenTitle title={groupContact.meta.name}/>
   </>)
 
   const menuItems = {
-    "Group info": notImplemented,
+    "Group info": groupInfo,
     "Delete Group": deleteContact,
     "Delete History": notImplemented,
     "Toggle planning": showPlanning,
@@ -73,10 +77,10 @@ export default function GroupChat() {
         if(settings.showThought){
           return [
             {"role": "thought", "content": messageWithPlan.plan},
-            {"role": "assistant", "content": messageWithPlan.answer, avatarId: avatarMetaData.id },
+            {"role": "assistant", "content": messageWithPlan.answer, avatarId: groupAvatarMetaData.id },
           ];
         }else{
-          return [{"role": "assistant", "content": messageWithPlan.answer, avatarId: avatarMetaData.id}];
+          return [{"role": "assistant", "content": messageWithPlan.answer, avatarId: groupAvatarMetaData.id}];
         }
       }
       if(m.role === "system"){
@@ -95,7 +99,17 @@ export default function GroupChat() {
     />
   )); 
 
-  const contactName = metaData.name;
+  const participants = contacts.map((contact) => (<LocalAvatar
+    key={contact.id}
+    id={contact.avatarMeta.id}
+    prompt={contact.avatarMeta.prompt}
+    sx={{
+        width: '4rem',
+        height: '4rem',
+        mb: '1rem'
+    }}
+    onClick={() => askBotToSpeak(contact.id)}
+  />));
 
   return (<Screen
     leftItem={<BackButton/>}
@@ -106,9 +120,10 @@ export default function GroupChat() {
     <ChatEntry handleSendMessage={(msg) => handleSendMessage(msg)}>
       {chatBubbles}
       {isWaitingAnswer && <ChatBubble
-          content={`${contactName} is typing...`}
+          content={`Someone is typing...`}
           role={'assistant'}
-        />}
+      />}
+      <Participants>{participants}</Participants>
     </ChatEntry>
   </Screen>);
 }

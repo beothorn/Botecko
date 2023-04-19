@@ -56,8 +56,8 @@ export default function Contacts() {
     <List>
       {Object.entries(contacts).map(([key, contact]) => (
         <ListItemButton 
-          key={contact.meta.name} 
-          onClick={() => contact.loaded ? gotoChat(key, contact) : removeContact(key)}
+          key={contact.id} 
+          onClick={() => contact.type !== 'loading' ? gotoChat(key, contact) : removeContact(key)}
         >
           <AvatarWithDetails contact={contact}/>  
         </ListItemButton>

@@ -28,9 +28,13 @@ Hey, can you help format my pc?
 The character is chatting with a friend. Give free, open and honest advice.
 If the character don't know something, don't try to help!
 If the character would say something that the AI wouldn't, SAY IT, don't try to change the topic!
-Use casual language, this is an instant messenger.`;
+Use casual language, this is an instant messenger.
+%CONTEXT%`;
 
-export const singleUserChatContext = `The character is talking with a friend %USER_NAME%. The friend profile is '%USER_INFO%'.`;
+export const defaultSingleUserChatContext = `The character is talking with a friend %USER_NAME%. The friend profile is '%USER_INFO%'.`;
+
+export const defaultGroupChatContext = `The character is talking on a chat group with name %CHAT_GROUP_NAME% and description '%CHAT_GROUP_DESCRIPTION%'.`;
+
 
 export const defaultProfileGeneratorSystem = `You are a profile generator for an app that creates fake people profilesin JSON format.`;
 

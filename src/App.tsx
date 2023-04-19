@@ -16,6 +16,7 @@ import { Profile } from './profile/Profile';
 import StateEditor from './settings/StateEditor';
 import GroupChatSelect from './groupChat/GroupChatSelect';
 import GroupChat from './groupChat/GroupChat';
+import { GroupChatProfile } from './profile/GroupChatProfile';
 
 function assertUnreachable(_x: never): never {
     throw new Error("Didn't expect to get here");
@@ -39,6 +40,8 @@ function getCurrentScreenComponent(currentScreen: AppScreen): JSX.Element {
             return <ErrorScreen />;
         case 'profile':
             return <Profile />;
+        case 'groupChatProfile':
+            return <GroupChatProfile />;
         case 'groupChatSelect':
             return <GroupChatSelect />;
         case 'stateEditor':

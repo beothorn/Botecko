@@ -7,7 +7,6 @@ import BackButton from '../screens/backButton';
 import ChatBubble, { ChatBubbleProps } from '../components/ChatBubble';
 import LocalAvatar from '../components/LocalAvatar';
 import ChatEntry from '../components/ChatEntry';
-import { singleUserChatContext } from '../prompts/promptGenerator';
 
 export default function Chat() {
   const settings = useAppSelector(selectSettings);
@@ -26,7 +25,8 @@ export default function Chat() {
       settings, 
       chatHistory, 
       msg,
-      singleUserChatContext
+      currentContact.contextTemplate,
+      null
     );
   };
 

@@ -4,10 +4,12 @@ import { batch } from 'react-redux'
 import type { RootState } from './store'
 
 import { chatCompletion, imageGeneration, listEngines, Message } from './OpenAiApi'
-import { defaultSystemEntry, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem } from './prompts/promptGenerator';
+import { defaultSystemEntry, defaultProfileGeneratorMessage, 
+  defaultProfileGeneratorSystem, defaultGroupChatContext, 
+  defaultSingleUserChatContext } from './prompts/promptGenerator';
 import migrations from './migrations';
 
-const currentVersion = '5';
+const currentVersion = '6';
 
 export type AppScreen = 'testOpenAiToken' 
   | 'settings' 
@@ -18,6 +20,7 @@ export type AppScreen = 'testOpenAiToken'
   | 'addContact'
   | 'error'
   | 'profile'
+  | 'groupChatProfile'
   | 'stateEditor';
 
 // If any value is changed here, a new version and migration is needed 
@@ -34,7 +37,7 @@ type MetaFromAI = {
 }
 
 // If any value is changed here, a new version and migration is needed
-type Meta = {
+export type ContactMeta = {
   userProfile: string,
   name: string,
   background: string,
@@ -43,6 +46,12 @@ type Meta = {
   likes: string,
   dislikes: string,
   chatCharacteristics: string,
+}
+
+// If any value is changed here, a new version and migration is needed
+export type GroupMeta = {
+  name: string,
+  description: string
 }
 
 // If any value is changed here, a new version and migration is needed
@@ -59,14 +68,23 @@ type ChatMessage = {
 }
 
 // If any value is changed here, a new version and migration is needed
+export type LoadingContact = {
+  type: 'loading',
+  id: string,
+  status: string,
+  chats: ChatMessage[],
+}
+
+// If any value is changed here, a new version and migration is needed
 export type BotContact = {
   type: 'bot',
   id: string,
-  meta: Meta,
+  meta: ContactMeta,
   avatarMeta: AvatarMeta,
   chats: ChatMessage[],
-  lastMessage: string,
+  status: string,
   loaded: boolean,
+  contextTemplate: string,
   contactSystemEntryTemplate: string
 }
 
@@ -74,14 +92,15 @@ export type BotContact = {
 export type GroupChatContact = {
   type: 'group',
   id: string,
-  meta: Meta,
+  meta: GroupMeta,
   avatarMeta: AvatarMeta,
   chats: ChatMessage[],
-  loaded: boolean,
-  lastMessage: string
+  contactsIds: string[],
+  contextTemplate: string,
+  status: string
 }
 
-export type Contact = BotContact | GroupChatContact
+export type Contact = BotContact | GroupChatContact | LoadingContact
 
 // If any value is changed here, a new version and migration is needed
 export type Settings = {
@@ -90,6 +109,8 @@ export type Settings = {
   userShortInfo: string,
   model: string,
   systemEntry: string,
+  singleBotSystemEntryContext: string,
+  chatGroupSystemEntryContext: string,
   profileGeneratorSystemEntry: string,
   profileGeneratorMessageEntry: string,
   showThought: boolean
@@ -118,6 +139,8 @@ const initialState: AppState = {
     systemEntry: defaultSystemEntry,
     profileGeneratorSystemEntry: defaultProfileGeneratorSystem,
     profileGeneratorMessageEntry: defaultProfileGeneratorMessage,
+    singleBotSystemEntryContext: defaultSingleUserChatContext,
+    chatGroupSystemEntryContext: defaultGroupChatContext,
     showThought: false
   },
   currentScreen: 'testOpenAiToken',
@@ -212,17 +235,18 @@ export const appStateSlice = createSlice({
       state.errorMessage = action.payload;
     },
     addMessage: (state: AppState, action: PayloadAction<ChatMessage>) => {
-      state.contacts[state.chatId].chats = state.contacts[state.chatId].chats?.concat(action.payload) ?? [];
+      const contact = state.contacts[state.chatId];
+      contact.chats = contact.chats?.concat(action.payload) ?? [];
       if(action.payload.role === 'assistant'){
         const maxMessageSizeOnContactList = 40;
         const lastMessageFull:string = JSON.parse(action.payload.content).answer;
         if(lastMessageFull.length > maxMessageSizeOnContactList){
-          state.contacts[state.chatId].lastMessage = JSON.parse(action.payload.content).answer.slice(0, maxMessageSizeOnContactList)+"...";  
+          state.contacts[state.chatId].status = JSON.parse(action.payload.content).answer.slice(0, maxMessageSizeOnContactList)+"...";  
         }else{
-          state.contacts[state.chatId].lastMessage = JSON.parse(action.payload.content).answer;  
+          state.contacts[state.chatId].status = JSON.parse(action.payload.content).answer;  
         }
       }else{
-        state.contacts[state.chatId].lastMessage = action.payload.content;
+        state.contacts[state.chatId].status = action.payload.content;
       }
       saveStateToLocalStorage(state);
     },
@@ -230,8 +254,9 @@ export const appStateSlice = createSlice({
       state.contacts[action.payload.id] = action.payload;
       saveStateToLocalStorage(state);
     },
-    addGroupChat: (state: AppState, action: PayloadAction<any>) => {
-      //TODO: add group chat
+    addGroupChat: (state: AppState, action: PayloadAction<GroupChatContact>) => {
+      state.contacts[action.payload.id] = action.payload;
+      saveStateToLocalStorage(state);
     },
     removeContact: (state: AppState, action: PayloadAction<string>) => {
       delete state.contacts[action.payload];
@@ -249,6 +274,11 @@ export const selectSettings = (state: RootState) => state.appState.settings
 export const selectVersion = (state: RootState) => state.appState.version
 export const selectErrorMessage = (state: RootState) => state.appState.errorMessage
 export const selectCurrentContact = (state: RootState) => state.appState.contacts[state.appState.chatId]
+export const selectCurrentContactsInGroupChat = (state: RootState) => 
+  (state.appState.contacts[state.appState.chatId] as GroupChatContact).contactsIds
+  .filter(id => state.appState.contacts[id].type === 'bot')
+  .map(id => state.appState.contacts[id]) as BotContact[]
+export const selectGroupChatParticipants = (state: RootState) => state.appState.groupChatsParticipants
 export const selectChatHistory = (state: RootState) => state.appState.contacts[state.appState.chatId].chats
 export const selectContacts = (state: RootState) => state.appState.contacts
 export const selectWaitingAnswer = (state: RootState) => state.appState.waitingAnswer
@@ -262,7 +292,6 @@ export const actionToggleShowPlanning = () => ({type: 'appState/toggleShowPlanni
 export const actionSetErrorMessage = (error: string) => ({type: 'appState/setErrorMessage', payload: error})
 export const actionAddMessage = (newMessage: Message) => ({type: 'appState/addMessage', payload: newMessage})
 export const actionAddContact = (newContact: Contact) => ({type: 'appState/addContact', payload: newContact})
-export const actionAddGroupChat = (id: string, participants: string[]) => ({type: 'appState/addGroupChat', payload: {id, participants}})
 export const actionRemoveContact = (id: string) => ({type: 'appState/removeContact', payload: id})
 export const actionSetWaitingAnswer = (waitingAnswer: boolean) => ({type: 'appState/setWaitingAnswer', payload: waitingAnswer})
 
@@ -286,22 +315,24 @@ export async function dispatchSendMessage(
   dispatch: Dispatch<AnyAction>, 
   contact: BotContact, 
   settings: Settings, 
-  context: Message[], 
+  previousMessages: Message[], 
   newMessage: string,
-  promptContext: string
+  promptContext: string,
+  groupMeta: GroupMeta | null
 ) {
   const newMessageWithRole: Message = {"role": "user", "content": newMessage};
   batch(() => {
     dispatch(actionSetWaitingAnswer(true));
     dispatch(actionAddMessage(newMessageWithRole));
   })
-  const chatWithNewMessage = context.concat({"role": "user", "content": newMessage})
+  const chatWithNewMessage = previousMessages.concat({"role": "user", "content": newMessage})
   if(settings.model === "debug"){
     dispatch(actionAddMessage({"role": "assistant", "content": "Lorem ipsum"}));
     dispatch(actionSetWaitingAnswer(false));
   }else{
     const sysEntry = writeSystemEntry(
       contact.meta, 
+      groupMeta,
       settings.userName, 
       settings.userShortInfo, 
       contact.contactSystemEntryTemplate,
@@ -321,7 +352,10 @@ export async function dispatchSendMessage(
 
 export async function dispatchCreateGroupChat(
   dispatch: Dispatch<AnyAction>,
-  groupName: string
+  settings: Settings, 
+  chatName: string,
+  description: string,
+  contactsIds: string[]
 ) {
   const id = Math.floor(Math.random() * 10000) + 'groupChat'
 
@@ -329,92 +363,54 @@ export async function dispatchCreateGroupChat(
     type: 'group',
     id: id,
     meta: {
-      userProfile: '',
-      name: groupName,
-      background: '',
-      current: '',
-      appearance: '',
-      likes: '',
-      dislikes: '',
-      chatCharacteristics: '',
+      name: chatName,
+      description: description
     },
     avatarMeta: {
       prompt: '',
       id: ''
     },
     chats: [],
-    loaded: true,
-    lastMessage: "Foo bar"
+    contactsIds: contactsIds,
+    contextTemplate: settings.chatGroupSystemEntryContext,
+    status: description
   }));
 }
 
-export async function dispatchCreateContact(dispatch: Dispatch<AnyAction>, settings: Settings, contactDescription: string) {
+export async function dispatchCreateContact(
+  dispatch: Dispatch<AnyAction>, 
+  settings: Settings, 
+  contactDescription: string
+) {
 
   const id = Math.floor(Math.random() * 10000) + 'bot'
 
   dispatch(actionAddContact({
-    type: 'bot',
+    type: 'loading',
     id,
-    meta: {
-      userProfile: '',
-      name: '',
-      background: '',
-      current: '',
-      appearance: '',
-      likes: '',
-      dislikes: '',
-      chatCharacteristics: '',
-    },
-    avatarMeta: {
-      prompt: '',
-      id: ''
-    },
     chats: [],
-    loaded: false,
-    lastMessage: '',
-    contactSystemEntryTemplate: ''
+    status: contactDescription,
   }))
 
-  if(settings.model === "debug"){
-    dispatch(actionAddContact({
-    type: 'bot',
-      id,
-      meta: {
-        userProfile: 'BarBaz',
-        name: 'FooBar',
-        background: '',
-        current: '',
-        appearance: '',
-        likes: '',
-        dislikes: '',
-        chatCharacteristics: '',
-      },
-      avatarMeta: {
-        prompt: '',
-        id: ''
-      },
-      chats: [],
-      loaded: true,
-      lastMessage: '',
-      contactSystemEntryTemplate: ''
-    }))
-  }else{
-    chatCompletion(settings, generateContact(contactDescription, settings.profileGeneratorSystemEntry, settings.profileGeneratorMessageEntry))
-    .then(response => {
-      const responseJson: MetaFromAI = JSON.parse(response.content);
-      imageGeneration(settings, responseJson.avatar)
-      .then(img => dispatch(actionAddContact(createContactFromMeta(id, settings, responseJson, img))))
-      .catch(() => dispatch(actionAddContact(createContactFromMeta(id, settings, responseJson, ""))));
-    }).catch(() => dispatch(actionRemoveContact(id)));
-  }
+  chatCompletion(settings, generateContact(
+    contactDescription, 
+    settings.profileGeneratorSystemEntry, 
+    settings.profileGeneratorMessageEntry))
+  .then(response => {
+    const responseJson: MetaFromAI = JSON.parse(response.content);
+    imageGeneration(settings, responseJson.avatar)
+    .then(img => dispatch(actionAddContact(createBotContactFromMeta(id, settings, responseJson, img))))
+    .catch(() => dispatch(actionAddContact(createBotContactFromMeta(id, settings, responseJson, ""))));
+  }).catch(() => dispatch(actionRemoveContact(id)));
+  
 }
 
-function createContactFromMeta(
+function createBotContactFromMeta(
     id: string, 
     settings: Settings,
     meta: MetaFromAI, 
     avatarBase64Img: string
-): Contact{
+): BotContact{
   const avatarId = Math.floor(Math.random() * 10000) + 'bot';
   localStorage.setItem(avatarId, avatarBase64Img);
   return {
@@ -427,13 +423,15 @@ function createContactFromMeta(
       },
       chats: [],
       loaded: true,
-      lastMessage: meta.userProfile,
-      contactSystemEntryTemplate: settings.systemEntry
+      status: meta.userProfile,
+      contactSystemEntryTemplate: settings.systemEntry,
+      contextTemplate: settings.singleBotSystemEntryContext
     };
 }
 
 function writeSystemEntry(
-  meta: Meta, 
+  meta: ContactMeta,
+  groupMeta: GroupMeta | null, 
   userName: string, 
   userShortInfo: string, 
   systemEntry: string,
@@ -445,14 +443,29 @@ function writeSystemEntry(
     systemEntry = defaultSystemEntry;
   }
 
-  const systemString = systemEntry
-    .replaceAll("%NAME%", meta.name)
-    .replaceAll("%USER_NAME%", userName)
-    .replaceAll("%USER_INFO%", userShortInfo)
-    .replaceAll("%META_JSON%", metaAsString)
-    .replaceAll("%CONTEXT%", promptContext);
+  const tokens = {
+    "%NAME%": meta.name,
+    "%USER_NAME%": userName,
+    "%USER_INFO%": userShortInfo,
+    "%META_JSON%": metaAsString,
+    "%CHAT_GROUP_NAME%": groupMeta?.name || "",
+    "%CHAT_GROUP_DESCRIPTION%": groupMeta?.description || ""
+  }
+
+  const systemPrompContext = replaceAllTokens(promptContext, tokens);
+
+  const systemString = replaceAllTokens(systemEntry, tokens)
+    .replaceAll("%CONTEXT%", systemPrompContext);
 
   return {"role": "system", "content": systemString}
+}
+
+function replaceAllTokens(str: string, tokens: Record<string, string>): string{
+  let result = str;
+  for(const [key, value] of Object.entries(tokens)){
+    result = result.replaceAll(key, value);
+  }
+  return result;
 }
 
 function generateContact(profileDescription: string, profileGeneratorSystem: string, profileGeneratorMessage: string): Message[]{

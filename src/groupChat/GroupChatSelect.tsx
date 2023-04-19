@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import List from '@mui/material/List';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { actionSetScreen, dispatchCreateGroupChat, selectContacts } from '../appStateSlice';
+import { actionSetScreen, dispatchCreateGroupChat, selectContacts, selectSettings } from '../appStateSlice';
 import Screen from '../screens/screen';
 import { ScreenTitle } from '../screens/screen';
 import AvatarWithDetails from '../components/AvatarWithDetails';
@@ -9,32 +9,54 @@ import BackButton from '../screens/backButton';
 import { Button, Checkbox, ListItem, TextField } from '@mui/material';
 import { batch } from 'react-redux';
 
+type GroupChatSelectState = {
+  groupName: string,
+  description: string,  
+  selected: string[]
+}
+
 export default function GroupChatSelect() {
   const contacts = useAppSelector(selectContacts) ?? [];
-  const [selected, setSelected] = useState<string[]>([]);
-  const [groupName, setGroupName] = useState<string>('');
+  const [chatSelect, setChatSelect] = useState<GroupChatSelectState>({
+    groupName: '',
+    description: '',
+    selected: []
+  });
 
   const dispatch = useAppDispatch();
 
+  const settings = useAppSelector(selectSettings);
+
   const select = (key: string,  checked: boolean) => {
-    console.log(selected);
     if (checked) {
-      setSelected([...selected, key]);
+      setChatSelect({...chatSelect, selected: [...chatSelect.selected, key]});
     }else{
-      setSelected(selected.filter(s => s !== key));
+      setChatSelect({...chatSelect, selected: chatSelect.selected.filter(s => s !== key)});
     }
-    console.log(checked);
-    console.log(selected);
+  };
+
+  const setGroupName = (groupName: string) => {
+    setChatSelect({...chatSelect, groupName: groupName});
+  };
+
+  const setGroupDescription = (description: string) => {
+    setChatSelect({...chatSelect, description: description});
   };
 
   const createChat = () => {
-    if (groupName !== '' && selected.length > 0) { 
+    if (chatSelect.groupName !== '' && chatSelect.selected.length > 1) { 
       batch(() => {
-        dispatchCreateGroupChat(dispatch, groupName);
+        dispatchCreateGroupChat(
+          dispatch, 
+          settings,
+          chatSelect.groupName,
+          chatSelect.description,
+          chatSelect.selected
+        );
         dispatch(actionSetScreen('contacts'));
       })
     }
-    console.log(selected);
+    console.log(chatSelect.selected);
   }
 
   return (<Screen
@@ -45,7 +67,7 @@ export default function GroupChatSelect() {
       <ListItem> 
         <TextField
             required
-            value={groupName}
+            value={chatSelect.groupName}
             onChange={e => setGroupName(e.target.value)}
             size="small"
             id="groupName"
@@ -54,14 +76,25 @@ export default function GroupChatSelect() {
         />
       </ListItem>
       <ListItem> 
+        <TextField
+            required
+            value={chatSelect.description}
+            onChange={e => setGroupDescription(e.target.value)}
+            size="small"
+            id="groupDescription"
+            label="Group Description"
+            variant="outlined"
+        />
+      </ListItem>
+      <ListItem> 
         <Button onClick={() => createChat()}>Start Chat</Button>
       </ListItem>
       {Object.entries(contacts).map(([key, contact]) => (
         <ListItem 
-          key={contact.meta.name} 
+          key={contact.id} 
         >
           <Checkbox 
-            checked={selected.includes(key)}
+            checked={chatSelect.selected.includes(key)}
             onChange={(_e, checked) => select(key, checked)} 
           />
           <AvatarWithDetails contact={contact}/>  

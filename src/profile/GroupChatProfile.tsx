@@ -2,19 +2,19 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useAppSelector } from '../hooks'
-import { ContactMeta, selectCurrentContact } from '../appStateSlice';
+import { GroupMeta, selectCurrentContact } from '../appStateSlice';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
 import LocalAvatar from '../components/LocalAvatar';
 
-export function Profile() {
+export function GroupChatProfile() {
     const currentContact = useAppSelector(selectCurrentContact);
-    if(currentContact.type !== 'bot'){
+    if(currentContact.type !== 'group'){
         return (
             <>INVALID STATE</>
         )
     }
-    const metaData = currentContact.meta as ContactMeta;
+    const metaData = currentContact.meta as GroupMeta;
     const avatarMetaData = currentContact.avatarMeta;
     return (
         <Screen
@@ -51,34 +51,10 @@ export function Profile() {
                         {metaData.name}
                     </Typography>
                     <Typography variant="h4" gutterBottom>
-                        Profile:
+                        Description:
                     </Typography>
                     <Typography variant="body1" gutterBottom>
-                        {metaData.background}
-                    </Typography>
-                    <Typography variant="h4" gutterBottom>
-                        Current:
-                    </Typography>
-                    <Typography variant="body1" gutterBottom>
-                        {metaData.current}
-                    </Typography>
-                    <Typography variant="h4" gutterBottom>
-                        Appearance:
-                    </Typography>
-                    <Typography variant="body1" gutterBottom>
-                        {metaData.appearance}
-                    </Typography>
-                    <Typography variant="h4" gutterBottom>
-                        Likes:
-                    </Typography>
-                    <Typography variant="body1" gutterBottom>
-                        {metaData.likes}
-                    </Typography>
-                    <Typography variant="h4" gutterBottom>
-                        Dislikes:
-                    </Typography>
-                    <Typography variant="body1" gutterBottom>
-                        {metaData.dislikes}
+                        {metaData.description}
                     </Typography>
                 </Box>
             </Box>

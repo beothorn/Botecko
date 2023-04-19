@@ -9,12 +9,12 @@ type AvatarWithDetails = {
 }
 
 export default function AvatarWithDetails({contact}: AvatarWithDetails){
-    if(contact.loaded){
+    if(contact.type !== 'loading'){
         return (<>
             <ListItemAvatar>
                 <LocalAvatar id={contact.avatarMeta.id} prompt={contact.avatarMeta.prompt} />
             </ListItemAvatar>
-            <StyledListItemText primary={contact.meta.name} secondary={contact.lastMessage} />
+            <StyledListItemText primary={contact.meta.name} secondary={contact.status} />
         </>);
     }
     return (<>
