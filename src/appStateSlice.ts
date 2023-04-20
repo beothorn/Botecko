@@ -173,8 +173,35 @@ function getInitialState(): AppState{
     console.error(`Stored state version '${storedStateVersion}' is higher than current version '${currentVersion}'`); 
   }
   for(let i = storedStateVersion; i < currentVersionNumber; i++){
-    console.log(`Applying migration ${i}`);
-    migrations[i]();
+    try{
+      console.log(`Applying migration ${i}`);
+      migrations[i]();
+    }catch(e){
+      const storedState = localStorage.getItem(storedStateVersion+"") || "nothing found";
+
+      return {
+        version: currentVersion,
+        settings: {
+          openAiKey: "",
+          userName: "",
+          userShortInfo: "",
+          model: "gpt-4",
+          systemEntry: defaultSystemEntry,
+          profileGeneratorSystemEntry: defaultProfileGeneratorSystem,
+          profileGeneratorMessageEntry: defaultProfileGeneratorMessage,
+          singleBotSystemEntryContext: defaultSingleUserChatContext,
+          chatGroupSystemEntryContext: defaultGroupChatContext,
+          showThought: false
+        },
+        currentScreen: 'error',
+        contacts: {},
+        chatId: '',
+        groupChatsParticipants: {},
+        waitingAnswer: false,
+        errorMessage: `Migration failed for version ${i} ${e} ${storedState}`,
+        screenStack: ['error']
+      }
+    }
   }
   const storedState = localStorage.getItem(currentVersion) || JSON.stringify(initialState);
   return JSON.parse(storedState);
