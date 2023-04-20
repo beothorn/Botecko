@@ -176,9 +176,14 @@ function getInitialState(): AppState{
     try{
       console.log(`Applying migration ${i}`);
       migrations[i]();
-    }catch(e){
+    }catch(e: any){
       const storedState = localStorage.getItem(storedStateVersion+"") || "nothing found";
-
+      const name: string = e.name;
+      let errorMessage = `Migration failed for version ${i} ${e} ${storedState}`
+      if(name.toLocaleLowerCase().includes("quota")){
+        const keys = Object.keys(localStorage);
+        errorMessage = errorMessage + ' keys:' + keys;
+      }
       return {
         version: currentVersion,
         settings: {
@@ -198,7 +203,7 @@ function getInitialState(): AppState{
         chatId: '',
         groupChatsParticipants: {},
         waitingAnswer: false,
-        errorMessage: `Migration failed for version ${i} ${e} ${storedState}`,
+        errorMessage: errorMessage,
         screenStack: ['error']
       }
     }

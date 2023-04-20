@@ -19,7 +19,7 @@ export function ErrorScreen() {
         leftItem={<BackButton/>}
         centerItem={<ScreenTitle title="Error" />}
     >
-        <Typography sx={{marginBottom: '1rem'}} variant="h5" gutterBottom>
+        <Typography sx={{marginBottom: '1rem', color: 'white'}} variant="h5" gutterBottom>
             {error}
         </Typography>
         <Button sx={{marginLeft: 1}} variant="contained" onClick={gotoNextScreen}>Continue</Button>
