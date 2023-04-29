@@ -5,7 +5,7 @@ import type { RootState } from './store'
 
 import { chatCompletion, imageGeneration, listEngines, Message } from './OpenAiApi'
 import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem, defaultSingleUserChatContext, defaultSystemEntry } from './prompts/promptGenerator';
-import { getAppState, updateAppState } from './persistence/indexeddb';
+import { addAvatar, getAppState, updateAppState } from './persistence/indexeddb';
 import migrations from './migrations';
 
 export const currentVersion = '8';
@@ -133,8 +133,12 @@ export type AppState = {
   volatileState: VolatileState
 }
 
+export type AvatarImg = {
+  id: string,
+  img: string
+}
 
-function saveStateToLocalStorage(state: AppState) {
+function saveStateToPersistence(state: AppState) {
   updateAppState(state);
 }
 
@@ -182,11 +186,11 @@ export const appStateSlice = createSlice({
     },
     setSettings: (state: AppState, action: PayloadAction<Settings>) => {
       state.settings = action.payload;
-      saveStateToLocalStorage(state);
+      saveStateToPersistence(state);
     },
     toggleShowPlanning: (state: AppState) => {
       state.settings.showThought = !state.settings.showThought;
-      saveStateToLocalStorage(state);
+      saveStateToPersistence(state);
     },
     setScreen: (state: AppState, action: PayloadAction<AppScreen>) => {
       if(action.payload === 'contacts'){
@@ -198,16 +202,16 @@ export const appStateSlice = createSlice({
       }
       state.volatileState.currentScreen = action.payload;
       state.volatileState.screenStack.push(action.payload);
-      saveStateToLocalStorage(state);
+      saveStateToPersistence(state);
     },
     goToPreviousScreen: (state: AppState) => {
       state.volatileState.screenStack.pop();
       state.volatileState.currentScreen = state.volatileState.screenStack.at(-1) || 'contacts';
-      saveStateToLocalStorage(state);
+      saveStateToPersistence(state);
     },
     setChatId: (state: AppState, action: PayloadAction<string>) => {
       state.volatileState.chatId = action.payload;
-      saveStateToLocalStorage(state);
+      saveStateToPersistence(state);
     },
     setErrorMessage: (state: AppState, action: PayloadAction<string>) => {
       state.volatileState.errorMessage = action.payload;
@@ -226,23 +230,23 @@ export const appStateSlice = createSlice({
       }else{
         state.contacts[state.volatileState.chatId].status = action.payload.content;
       }
-      saveStateToLocalStorage(state);
+      saveStateToPersistence(state);
     },
     addContact: (state: AppState, action: PayloadAction<Contact>) => {
       state.contacts[action.payload.id] = action.payload;
-      saveStateToLocalStorage(state);
+      saveStateToPersistence(state);
     },
     addGroupChat: (state: AppState, action: PayloadAction<GroupChatContact>) => {
       state.contacts[action.payload.id] = action.payload;
-      saveStateToLocalStorage(state);
+      saveStateToPersistence(state);
     },
     removeContact: (state: AppState, action: PayloadAction<string>) => {
       delete state.contacts[action.payload];
-      saveStateToLocalStorage(state);
+      saveStateToPersistence(state);
     },
     setWaitingAnswer: (state: AppState, action: PayloadAction<boolean>) => {
       state.volatileState.waitingAnswer = action.payload;
-      saveStateToLocalStorage(state);
+      saveStateToPersistence(state);
     },
   },
 });
@@ -390,7 +394,7 @@ function createBotContactFromMeta(
     avatarBase64Img: string
 ): BotContact{
   const avatarId = Math.floor(Math.random() * 10000) + 'bot';
-  localStorage.setItem(avatarId, avatarBase64Img);
+  addAvatar(avatarId, avatarBase64Img);
   return {
       type: 'bot',
       id,

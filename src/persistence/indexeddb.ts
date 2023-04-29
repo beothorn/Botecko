@@ -1,10 +1,12 @@
-import { AppState } from "../appStateSlice";
+import { AppState, AvatarImg } from "../appStateSlice";
 
 const DB_NAME = "BoteckoDB";
 const DB_VERSION = 8;
 const APP_STATE_STORE = "appState";
+const AVATAR_STORE = "avatar";
 
-export function openDB(): Promise<IDBDatabase> {
+
+function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
     
@@ -13,9 +15,11 @@ export function openDB(): Promise<IDBDatabase> {
       if(event.oldVersion === 1){
         console.log("First Version")
       }
-      // 2. Define an upgrade mechanism for the IndexedDB
       if (!db.objectStoreNames.contains(APP_STATE_STORE)) {
         db.createObjectStore(APP_STATE_STORE, { keyPath: "version" });
+      }
+      if (!db.objectStoreNames.contains(AVATAR_STORE)) {
+        db.createObjectStore(AVATAR_STORE, { keyPath: "id" });
       }
     };
 
@@ -46,6 +50,23 @@ export function addAppState(appState: AppState){
     .then((transaction: IDBTransaction) => transaction.commit());
 }
 
+export function addAvatar(id: string, img: string){
+  return openDB()
+    .then((db) => {
+      const transaction = db.transaction([AVATAR_STORE], "readwrite");
+      const store = transaction.objectStore(AVATAR_STORE);
+      return new Promise<IDBTransaction>((resolve, reject) => {
+        const request = store.add({id, img});
+        request.onsuccess = () => resolve(transaction);
+        request.onerror = () => {
+          transaction.abort();
+          reject(request.error);
+        }
+      });
+    })
+    .then((transaction: IDBTransaction) => transaction.commit());
+}
+
 export function updateAppState(appState: AppState): Promise<IDBRequest<IDBValidKey>>{
   const appStateCopy = JSON.parse(JSON.stringify(appState));
   console.log(appStateCopy);
@@ -62,6 +83,22 @@ export function getAppState(version: string){
       const store = transaction.objectStore(APP_STATE_STORE);
       return new Promise<AppState>((resolve, reject) => {
         const request = store.get(version);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => {
+          transaction.abort();
+          reject(request.error);
+        }
+      });
+    });
+}
+
+export function getAvatar(id: string){
+  return openDB()
+    .then((db) => {
+      const transaction = db.transaction([AVATAR_STORE], "readonly");
+      const store = transaction.objectStore(AVATAR_STORE);
+      return new Promise<AvatarImg>((resolve, reject) => {
+        const request = store.get(id);
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => {
           transaction.abort();

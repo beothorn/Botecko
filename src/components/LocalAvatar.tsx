@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { selectSettings } from '../appStateSlice';
 import { useAppSelector } from '../hooks';
 import { imageGeneration } from '../OpenAiApi';
+import { addAvatar, getAvatar } from '../persistence/indexeddb';
 
 type LocalAvatarProps = {
   id: string;
@@ -12,25 +13,26 @@ type LocalAvatarProps = {
 };
 
 export default function LocalAvatar({ id, prompt, sx, onClick }: LocalAvatarProps) {
-  const [base64ImgFromLocalStorage, setBase64ImgFromLocalStorage] = useState('');
+  const [base64Img, setBase64Img] = useState('');
   const settings = useAppSelector(selectSettings);
-    useEffect(() => {
-      const imgFromLocal = localStorage.getItem(id);
-      if (imgFromLocal !== null) {
-          setBase64ImgFromLocalStorage(imgFromLocal)
+  useEffect(() => {
+    getAvatar(id).then(avatar => {
+      if(avatar){
+        setBase64Img(avatar.img);
       }else{
         if(prompt){
-          imageGeneration(settings, prompt)
-            .then(img => {
-              localStorage.setItem(id, img);
-              setBase64ImgFromLocalStorage(img);
-            } );
+          imageGeneration(settings, prompt as string)
+              .then(img => {
+                addAvatar(id, img);
+                setBase64Img(img);
+              } );
         }
-      }
+      }       
+    })
   }, [id]);
 
   return <Avatar 
-        src={`data:image/png;base64, ${base64ImgFromLocalStorage}`} 
+        src={`data:image/png;base64, ${base64Img}`} 
         alt={prompt}
         sx={sx}
         onClick={onClick}

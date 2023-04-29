@@ -1,4 +1,4 @@
-import { addAppState } from "./persistence/indexeddb";
+import { addAppState, addAvatar } from "./persistence/indexeddb";
 import { defaultSystemEntry } from "./prompts/promptGenerator";
 
 const migrations = [
@@ -104,19 +104,30 @@ const migrations = [
         console.log("Running migration from version 7 to 8");
         const storedState = localStorage.getItem("7") || "{}";
         const loadedInitialState = JSON.parse(storedState);
+        
         loadedInitialState.version = "8";
 
-        // Open a connection to the IndexedDB database
         try{
             await addAppState(loadedInitialState);
         }catch(e){
             console.error(e);
         }
 
-        // Move state to indexeddb
-        // Move avatars to indexeddb
-        // Clean up local storage
 
+        Object.entries(loadedInitialState.contacts).forEach(async ([_key, contact]: [any, any]) => {
+            if(contact.avatarMeta.id !== ''){
+                try{
+                    await addAvatar(
+                        contact.avatarMeta.id, 
+                        localStorage.getItem(contact.avatarMeta.id) || ''
+                    );
+                }catch(e){
+                    console.error(e);
+                }
+            }
+        });
+
+        localStorage.clear(); // Bye bye local storage (can't have more than 10mega there :( )
         localStorage.setItem("currentVersion", "8");
         console.log("Done migration from version 7 to 8");
     }
