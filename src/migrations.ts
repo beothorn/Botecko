@@ -1,12 +1,34 @@
 import { addAppState, addAvatar } from "./persistence/indexeddb";
 import { defaultSystemEntry } from "./prompts/promptGenerator";
 
+
+const cleanUpAvatars = (contacts: any) => {
+    Object.entries(contacts).forEach(async ([_key, contact]: [any, any]) => {
+        if(contact.avatarMeta.id !== ''){
+            try{
+                await addAvatar(
+                    contact.avatarMeta.id, 
+                    localStorage.getItem(contact.avatarMeta.id) || ''
+                );
+                localStorage.removeItem(contact.avatarMeta.id);
+            }catch(e){
+                console.error(e);
+            }
+        }
+    });
+
+    localStorage.clear(); // Bye bye local storage (can't have more than 10mega there :( )
+    localStorage.setItem("currentVersion", "8");
+    console.log("Done migration from version 7 to 8");
+}
+
 const migrations = [
     () => {
         console.error("Migration from version 0 does not exist");
     },
     () => {
         console.log("Running migration from version 1 to 2");
+        cleanUpAvatars("1");
         const storedState = localStorage.getItem("1") || "{}";
         const loadedInitialState = JSON.parse(storedState);
         loadedInitialState.version = "2";
@@ -15,6 +37,7 @@ const migrations = [
     },
     () => {
         console.log("Running migration from version 2 to 3");
+        cleanUpAvatars("2");
         const storedState = localStorage.getItem("2") || "{}";
         const loadedInitialState = JSON.parse(storedState);
 
@@ -31,6 +54,7 @@ const migrations = [
     },
     () => {
         console.log("Running migration from version 3 to 4");
+        cleanUpAvatars("3");
         const storedState = localStorage.getItem("3") || "{}";
         const loadedInitialState = JSON.parse(storedState);
 
@@ -46,6 +70,7 @@ const migrations = [
     },
     () => {
         console.log("Running migration from version 4 to 5");
+        cleanUpAvatars("4");
         const storedState = localStorage.getItem("4") || "{}";
         const loadedInitialState = JSON.parse(storedState);
 
@@ -58,6 +83,7 @@ const migrations = [
     },
     () => {
         console.log("Running migration from version 5 to 6");
+        cleanUpAvatars("5");
         const storedState = localStorage.getItem("5") || "{}";
         const loadedInitialState = JSON.parse(storedState);
 
@@ -78,6 +104,7 @@ const migrations = [
     },
     () => {
         console.log("Running migration from version 6 to 7");
+        cleanUpAvatars("6");
         const storedState = localStorage.getItem("6") || "{}";
         const loadedInitialState = JSON.parse(storedState);
 
