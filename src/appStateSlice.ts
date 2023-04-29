@@ -4,14 +4,14 @@ import { batch } from 'react-redux'
 import type { RootState } from './store'
 
 import { chatCompletion, imageGeneration, listEngines, Message } from './OpenAiApi'
-import { defaultSystemEntry, defaultProfileGeneratorMessage, 
-  defaultProfileGeneratorSystem, defaultGroupChatContext, 
-  defaultSingleUserChatContext } from './prompts/promptGenerator';
+import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem, defaultSingleUserChatContext, defaultSystemEntry } from './prompts/promptGenerator';
+import { getAppState, updateAppState } from './persistence/indexeddb';
 import migrations from './migrations';
 
-export const currentVersion = '6';
+export const currentVersion = '8';
 
-export type AppScreen = 'testOpenAiToken' 
+export type AppScreen = 'loading' 
+  | 'testOpenAiToken' 
   | 'settings' 
   | 'contacts'
   | 'chat' 
@@ -20,8 +20,7 @@ export type AppScreen = 'testOpenAiToken'
   | 'addContact'
   | 'error'
   | 'profile'
-  | 'groupChatProfile'
-  | 'stateEditor';
+  | 'groupChatProfile';
 
 // If any value is changed here, a new version and migration is needed 
 type MetaFromAI = {
@@ -117,16 +116,26 @@ export type Settings = {
 }
 
 // If any value is changed here, a new version and migration is needed
-type AppState = {
-  version: string,
-  settings: Settings,
+type VolatileState = {
   currentScreen: AppScreen,
-  contacts: Record<string, Contact>,
-  groupChatsParticipants: Record<string, string[]>,
   chatId: string,
   waitingAnswer: boolean,
   errorMessage: string,
   screenStack: AppScreen[]
+}
+
+// If any value is changed here, a new version and migration is needed
+export type AppState = {
+  version: string,
+  settings: Settings,
+  contacts: Record<string, Contact>,
+  groupChatsParticipants: Record<string, string[]>,
+  volatileState: VolatileState
+}
+
+
+function saveStateToLocalStorage(state: AppState) {
+  updateAppState(state);
 }
 
 const initialState: AppState = {
@@ -143,96 +152,33 @@ const initialState: AppState = {
     chatGroupSystemEntryContext: defaultGroupChatContext,
     showThought: false
   },
-  currentScreen: 'testOpenAiToken',
   contacts: {},
-  chatId: '',
   groupChatsParticipants: {},
-  waitingAnswer: false,
-  errorMessage: '',
-  screenStack: ['contacts']
-}
-
-function getInitialState(): AppState{
-
-  const currentInstalledVersion = localStorage.getItem("currentVersion");
-  const isFirstTime = currentInstalledVersion === null;
-  if(isFirstTime){
-    localStorage.setItem("currentVersion", currentVersion);
-    return initialState;
+  volatileState: {
+    currentScreen: 'loading',
+    chatId: '',
+    waitingAnswer: false,
+    errorMessage: '',
+    screenStack: []
   }
-
-  const isUpToDate = currentInstalledVersion === currentVersion;
-  if(isUpToDate){
-    const storedState = localStorage.getItem(currentVersion) || JSON.stringify(initialState);
-    return JSON.parse(storedState);
-  }
-
-  const storedStateVersion =  Number(localStorage.getItem("currentVersion"));
-  const currentVersionNumber = Number(currentVersion);
-  if(storedStateVersion > currentVersionNumber){
-    console.error(`Stored state version '${storedStateVersion}' is higher than current version '${currentVersion}'`); 
-  }
-  for(let i = storedStateVersion; i < currentVersionNumber; i++){
-    try{
-      console.log(`Applying migration ${i}`);
-      migrations[i]();
-    }catch(e: any){
-      const storedState = localStorage.getItem(storedStateVersion+"") || "nothing found";
-      const name: string = e.name;
-      let errorMessage = `Migration failed for version ${i} ${e} ${storedState}`
-      if(name.toLocaleLowerCase().includes("quota")){
-        const keys = Object.keys(localStorage);
-        errorMessage = errorMessage + ' keys:' + keys;
-      }
-      return {
-        version: currentVersion,
-        settings: {
-          openAiKey: "",
-          userName: "",
-          userShortInfo: "",
-          model: "gpt-4",
-          systemEntry: defaultSystemEntry,
-          profileGeneratorSystemEntry: defaultProfileGeneratorSystem,
-          profileGeneratorMessageEntry: defaultProfileGeneratorMessage,
-          singleBotSystemEntryContext: defaultSingleUserChatContext,
-          chatGroupSystemEntryContext: defaultGroupChatContext,
-          showThought: false
-        },
-        currentScreen: 'error',
-        contacts: {},
-        chatId: '',
-        groupChatsParticipants: {},
-        waitingAnswer: false,
-        errorMessage: errorMessage,
-        screenStack: ['error']
-      }
-    }
-  }
-  const storedState = localStorage.getItem(currentVersion) || JSON.stringify(initialState);
-  return JSON.parse(storedState);
-}
-
-function saveStateToLocalStorage(state: AppState) {
-  localStorage.setItem(state.version, JSON.stringify(state));
 }
 
 export const appStateSlice = createSlice({
   name: 'appState',
-  initialState: getInitialState(),
+  initialState: initialState,
   reducers: {
-    reloadState: (state: AppState, action: PayloadAction<string>) => {
-      const storedState = localStorage.getItem(action.payload);
-      if (storedState) {
-        const reloadedState = JSON.parse(storedState);
-        state.version = reloadedState.version;
-        state.settings = reloadedState.settings;
-        state.currentScreen = reloadedState.currentScreen;
-        state.contacts = reloadedState.contacts;
-        state.chatId = reloadedState.chatId;
-        state.waitingAnswer = reloadedState.waitingAnswer;
-        state.errorMessage = reloadedState.errorMessage;
-        state.screenStack = reloadedState.screenStack;
-      }
+    reloadState: (state: AppState, action: PayloadAction<AppState>) => {
+      // TODO: Copy all properties
+      const reloadedState = action.payload;
+      state.version = reloadedState.version;
+      state.settings = reloadedState.settings;
+      state.volatileState.currentScreen = reloadedState.volatileState.currentScreen;
+      state.contacts = reloadedState.contacts;
+      state.groupChatsParticipants = reloadedState.groupChatsParticipants;
+      state.volatileState.chatId = reloadedState.volatileState.chatId;
+      state.volatileState.waitingAnswer = reloadedState.volatileState.waitingAnswer;
+      state.volatileState.errorMessage = reloadedState.volatileState.errorMessage;
+      state.volatileState.screenStack = reloadedState.volatileState.screenStack;
     },
     setSettings: (state: AppState, action: PayloadAction<Settings>) => {
       state.settings = action.payload;
@@ -244,41 +190,41 @@ export const appStateSlice = createSlice({
     },
     setScreen: (state: AppState, action: PayloadAction<AppScreen>) => {
       if(action.payload === 'contacts'){
-        state.currentScreen = action.payload;
-        state.screenStack = ['contacts'];
+        state.volatileState.currentScreen = action.payload;
+        state.volatileState.screenStack = ['contacts'];
       }
-      if(action.payload === state.currentScreen){
+      if(action.payload === state.volatileState.currentScreen){
         return;
       }
-      state.currentScreen = action.payload;
-      state.screenStack.push(action.payload);
+      state.volatileState.currentScreen = action.payload;
+      state.volatileState.screenStack.push(action.payload);
       saveStateToLocalStorage(state);
     },
     goToPreviousScreen: (state: AppState) => {
-      state.screenStack.pop();
-      state.currentScreen = state.screenStack.at(-1) || 'contacts';
+      state.volatileState.screenStack.pop();
+      state.volatileState.currentScreen = state.volatileState.screenStack.at(-1) || 'contacts';
       saveStateToLocalStorage(state);
     },
     setChatId: (state: AppState, action: PayloadAction<string>) => {
-      state.chatId = action.payload;
+      state.volatileState.chatId = action.payload;
       saveStateToLocalStorage(state);
     },
     setErrorMessage: (state: AppState, action: PayloadAction<string>) => {
-      state.errorMessage = action.payload;
+      state.volatileState.errorMessage = action.payload;
     },
     addMessage: (state: AppState, action: PayloadAction<ChatMessage>) => {
-      const contact = state.contacts[state.chatId];
+      const contact = state.contacts[state.volatileState.chatId];
       contact.chats = contact.chats?.concat(action.payload) ?? [];
       if(action.payload.role === 'assistant'){
         const maxMessageSizeOnContactList = 40;
         const lastMessageFull:string = JSON.parse(action.payload.content).answer;
         if(lastMessageFull.length > maxMessageSizeOnContactList){
-          state.contacts[state.chatId].status = JSON.parse(action.payload.content).answer.slice(0, maxMessageSizeOnContactList)+"...";  
+          state.contacts[state.volatileState.chatId].status = JSON.parse(action.payload.content).answer.slice(0, maxMessageSizeOnContactList)+"...";  
         }else{
-          state.contacts[state.chatId].status = JSON.parse(action.payload.content).answer;  
+          state.contacts[state.volatileState.chatId].status = JSON.parse(action.payload.content).answer;  
         }
       }else{
-        state.contacts[state.chatId].status = action.payload.content;
+        state.contacts[state.volatileState.chatId].status = action.payload.content;
       }
       saveStateToLocalStorage(state);
     },
@@ -295,27 +241,27 @@ export const appStateSlice = createSlice({
       saveStateToLocalStorage(state);
     },
     setWaitingAnswer: (state: AppState, action: PayloadAction<boolean>) => {
-      state.waitingAnswer = action.payload;
+      state.volatileState.waitingAnswer = action.payload;
       saveStateToLocalStorage(state);
     },
   },
-})
+});
 
-export const selectScreen = (state: RootState) => state.appState.currentScreen
+export const selectScreen = (state: RootState) => state.appState.volatileState.currentScreen
 export const selectSettings = (state: RootState) => state.appState.settings
 export const selectVersion = (state: RootState) => state.appState.version
-export const selectErrorMessage = (state: RootState) => state.appState.errorMessage
-export const selectCurrentContact = (state: RootState) => state.appState.contacts[state.appState.chatId]
+export const selectErrorMessage = (state: RootState) => state.appState.volatileState.errorMessage
+export const selectCurrentContact = (state: RootState) => state.appState.contacts[state.appState.volatileState.chatId]
 export const selectCurrentContactsInGroupChat = (state: RootState) => 
-  (state.appState.contacts[state.appState.chatId] as GroupChatContact).contactsIds
+  (state.appState.contacts[state.appState.volatileState.chatId] as GroupChatContact).contactsIds
   .filter(id => state.appState.contacts[id].type === 'bot')
   .map(id => state.appState.contacts[id]) as BotContact[]
 export const selectGroupChatParticipants = (state: RootState) => state.appState.groupChatsParticipants
-export const selectChatHistory = (state: RootState) => state.appState.contacts[state.appState.chatId].chats
+export const selectChatHistory = (state: RootState) => state.appState.contacts[state.appState.volatileState.chatId].chats
 export const selectContacts = (state: RootState) => state.appState.contacts
-export const selectWaitingAnswer = (state: RootState) => state.appState.waitingAnswer
+export const selectWaitingAnswer = (state: RootState) => state.appState.volatileState.waitingAnswer
 
-export const actionReloadState = (version: string) => ({type: 'appState/reloadState', payload: version})
+export const actionReloadState = (newState: AppState) => ({type: 'appState/reloadState', payload: newState})
 export const actionSetScreen = (screen: AppScreen) => ({type: 'appState/setScreen', payload: screen})
 export const actionGoToPreviousScreen = () => ({type: 'appState/goToPreviousScreen'})
 export const actionSetChatId = (chatId: string) => ({type: 'appState/setChatId', payload: chatId})
@@ -459,6 +405,52 @@ function createBotContactFromMeta(
       contactSystemEntryTemplate: settings.systemEntry,
       contextTemplate: settings.singleBotSystemEntryContext
     };
+}
+
+export async function dispatchActionReloadState(
+  dispatch: Dispatch<AnyAction>
+){
+  const currentInstalledVersion = localStorage.getItem("currentVersion");
+  const isFirstTime = currentInstalledVersion === null;
+  if(isFirstTime){
+    localStorage.setItem("currentVersion", currentVersion);
+    dispatch(actionReloadState(initialState));
+    return;
+  }
+  const storedStateVersion =  Number(currentInstalledVersion);
+  
+  const currentVersionNumber = Number(currentVersion);
+  if(storedStateVersion > currentVersionNumber){
+    console.error(`Stored state version '${storedStateVersion}' is higher than current version '${currentVersion}'`); 
+  }
+
+  for(let i = storedStateVersion; i < currentVersionNumber; i++){
+    try{
+      console.log(`Applying migration ${i}`);
+      await migrations[i]();
+    }catch(e: any){
+      const storedState = localStorage.getItem(storedStateVersion+"") || "nothing found";
+      const name: string = e.name;
+      let errorMessage = `Migration failed for version ${i} ${e} ${storedState}`
+      if(name.toLocaleLowerCase().includes("quota")){
+        const keys = Object.keys(localStorage);
+        errorMessage = errorMessage + ' keys:' + keys;
+      }
+      dispatch(actionReloadState({ ...initialState,
+        volatileState: {
+          currentScreen: 'error',
+          chatId: '',
+          waitingAnswer: false,
+          errorMessage: errorMessage,
+          screenStack: ['error']
+        }
+      }));
+      return;
+    }
+  }
+  console.log(`Reloading state`);
+  const loadedState = await getAppState(currentVersion);
+  dispatch(actionReloadState(loadedState));
 }
 
 function writeSystemEntry(

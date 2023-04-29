@@ -44,10 +44,6 @@ export default function Settings() {
         })
     }
 
-    const gotoStateEditor = () => {
-        dispatch(actionSetScreen('stateEditor'));
-    }
-
     return <Screen
         leftItem = {<BackButton/>}
         centerItem = {<ScreenTitle title='Settings' />}
@@ -97,6 +93,5 @@ export default function Settings() {
                 id="Show Thoughts" />} label="showThought" />
             <Button onClick={updateKey}>Save settings</Button>      
         </SettingsForm>
-        <Button onClick={gotoStateEditor}>State Editor (Advanced)</Button>   
     </Screen>;
 }
