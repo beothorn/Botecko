@@ -16,10 +16,6 @@ const cleanUpAvatars = (contacts: any) => {
             }
         }
     });
-
-    localStorage.clear(); // Bye bye local storage (can't have more than 10mega there :( )
-    localStorage.setItem("currentVersion", "8");
-    console.log("Done migration from version 7 to 8");
 }
 
 const migrations = [

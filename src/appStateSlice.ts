@@ -418,7 +418,15 @@ export async function dispatchActionReloadState(
   const isFirstTime = currentInstalledVersion === null;
   if(isFirstTime){
     localStorage.setItem("currentVersion", currentVersion);
-    dispatch(actionReloadState(initialState));
+    dispatch(actionReloadState({ ...initialState,
+      volatileState: {
+        currentScreen: 'testOpenAiToken',
+        chatId: '',
+        waitingAnswer: false,
+        errorMessage: 'errorMessage',
+        screenStack: ['contacts']
+      }
+    }));
     return;
   }
   const storedStateVersion =  Number(currentInstalledVersion);
