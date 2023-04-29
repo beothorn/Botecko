@@ -76,6 +76,15 @@ export function updateAppState(appState: AppState): Promise<IDBRequest<IDBValidK
     .then((store) => store.put(appStateCopy));
 }
 
+export function updateAvatar(id: string, img: string): Promise<IDBRequest<IDBValidKey>>{
+  const appStateCopy = JSON.parse(JSON.stringify({id, img}));
+  console.log(appStateCopy);
+  return openDB()
+    .then((db) => db.transaction([AVATAR_STORE], "readwrite"))
+    .then((transaction) => transaction.objectStore(AVATAR_STORE))
+    .then((store) => store.put(appStateCopy));
+}
+
 export function getAppState(version: string){
   return openDB()
     .then((db) => {
