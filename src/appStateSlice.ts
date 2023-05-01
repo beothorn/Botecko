@@ -8,7 +8,7 @@ import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfile
 import { addAvatar, getAppState, updateAppState } from './persistence/indexeddb';
 import migrations from './migrations';
 
-export const currentVersion = '9';
+export const currentVersion = '12';
 
 export type AppScreen = 'loading' 
   | 'testOpenAiToken' 
@@ -94,7 +94,7 @@ export type GroupChatContact = {
   meta: GroupMeta,
   avatarMeta: AvatarMeta,
   chats: ChatMessage[],
-  contactsIds: string[],
+  contacts: BotContact[], // Needs migration
   contextTemplate: string,
   status: string
 }
@@ -257,9 +257,8 @@ export const selectVersion = (state: RootState) => state.appState.version
 export const selectErrorMessage = (state: RootState) => state.appState.volatileState.errorMessage
 export const selectCurrentContact = (state: RootState) => state.appState.contacts[state.appState.volatileState.chatId]
 export const selectCurrentContactsInGroupChat = (state: RootState) => 
-  (state.appState.contacts[state.appState.volatileState.chatId] as GroupChatContact).contactsIds
-  .filter(id => state.appState.contacts[id].type === 'bot')
-  .map(id => state.appState.contacts[id]) as BotContact[]
+  (state.appState.contacts[state.appState.volatileState.chatId] as GroupChatContact).contacts
+  .filter(contact => state.appState.contacts[contact.id].type === 'bot') as BotContact[]
 export const selectGroupChatParticipants = (state: RootState) => state.appState.groupChatsParticipants
 export const selectChatHistory = (state: RootState) => state.appState.contacts[state.appState.volatileState.chatId].chats
 export const selectContacts = (state: RootState) => state.appState.contacts
@@ -307,29 +306,64 @@ export async function dispatchSendMessage(
     dispatch(actionSetWaitingAnswer(true));
     dispatch(actionAddMessage(newMessageWithRole));
   })
-  const chatWithNewMessage = previousMessages.concat({"role": "user", "content": newMessage})
-  if(settings.model === "debug"){
-    dispatch(actionAddMessage({"role": "assistant", "content": "Lorem ipsum"}));
-    dispatch(actionSetWaitingAnswer(false));
-  }else{
-    const sysEntry = writeSystemEntry(
-      contact.meta, 
-      groupMeta,
-      settings.userName, 
-      settings.userShortInfo, 
-      contact.contactSystemEntryTemplate,
-      promptContext
-    );
-    chatCompletion(settings, [sysEntry].concat(chatWithNewMessage))
-      .then(response => batch(() => {
+  const chatWithNewMessage = previousMessages.concat({"role": "user", "content": newMessage});
+  const sysEntry = writeSystemEntry(
+    contact.meta, 
+    groupMeta,
+    settings.userName, 
+    settings.userShortInfo, 
+    contact.contactSystemEntryTemplate,
+    promptContext
+  );
+  chatCompletion(settings, [sysEntry].concat(chatWithNewMessage))
+    .then(response => batch(() => {
+      dispatch(actionSetWaitingAnswer(false));
+      dispatch(actionAddMessage(response));
+      })  
+    ).catch((e) => batch(() => {
+      dispatch(actionSetWaitingAnswer(false));
+      dispatch(actionAddMessage({"role": "assistant", "content": `{"plan": "${e.message}", "answer": "..."}`}));
+    }));
+}
+
+export async function dispatchAskBotToMessage(
+  dispatch: Dispatch<AnyAction>, 
+  botId: string,
+  chatContact: GroupChatContact, 
+  settings: Settings, 
+  previousMessages: Message[], 
+  promptContext: string,
+  groupMeta: GroupMeta | null
+) {
+
+  const cleanedMessages = previousMessages.map(m => ({
+    role: m.role,
+    content: m.content
+  })); // Should remove thoughts and add bot name
+
+  const botContact = chatContact.contacts.find(contact => contact.id === botId) as BotContact;
+
+  dispatch(actionSetWaitingAnswer(true));
+  const sysEntry = writeSystemEntry(
+    botContact.meta, 
+    groupMeta,
+    settings.userName, 
+    settings.userShortInfo, 
+    botContact.contactSystemEntryTemplate,
+    promptContext
+  );
+  chatCompletion(settings, [sysEntry].concat(cleanedMessages))
+    .then(response => {
+      const chatMsg = response as ChatMessage;
+      chatMsg.contactId = botId;
+      batch(() => {
         dispatch(actionSetWaitingAnswer(false));
-        dispatch(actionAddMessage(response));
-        })  
-      ).catch((e) => batch(() => {
-        dispatch(actionSetWaitingAnswer(false));
-        dispatch(actionAddMessage({"role": "assistant", "content": `{"plan": "${e.message}", "answer": "..."}`}));
-      }));
-  }  
+        dispatch(actionAddMessage(chatMsg));
+      })
+    }).catch((e) => batch(() => {
+      dispatch(actionSetWaitingAnswer(false));
+      dispatch(actionAddMessage({"role": "assistant", "content": `{"plan": "${e.message}", "answer": "..."}`}));
+    }));
 }
 
 export async function dispatchCreateGroupChat(
@@ -339,7 +373,21 @@ export async function dispatchCreateGroupChat(
   description: string,
   contactsIds: string[]
 ) {
-  const id = Math.floor(Math.random() * 10000) + 'groupChat'
+  const id = Math.floor(Math.random() * 10000) + 'groupChat';
+
+  // TODO: Add contacts to own store
+
+  const currentAppState = await getAppState(currentVersion);
+
+  const contacts: BotContact[] = [];
+
+  Object.entries(currentAppState.contacts).forEach(async ([_key, contact]: [any, any]) => {
+      if(contact.type === 'bot' && contactsIds.includes(contact.id)){
+          const contactCopy: BotContact = JSON.parse(JSON.stringify(contact));
+          contactCopy.chats = [];
+          contacts.push(contactCopy);
+      }
+  });
 
   dispatch(actionAddContact({
     type: 'group',
@@ -353,7 +401,7 @@ export async function dispatchCreateGroupChat(
       id: ''
     },
     chats: [],
-    contactsIds: contactsIds,
+    contacts: contacts,
     contextTemplate: settings.chatGroupSystemEntryContext,
     status: description
   }));

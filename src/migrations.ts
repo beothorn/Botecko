@@ -1,3 +1,4 @@
+import { AppScreen } from "./appStateSlice";
 import { addAppState, addAvatar, deleteAppState, getAppState } from "./persistence/indexeddb";
 import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem, defaultSingleUserChatContext, defaultSystemEntry } from "./prompts/promptGenerator";
 
@@ -181,6 +182,87 @@ const migrations = [
         localStorage.setItem("currentVersion", "9");
         deleteAppState('8');
         console.log("Done migration from version 8 to 9");
+    },
+    async () => {
+        console.log("Running migration from version 9 to 10");
+        const loadedState = await getAppState('9');
+        const newLoadedState = {
+            ...loadedState,
+            version: '10',
+            settings: {
+                ...loadedState.settings,
+                systemEntry: defaultSystemEntry,
+                profileGeneratorSystemEntry: defaultProfileGeneratorSystem,
+                profileGeneratorMessageEntry: defaultProfileGeneratorMessage,
+                singleBotSystemEntryContext: defaultSingleUserChatContext,
+                chatGroupSystemEntryContext: defaultGroupChatContext,
+            },
+            volatileState: {
+                ...loadedState.volatileState,
+                screenStack: ['contacts' as AppScreen],
+                currenScreen: 'contacts',
+            }
+        }
+
+        Object.entries(newLoadedState.contacts).forEach(async ([_key, contact]: [any, any]) => {
+            if(contact.type === 'bot'){
+                contact.contactSystemEntryTemplate = defaultSystemEntry;
+                contact.contextTemplate = defaultSingleUserChatContext;
+            }else{
+                delete newLoadedState.contacts[contact.id];
+            }
+        });
+
+        addAppState(newLoadedState);
+        localStorage.setItem("currentVersion", "10");
+        deleteAppState('9');
+        console.log("Done migration from version 9 to 10");
+    },
+    async () => {
+        console.log("Running migration from version 10 to 11");
+        const loadedState = await getAppState('10');
+        const newLoadedState = {
+            ...loadedState,
+            version: '11',
+            volatileState: {
+                ...loadedState.volatileState,
+                screenStack: ['contacts' as AppScreen],
+                currenScreen: 'contacts',
+            }
+        }
+
+        addAppState(newLoadedState);
+        localStorage.setItem("currentVersion", "11");
+        deleteAppState('10');
+        console.log("Done migration from version 10 to 11");
+    },
+    async () => {
+        console.log("Running migration from version 11 to 12");
+        const loadedState = await getAppState('11');
+        const newLoadedState = {
+            ...loadedState,
+            version: '12',
+            volatileState: {
+                ...loadedState.volatileState,
+                screenStack: ['contacts' as AppScreen],
+                currentScreen: 'contacts' as AppScreen,
+            }
+        }
+
+        console.log(JSON.stringify(Object.entries(newLoadedState.contacts)));
+
+        Object.entries(newLoadedState.contacts).forEach(([_key, contact]: [any, any]) => {
+            if(contact.type === 'group'){
+                delete newLoadedState.contacts[contact.id];
+            }
+        });
+
+        console.log(JSON.stringify(Object.entries(newLoadedState.contacts)));
+
+        addAppState(newLoadedState);
+        localStorage.setItem("currentVersion", "12");
+        //deleteAppState('11');
+        console.log("Done migration from version 11 to 12");
     }
 ];
 

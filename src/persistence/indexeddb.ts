@@ -1,7 +1,7 @@
 import { AppState, AvatarImg } from "../appStateSlice";
 
 const DB_NAME = "BoteckoDB";
-const DB_VERSION = 9;
+const DB_VERSION = 10;
 const APP_STATE_STORE = "appState";
 const AVATAR_STORE = "avatar";
 
@@ -21,11 +21,13 @@ function openDB(): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains(AVATAR_STORE)) {
         db.createObjectStore(AVATAR_STORE, { keyPath: "id" });
       }
-      if(event.oldVersion === 8){
-        // get store for APP_STATE_STORE
+      if(event.oldVersion <= 8){
         const tx = (event.target as IDBRequest)?.transaction as IDBTransaction;
         const store = tx.objectStore(APP_STATE_STORE);
         store.createIndex('versionIndex', 'version');
+      }
+      if(event.oldVersion <= 9){
+        // do nothing
       }
     };
 

@@ -2,7 +2,8 @@ import React from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { selectSettings, selectChatHistory, selectWaitingAnswer, 
   actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning, 
-  actionSetErrorMessage, GroupChatContact, actionAddMessage, selectCurrentContactsInGroupChat } from '../appStateSlice';
+  actionSetErrorMessage, GroupChatContact, actionAddMessage, 
+  selectCurrentContactsInGroupChat, dispatchAskBotToMessage } from '../appStateSlice';
 import { batch } from 'react-redux';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
@@ -30,7 +31,15 @@ export default function GroupChat() {
   };
   
   const askBotToSpeak = (id: string) => {
-    dispatch(actionAddMessage({"role": "user", "content": `Bot ${id} will speak`}));
+    dispatchAskBotToMessage(
+      dispatch, 
+      id,
+      groupContact, 
+      settings, 
+      chatHistory, 
+      groupContact.contextTemplate,
+      groupContact.meta
+    );
   };
 
   const groupInfo = () => {
@@ -74,13 +83,18 @@ export default function GroupChat() {
     .flatMap((m): ChatBubbleProps[] => {
       if(m.role === "assistant"){
         const messageWithPlan = JSON.parse(m.content)
+        // Find avatar ID
+
+        const avatarId = groupContact.contacts.find(c => c.id === m.contactId)?.avatarMeta.id;
+
+
         if(settings.showThought){
           return [
             {"role": "thought", "content": messageWithPlan.plan},
-            {"role": "assistant", "content": messageWithPlan.answer, avatarId: groupAvatarMetaData.id },
+            {"role": "assistant", "content": messageWithPlan.answer, avatarId: avatarId },
           ];
         }else{
-          return [{"role": "assistant", "content": messageWithPlan.answer, avatarId: groupAvatarMetaData.id}];
+          return [{"role": "assistant", "content": messageWithPlan.answer, avatarId: avatarId}];
         }
       }
       if(m.role === "system"){
