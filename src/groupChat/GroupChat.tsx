@@ -83,11 +83,7 @@ export default function GroupChat() {
     .flatMap((m): ChatBubbleProps[] => {
       if(m.role === "assistant"){
         const messageWithPlan = JSON.parse(m.content)
-        // Find avatar ID
-
         const avatarId = groupContact.contacts.find(c => c.id === m.contactId)?.avatarMeta.id;
-
-
         if(settings.showThought){
           return [
             {"role": "thought", "content": messageWithPlan.plan},

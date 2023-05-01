@@ -331,15 +331,30 @@ export async function dispatchAskBotToMessage(
   botId: string,
   chatContact: GroupChatContact, 
   settings: Settings, 
-  previousMessages: Message[], 
+  previousMessages: ChatMessage[], 
   promptContext: string,
   groupMeta: GroupMeta | null
 ) {
 
-  const cleanedMessages = previousMessages.map(m => ({
-    role: m.role,
-    content: m.content
-  })); // Should remove thoughts and add bot name
+  const cleanedMessages = previousMessages.map(m => {
+    if(m.role === 'assistant'){
+      const botContact = chatContact.contacts.find(contact => contact.id === m.contactId) as BotContact;
+      let answer = "";
+      try{
+        answer = JSON.parse(m.content).answer;
+      }catch(e){
+        answer = m.content;
+      }
+      return {
+        role: m.role,
+        content: `{"plan": "", "user": "${botContact.meta.name}", "answer": "${answer}"}`
+      };
+    }
+    return {
+      role: m.role,
+      content: `{"plan": "", "user": "${settings.userName}", "answer": "${m.content}"}`
+    };
+  }); // Should remove thoughts and add bot name
 
   const botContact = chatContact.contacts.find(contact => contact.id === botId) as BotContact;
 
