@@ -81,6 +81,7 @@ export function deleteAppState(version: string){
     .then((transaction: IDBTransaction) => transaction.commit());
 }
 
+const avatarCache: Record<string, AvatarImg> = {};
 
 export function addAvatar(id: string, img: string){
   return openDB()
@@ -89,7 +90,10 @@ export function addAvatar(id: string, img: string){
       const store = transaction.objectStore(AVATAR_STORE);
       return new Promise<IDBTransaction>((resolve, reject) => {
         const request = store.add({id, img});
-        request.onsuccess = () => resolve(transaction);
+        request.onsuccess = () => {
+          avatarCache[id] = {id, img};
+          resolve(transaction);
+        }
         request.onerror = () => {
           transaction.abort();
           reject(request.error);
@@ -134,13 +138,19 @@ export function getAppState(version: string){
 }
 
 export function getAvatar(id: string){
+  if(avatarCache[id]){
+    return Promise.resolve(avatarCache[id]);
+  }
   return openDB()
     .then((db) => {
       const transaction = db.transaction([AVATAR_STORE], "readonly");
       const store = transaction.objectStore(AVATAR_STORE);
       return new Promise<AvatarImg>((resolve, reject) => {
         const request = store.get(id);
-        request.onsuccess = () => resolve(request.result);
+        request.onsuccess = () => {
+          avatarCache[id] = request.result;
+          resolve(request.result);
+        }
         request.onerror = () => {
           transaction.abort();
           reject(request.error);

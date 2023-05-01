@@ -17,7 +17,7 @@ export default function LocalAvatar({ id, prompt, sx, onClick }: LocalAvatarProp
   const settings = useAppSelector(selectSettings);
   useEffect(() => {
     getAvatar(id).then(avatar => {
-      if(avatar?.img !== '' ){
+      if(avatar && avatar.img !== '' ){
         setBase64Img(avatar.img);
       }else{
         if(prompt){
