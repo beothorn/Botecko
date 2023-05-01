@@ -8,7 +8,7 @@ import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfile
 import { addAvatar, getAppState, updateAppState } from './persistence/indexeddb';
 import migrations from './migrations';
 
-export const currentVersion = '8';
+export const currentVersion = '9';
 
 export type AppScreen = 'loading' 
   | 'testOpenAiToken' 

@@ -1,7 +1,7 @@
 import { AppState, AvatarImg } from "../appStateSlice";
 
 const DB_NAME = "BoteckoDB";
-const DB_VERSION = 8;
+const DB_VERSION = 9;
 const APP_STATE_STORE = "appState";
 const AVATAR_STORE = "avatar";
 
@@ -20,6 +20,12 @@ function openDB(): Promise<IDBDatabase> {
       }
       if (!db.objectStoreNames.contains(AVATAR_STORE)) {
         db.createObjectStore(AVATAR_STORE, { keyPath: "id" });
+      }
+      if(event.oldVersion === 8){
+        // get store for APP_STATE_STORE
+        const tx = (event.target as IDBRequest)?.transaction as IDBTransaction;
+        const store = tx.objectStore(APP_STATE_STORE);
+        store.createIndex('versionIndex', 'version');
       }
     };
 
@@ -49,6 +55,32 @@ export function addAppState(appState: AppState){
     })
     .then((transaction: IDBTransaction) => transaction.commit());
 }
+
+export function deleteAppState(version: string){
+  return openDB()
+    .then((db) => {
+      const transaction = db.transaction([APP_STATE_STORE], "readwrite");
+      const store = transaction.objectStore(APP_STATE_STORE);
+      return new Promise<IDBTransaction>((resolve, reject) => {
+        const request = store.index('versionIndex').openCursor(IDBKeyRange.only(version));
+        request.onsuccess = (event: Event) => {
+          const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+          if (cursor) {
+            cursor.delete();
+            cursor.continue();
+          } else {
+            resolve(transaction);
+          }
+        };
+        request.onerror = () => {
+          transaction.abort();
+          reject(request.error);
+        };
+      });
+    })
+    .then((transaction: IDBTransaction) => transaction.commit());
+}
+
 
 export function addAvatar(id: string, img: string){
   return openDB()

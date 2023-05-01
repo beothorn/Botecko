@@ -1,5 +1,5 @@
-import { addAppState, addAvatar } from "./persistence/indexeddb";
-import { defaultSystemEntry } from "./prompts/promptGenerator";
+import { addAppState, addAvatar, deleteAppState, getAppState } from "./persistence/indexeddb";
+import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem, defaultSingleUserChatContext, defaultSystemEntry } from "./prompts/promptGenerator";
 
 
 const cleanUpAvatars = (contacts: any) => {
@@ -153,6 +153,34 @@ const migrations = [
         localStorage.clear(); // Bye bye local storage (can't have more than 10mega there :( )
         localStorage.setItem("currentVersion", "8");
         console.log("Done migration from version 7 to 8");
+    },
+    async () => {
+        console.log("Running migration from version 8 to 9");
+        const loadedState = await getAppState('8');
+        const newLoadedState = {
+            ...loadedState,
+            version: '9',
+            settings: {
+                ...loadedState.settings,
+                systemEntry: defaultSystemEntry,
+                profileGeneratorSystemEntry: defaultProfileGeneratorSystem,
+                profileGeneratorMessageEntry: defaultProfileGeneratorMessage,
+                singleBotSystemEntryContext: defaultSingleUserChatContext,
+                chatGroupSystemEntryContext: defaultGroupChatContext,
+            }
+        }
+
+        Object.entries(newLoadedState.contacts).forEach(async ([_key, contact]: [any, any]) => {
+            if(contact.type === 'bot'){
+                contact.contactSystemEntryTemplate = defaultSystemEntry;
+                contact.contextTemplate = defaultSingleUserChatContext;
+            }
+        });
+
+        addAppState(newLoadedState);
+        localStorage.setItem("currentVersion", "9");
+        deleteAppState('8');
+        console.log("Done migration from version 8 to 9");
     }
 ];
 
