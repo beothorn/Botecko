@@ -6,6 +6,8 @@ An instant chat app where all contacts are bots.
 This is a client for the openAI api, so you need a key.  
 You can get one [here](https://platform.openai.com/account/api-keys)
 
+[![Botecko demo](//img.youtube.com/vi/T5jF57Luoh4/0.jpg)](//www.youtube.com/watch?v=T5jF57Luoh4 "Botecko demo")
+
 # Features
 
 Add a contact using an one sentence description and it will create:
