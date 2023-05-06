@@ -35,7 +35,7 @@ Use casual language, this is an instant messenger.
 
 export const defaultSingleUserChatContext = `The character is talking with a friend %USER_NAME%. The friend profile is '%USER_INFO%'.`;
 
-export const defaultGroupChatContext = `The character is talking on a chat group with name %CHAT_GROUP_NAME% and description '%CHAT_GROUP_DESCRIPTION%'.`;
+export const defaultGroupChatContext = `The character is talking on a chat group with name %CHAT_GROUP_NAME% and description '%CHAT_GROUP_DESCRIPTION%'. DO NOT ANSWER AS OTHER CHARACTER, you are %NAME%!`;
 
 
 export const defaultProfileGeneratorSystem = `You are a profile generator for an app that creates fake people profilesin JSON format.`;
