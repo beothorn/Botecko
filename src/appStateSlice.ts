@@ -3,7 +3,7 @@ import { batch } from 'react-redux'
 
 import type { RootState } from './store'
 
-import { chatCompletion, imageGeneration, listEngines, Message } from './OpenAiApi'
+import { chatCompletion, imageGeneration, listEngines, Message, RoleType } from './OpenAiApi'
 import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem, defaultSingleUserChatContext, defaultSystemEntry } from './prompts/promptGenerator';
 import { addAvatar, getAppState, updateAppState } from './persistence/indexeddb';
 import migrations from './migrations';
@@ -62,7 +62,7 @@ type AvatarMeta = {
 // If any value is changed here, a new version and migration is needed
 type ChatMessage = {
   contactId: string;
-  role: 'user' | 'system' | 'assistant' | 'thought';
+  role: RoleType;
   content: string;
 }
 
@@ -306,7 +306,10 @@ export async function dispatchSendMessage(
     dispatch(actionSetWaitingAnswer(true));
     dispatch(actionAddMessage(newMessageWithRole));
   })
-  const chatWithNewMessage = previousMessages.concat({"role": "user", "content": newMessage});
+
+  const previousMessagesWithoutErrors = previousMessages.filter(m => m.role !== 'error');
+
+  const chatWithNewMessage = previousMessagesWithoutErrors.concat({"role": "user", "content": newMessage});
   const sysEntry = writeSystemEntry(
     contact.meta, 
     groupMeta,
@@ -322,7 +325,7 @@ export async function dispatchSendMessage(
       })  
     ).catch((e) => batch(() => {
       dispatch(actionSetWaitingAnswer(false));
-      dispatch(actionAddMessage({"role": "assistant", "content": `{"plan": "${e.message}", "answer": "..."}`}));
+      dispatch(actionAddMessage({"role": 'error', "content": `${e.message}`}));
     }));
 }
 
@@ -347,12 +350,12 @@ export async function dispatchAskBotToMessage(
       }
       return {
         role: m.role,
-        content: `{"plan": "", "user": "${botContact.meta.name}", "answer": "${answer}"}`
+        content: `{"plan": "1-...2-...3-...4-...", "user": "${botContact.meta.name}", "answer": "${answer}"}`
       };
     }
     return {
       role: m.role,
-      content: `{"plan": "", "user": "${settings.userName}", "answer": "${m.content}"}`
+      content: `{"plan": "1-...2-...3-...4-...", "user": "${settings.userName}", "answer": "${m.content}"}`
     };
   }); // Should remove thoughts and add bot name
 

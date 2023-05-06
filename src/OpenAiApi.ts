@@ -4,8 +4,10 @@ import { Settings } from './appStateSlice';
 const openAiUrl = 'https://api.openai.com/v1';
 const model = "gpt-4";
 
+export type RoleType = 'user' | 'system' | 'assistant' | 'thought' | 'error';
+
 export type Message = {
-    role: 'user' | 'system' | 'assistant' | 'thought';
+    role: RoleType;
     content: string;
 };
 

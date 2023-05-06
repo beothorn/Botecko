@@ -9,6 +9,7 @@ import { styled } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import StyledMenu from './StyledMenu';
 import LocalAvatar from './LocalAvatar';
+import { RoleType } from '../OpenAiApi';
 
 type ChatBubbleStyledProps = {
   className?: string;
@@ -16,7 +17,7 @@ type ChatBubbleStyledProps = {
 };
 
 export type ChatBubbleProps = {
-  role: 'user' | 'system' | 'assistant' | 'thought';
+  role: RoleType;
   content: string;
   avatarId?: string;
 };
@@ -111,6 +112,7 @@ export default function ChatBubble({ content, role, avatarId }: ChatBubbleProps)
   return (<>
     {role === 'user' && <ChatBubbleUser>{message}</ChatBubbleUser>}
     {role === 'system' && <ChatBubbleSystem>{message}</ChatBubbleSystem>}
+    {role === 'error' && <ChatBubbleSystem>{message}</ChatBubbleSystem>}
     {role === 'assistant' && <ChatBubbleAssistant>{message}</ChatBubbleAssistant>}
     {role === 'thought' && <ChatBubbleThought>{message}</ChatBubbleThought>}
   </>);
