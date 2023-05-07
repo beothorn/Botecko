@@ -7,8 +7,11 @@ import { chatCompletion, imageGeneration, listEngines, Message, RoleType } from 
 import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem, defaultSingleUserChatContext, defaultSystemEntry } from './prompts/promptGenerator';
 import { addAvatar, getAppState, updateAppState } from './persistence/indexeddb';
 import migrations from './migrations';
+import { countWords } from './utils/StringUtils';
 
-export const currentVersion = '13';
+export const currentVersion = '14';
+
+const MAX_WORD_SIZE = 2000;
 
 export type AppScreen = 'loading' 
   | 'testOpenAiToken' 
@@ -65,6 +68,7 @@ type ChatMessage = {
   role: RoleType;
   content: string;
   timestamp: number;
+  wordCount: number;
 }
 
 // If any value is changed here, a new version and migration is needed
@@ -254,6 +258,11 @@ export const appStateSlice = createSlice({
       contact.chats = contact.chats.filter(c => c.timestamp !== action.payload);
       saveStateToPersistence(state);
     },
+    copyMessage: (state: AppState, action: PayloadAction<number>) => {
+      const contact = state.contacts[state.volatileState.chatId];
+      contact.chats.filter(c => c.timestamp === action.payload)
+        .forEach(c =>navigator.clipboard.writeText(c.content));
+    },
   },
 });
 
@@ -282,6 +291,7 @@ export const actionAddContact = (newContact: Contact) => ({type: 'appState/addCo
 export const actionRemoveContact = (id: string) => ({type: 'appState/removeContact', payload: id})
 export const actionSetWaitingAnswer = (waitingAnswer: boolean) => ({type: 'appState/setWaitingAnswer', payload: waitingAnswer})
 export const actionDeleteMessage = (timestamp: number) => ({type: 'appState/deleteMessage', payload: timestamp})
+export const actionCopyMessage = (timestamp: number) => ({type: 'appState/copyMessage', payload: timestamp})
 
 export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>, settings: Settings) {
   listEngines(settings)
@@ -299,29 +309,58 @@ export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>
     });
 }
 
+function cleanAndLimitMessagesSize(sysEntry: Message, messages: ChatMessage[]): Message[]{
+  const messagesWithoutErrors = messages.filter(m => m.role !== 'error');
+
+  let totalWords = countWords(sysEntry.content);
+  console.log(`SysEntry size in word is ${totalWords}`);
+  let startIndex = 0;
+
+  for(let i= messagesWithoutErrors.length-1; i >= 0; i--){
+    const msgWordCount = messagesWithoutErrors[i].wordCount;
+    if(totalWords + msgWordCount  >= MAX_WORD_SIZE){
+      break;
+    }
+    totalWords += msgWordCount;
+    startIndex = i;
+  }
+
+  console.log(`Prompt size in word is ${totalWords}`);
+
+  const chatWithLimitedSize = messagesWithoutErrors.slice(startIndex);
+
+  const chatWithOnlyExpectedData = chatWithLimitedSize.map(c => ({
+    "role": c.role,
+    "content": c.content
+  }));
+
+  return [sysEntry].concat(chatWithOnlyExpectedData)
+}
+
 export async function dispatchSendMessage(
   dispatch: Dispatch<AnyAction>, 
   contact: BotContact, 
   settings: Settings, 
-  previousMessages: Message[], 
+  previousMessages: ChatMessage[], 
   newMessage: string,
   promptContext: string,
   groupMeta: GroupMeta | null
 ) {
-  const newMessageWithRole: ChatMessage = {"contactId": "user", "role": "user", "content": newMessage, "timestamp": Date.now()};
+  const newMessageWithRole: ChatMessage = {
+    "contactId": "user", 
+    "role": "user", 
+    "content": newMessage, 
+    "wordCount": countWords(newMessage),
+    "timestamp": Date.now()
+  };
   batch(() => {
     dispatch(actionSetWaitingAnswer(true));
     dispatch(actionAddMessage(newMessageWithRole));
   })
 
-  const previousMessagesWithoutErrors = previousMessages.filter(m => m.role !== 'error');
+  
 
-  const chatWithNewMessage = previousMessagesWithoutErrors.concat(newMessageWithRole);
-
-  const chatWithOnlyExpectedData = chatWithNewMessage.map(c => ({
-    "role": c.role,
-    "content": c.content
-  }));
+  const chatWithNewMessage: ChatMessage[] = previousMessages.concat(newMessageWithRole);
 
   const sysEntry = writeSystemEntry(
     contact.meta, 
@@ -331,20 +370,25 @@ export async function dispatchSendMessage(
     contact.contactSystemEntryTemplate,
     promptContext
   );
-  chatCompletion(settings, [sysEntry].concat(chatWithOnlyExpectedData))
+
+  const finalPrompt = cleanAndLimitMessagesSize(sysEntry, chatWithNewMessage);
+  
+  chatCompletion(settings, finalPrompt)
     .then(response => batch(() => {
       dispatch(actionSetWaitingAnswer(false));
       dispatch(actionAddMessage({
         ...response,
+        wordCount: countWords(response.content),
         contactId: contact.id,
         timestamp: Date.now()
       }));
-      })  
+    })  
     ).catch((e) => batch(() => {
       dispatch(actionSetWaitingAnswer(false));
       dispatch(actionAddMessage({
-        "role": 'error', 
-        "content": `${e.message}`,
+        role: 'error', 
+        content: `${e.message}`,
+        wordCount: countWords(e.message),
         contactId: contact.id,
         timestamp: Date.now()
       }));
@@ -361,7 +405,7 @@ export async function dispatchAskBotToMessage(
   groupMeta: GroupMeta | null
 ) {
 
-  const cleanedMessages = previousMessages.map(m => {
+  const messagesWithAuthor: ChatMessage[] = previousMessages.map(m => {
     if(m.role === 'assistant'){
       const botContact = chatContact.contacts.find(contact => contact.id === m.contactId) as BotContact;
       let answer = "";
@@ -371,15 +415,17 @@ export async function dispatchAskBotToMessage(
         answer = m.content;
       }
       return {
+        ...m,
         role: m.role,
         content: `{"plan": "1-...2-...3-...4-...", "user": "${botContact.meta.name}", "answer": "${answer}"}`
       };
     }
     return {
+      ...m,
       role: m.role,
       content: `{"plan": "1-...2-...3-...4-...", "user": "${settings.userName}", "answer": "${m.content}"}`
     };
-  }); // Should remove thoughts and add bot name
+  });
 
   const botContact = chatContact.contacts.find(contact => contact.id === botId) as BotContact;
 
@@ -392,10 +438,18 @@ export async function dispatchAskBotToMessage(
     botContact.contactSystemEntryTemplate,
     promptContext
   );
-  chatCompletion(settings, [sysEntry].concat(cleanedMessages))
+
+  const finalPrompt = cleanAndLimitMessagesSize(sysEntry, messagesWithAuthor);
+
+  chatCompletion(settings, finalPrompt)
     .then(response => {
-      const chatMsg = response as ChatMessage;
-      chatMsg.contactId = botId;
+      const chatMsg = {
+        role: response.role, 
+        content: response.content,
+        wordCount: countWords(response.content),
+        contactId: botId,
+        timestamp: Date.now(),
+      };
       batch(() => {
         dispatch(actionSetWaitingAnswer(false));
         dispatch(actionAddMessage(chatMsg));
@@ -403,10 +457,11 @@ export async function dispatchAskBotToMessage(
     }).catch((e) => batch(() => {
       dispatch(actionSetWaitingAnswer(false));
       dispatch(actionAddMessage({
-        "role": "assistant", 
-        "content": `{"plan": "${e.message}", "answer": "..."}`,
-        "contactId": chatContact.id,
-        "timestamp": Date.now()
+        role: "assistant", 
+        content: `{"plan": "${e.message}", "answer": "..."}`,
+        wordCount: countWords(`{"plan": "${e.message}", "answer": "..."}`),
+        contactId: chatContact.id,
+        timestamp: Date.now()
       }));
     }));
 }

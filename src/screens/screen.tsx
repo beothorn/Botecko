@@ -16,11 +16,24 @@ export const ScreenTitle = styled(ScreenTitleRaw)(() => ({
   flexGrow: 1
 }));
 
+export type Background = 'carbon';
+
+export const Content = styled('div')(({backgroungImg}: {backgroungImg?:Background}) => {
+  if(backgroungImg === 'carbon'){
+    return {
+      backgroundImage: `url("/imgs/carbon_fibre.png")`,
+    };
+  }
+  return {};
+});
+
+
 type Props = {
     children: React.ReactNode;
     menuItems?: Record<string, () => void>;
     leftItem?: React.ReactNode;
     centerItem?: React.ReactNode;
+    backgroungImg?: Background;
     barPosition?: "fixed" | "absolute" | "relative" | "static" | "sticky" | undefined
 };
 
@@ -30,7 +43,7 @@ type ScreenTitleProps = {
     title: string;
 };
 
-export default function Screen({ children, menuItems, leftItem, centerItem, barPosition }: Props){
+export default function Screen({ children, menuItems, leftItem, centerItem, barPosition, backgroungImg }: Props){
     // Add state for the menu
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -76,8 +89,8 @@ export default function Screen({ children, menuItems, leftItem, centerItem, barP
           )}
         </Toolbar>
       </AppBarStyled>
-      <div>
+      <Content backgroungImg={backgroungImg}>
         {children}
-      </div>
+      </Content>
     </>);
 }

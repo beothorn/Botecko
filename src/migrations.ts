@@ -1,6 +1,7 @@
 import { AppScreen } from "./appStateSlice";
 import { addAppState, addAvatar, deleteAppState, getAppState } from "./persistence/indexeddb";
 import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem, defaultSingleUserChatContext, defaultSystemEntry } from "./prompts/promptGenerator";
+import { countWords } from './utils/StringUtils';
 
 
 const cleanUpAvatars = (contacts: any) => {
@@ -288,6 +289,32 @@ const migrations = [
         addAppState(newLoadedState);
         localStorage.setItem("currentVersion", "13");
         console.log("Done migration from version 12 to 13");
+    },
+    async () => {
+        const oldVersion = '13';
+        const newVersion = '14';
+        console.log(`Running migration from version ${oldVersion} to ${newVersion}`);
+        const loadedState = await getAppState(oldVersion);
+
+        const newLoadedState = {
+            ...loadedState,
+            version: newVersion,
+            volatileState: {
+                ...loadedState.volatileState,
+                screenStack: ['contacts' as AppScreen],
+                currentScreen: 'contacts' as AppScreen,
+            }
+        }
+
+        Object.entries(newLoadedState.contacts).forEach(([_key, contact]: [any, any]) => {
+            for(let i = 0; i < contact.chats.length; i++){
+                contact.chats[i].wordCount = countWords(contact.chats[i].content);
+            }
+        });
+
+        addAppState(newLoadedState);
+        localStorage.setItem("currentVersion", newVersion);
+        console.log(`Done migration from version ${oldVersion} to ${newVersion}`);
     }
 ];
 

@@ -11,6 +11,7 @@ import ChatBubble, { ChatBubbleProps } from '../components/ChatBubble';
 import LocalAvatar from '../components/LocalAvatar';
 import ChatEntry from '../components/ChatEntry';
 import { styled } from '@mui/material';
+import { countWords } from '../utils/StringUtils';
 
 const Participants = styled('div')({
   display: 'flex'
@@ -27,7 +28,12 @@ export default function GroupChat() {
   const dispatch = useAppDispatch();
 
   const handleSendMessage = (msg: string) => {
-    dispatch(actionAddMessage({"role": "user", "content": msg, "contactId": "user", "timestamp": Date.now()}));
+    dispatch(actionAddMessage({
+      role: "user", 
+      content: msg, 
+      wordCount: countWords(msg),
+      contactId: "user", 
+      timestamp: Date.now()}));
   };
   
   const askBotToSpeak = (id: string) => {

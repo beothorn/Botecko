@@ -31,6 +31,10 @@ const InputContainer = styled('div')(({ theme }) => ({
   paddingRight: theme.spacing(1),
 }));
 
+const MessageInput = styled(TextField)(({ theme }) => ({
+  backgroundColor: theme.palette.background.default,
+}));
+
 export default function ChatEntry({
     children,
     handleSendMessage
@@ -63,7 +67,7 @@ export default function ChatEntry({
             {children}
         </ChatContainer>
     <InputContainer>
-      <TextField
+      <MessageInput
         fullWidth
         value={message}
         onChange={(e) => setMessage(e.target.value)}
