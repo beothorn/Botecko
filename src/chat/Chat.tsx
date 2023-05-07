@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { selectSettings, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning, actionSetErrorMessage, BotContact } from '../appStateSlice';
+import { selectSettings, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning, actionSetErrorMessage, BotContact, actionDeleteMessage } from '../appStateSlice';
 import { batch } from 'react-redux';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
@@ -70,25 +70,29 @@ export default function Chat() {
     "Toggle planning": showPlanning,
   }
 
+  const print = (timestamp: number) => {console.log(`${timestamp}`)};
+
+  const deleteMessage = (timestamp: number) => dispatch(actionDeleteMessage(timestamp));
+
   const chatBubbles = chatHistory
     .flatMap((m): ChatBubbleProps[] => {
       if(m.role === "assistant"){
         const messageWithPlan = JSON.parse(m.content)
         if(settings.showThought){
           return [
-            {"role": "thought", "content": messageWithPlan.plan},
-            {"role": "assistant", "content": messageWithPlan.answer, avatarId: avatarMetaData.id },
+            {"role": "thought", "content": messageWithPlan.plan, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: print, onEdit: print},
+            {"role": "assistant", "content": messageWithPlan.answer, avatarId: avatarMetaData.id, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: print, onEdit: print},
           ];
         }else{
-          return [{"role": "assistant", "content": messageWithPlan.answer, avatarId: avatarMetaData.id}];
+          return [{"role": "assistant", "content": messageWithPlan.answer, avatarId: avatarMetaData.id, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: print, onEdit: print}];
         }
       }
       if(m.role === "system"){
         return [
-          {"role": "system", "content": m.content}
+          {"role": "system", "content": m.content, timestamp: m.timestamp, onCopy: print}
         ];
       }
-      return [{"role": "user", "content": m.content}];
+      return [{"role": "user", "content": m.content, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: print, onEdit: print}];
     })
     .map((message, index) => (
     <ChatBubble
@@ -96,6 +100,10 @@ export default function Chat() {
       content={message.content}
       role={message.role}
       avatarId={message.avatarId}
+      timestamp={message.timestamp}
+      onDelete={message.onDelete}
+      onCopy={message.onCopy}
+      onEdit={message.onEdit}
     />
   )); 
 

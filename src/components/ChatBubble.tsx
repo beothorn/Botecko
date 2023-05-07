@@ -14,15 +14,23 @@ import { RoleType } from '../OpenAiApi';
 type ChatBubbleStyledProps = {
   className?: string;
   children?: React.ReactNode;
+  timestamp?: number;
+  onDelete?: (timestamp: number) => void;
+  onEdit?: (timestamp: number) => void;
+  onCopy?: (timestamp: number) => void;
 };
 
 export type ChatBubbleProps = {
   role: RoleType;
   content: string;
+  timestamp?: number;
+  onDelete?: (timestamp: number) => void;
+  onEdit?: (timestamp: number) => void;
+  onCopy?: (timestamp: number) => void;
   avatarId?: string;
 };
 
-function ChatBubbleStyled({ className, children }: ChatBubbleStyledProps) {
+function ChatBubbleStyled({ className, children, timestamp, onDelete, onEdit, onCopy }: ChatBubbleStyledProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -50,9 +58,9 @@ function ChatBubbleStyled({ className, children }: ChatBubbleStyledProps) {
         onClose={handleClose}
         onClick={handleClose}
       >
-        <MenuItem onClick={() => {console.log("TO BE IMPLEMENTED")}}>Delete message</MenuItem>
-        <MenuItem onClick={() => {console.log("TO BE IMPLEMENTED")}}>Edit Message</MenuItem>
-        <MenuItem onClick={() => {console.log("TO BE IMPLEMENTED")}}>Copy message</MenuItem>
+        {onDelete && <MenuItem onClick={() => onDelete(timestamp || 0)}>Delete message</MenuItem>}
+        {onEdit && <MenuItem onClick={() => onEdit(timestamp || 0)}>Edit Message</MenuItem>}
+        {onCopy && <MenuItem onClick={() => onCopy(timestamp || 0)}>Copy message</MenuItem>}
       </StyledMenu>
       {children}
     </Paper>
@@ -98,7 +106,7 @@ const ChatBubbleSystem = styled(ChatBubbleStyled)(({ theme }) => ({
   alignSelf: 'flex-end',
 }));
 
-export default function ChatBubble({ content, role, avatarId }: ChatBubbleProps){
+export default function ChatBubble({ content, role, avatarId, timestamp, onEdit, onDelete, onCopy }: ChatBubbleProps){
 
   const message = <>
     {avatarId && <LocalAvatar sx={{float: "left", marginRight: "0.2rem",}} id={avatarId} />}
@@ -110,10 +118,10 @@ export default function ChatBubble({ content, role, avatarId }: ChatBubbleProps)
   </>;
 
   return (<>
-    {role === 'user' && <ChatBubbleUser>{message}</ChatBubbleUser>}
-    {role === 'system' && <ChatBubbleSystem>{message}</ChatBubbleSystem>}
-    {role === 'error' && <ChatBubbleSystem>{message}</ChatBubbleSystem>}
-    {role === 'assistant' && <ChatBubbleAssistant>{message}</ChatBubbleAssistant>}
-    {role === 'thought' && <ChatBubbleThought>{message}</ChatBubbleThought>}
+    {role === 'user' && <ChatBubbleUser timestamp={timestamp} onEdit={onEdit} onDelete={onDelete} onCopy={onCopy}>{message}</ChatBubbleUser>}
+    {role === 'system' && <ChatBubbleSystem timestamp={timestamp} onEdit={onEdit} onDelete={onDelete} onCopy={onCopy}>{message}</ChatBubbleSystem>}
+    {role === 'error' && <ChatBubbleSystem timestamp={timestamp} onEdit={onEdit} onDelete={onDelete} onCopy={onCopy}>{message}</ChatBubbleSystem>}
+    {role === 'assistant' && <ChatBubbleAssistant timestamp={timestamp} onEdit={onEdit} onDelete={onDelete} onCopy={onCopy}>{message}</ChatBubbleAssistant>}
+    {role === 'thought' && <ChatBubbleThought timestamp={timestamp} onEdit={onEdit} onDelete={onDelete} onCopy={onCopy}>{message}</ChatBubbleThought>}
   </>);
 }

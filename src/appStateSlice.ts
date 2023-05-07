@@ -8,7 +8,7 @@ import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfile
 import { addAvatar, getAppState, updateAppState } from './persistence/indexeddb';
 import migrations from './migrations';
 
-export const currentVersion = '12';
+export const currentVersion = '13';
 
 export type AppScreen = 'loading' 
   | 'testOpenAiToken' 
@@ -64,6 +64,7 @@ type ChatMessage = {
   contactId: string;
   role: RoleType;
   content: string;
+  timestamp: number;
 }
 
 // If any value is changed here, a new version and migration is needed
@@ -248,6 +249,11 @@ export const appStateSlice = createSlice({
       state.volatileState.waitingAnswer = action.payload;
       saveStateToPersistence(state);
     },
+    deleteMessage: (state: AppState, action: PayloadAction<number>) => {
+      const contact = state.contacts[state.volatileState.chatId];
+      contact.chats = contact.chats.filter(c => c.timestamp !== action.payload);
+      saveStateToPersistence(state);
+    },
   },
 });
 
@@ -271,10 +277,11 @@ export const actionSetChatId = (chatId: string) => ({type: 'appState/setChatId',
 export const actionSetSettings = (settings: Settings) => ({type: 'appState/setSettings', payload: settings})
 export const actionToggleShowPlanning = () => ({type: 'appState/toggleShowPlanning'})
 export const actionSetErrorMessage = (error: string) => ({type: 'appState/setErrorMessage', payload: error})
-export const actionAddMessage = (newMessage: Message) => ({type: 'appState/addMessage', payload: newMessage})
+export const actionAddMessage = (newMessage: ChatMessage) => ({type: 'appState/addMessage', payload: newMessage})
 export const actionAddContact = (newContact: Contact) => ({type: 'appState/addContact', payload: newContact})
 export const actionRemoveContact = (id: string) => ({type: 'appState/removeContact', payload: id})
 export const actionSetWaitingAnswer = (waitingAnswer: boolean) => ({type: 'appState/setWaitingAnswer', payload: waitingAnswer})
+export const actionDeleteMessage = (timestamp: number) => ({type: 'appState/deleteMessage', payload: timestamp})
 
 export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>, settings: Settings) {
   listEngines(settings)
@@ -301,7 +308,7 @@ export async function dispatchSendMessage(
   promptContext: string,
   groupMeta: GroupMeta | null
 ) {
-  const newMessageWithRole: Message = {"role": "user", "content": newMessage};
+  const newMessageWithRole: ChatMessage = {"contactId": "user", "role": "user", "content": newMessage, "timestamp": Date.now()};
   batch(() => {
     dispatch(actionSetWaitingAnswer(true));
     dispatch(actionAddMessage(newMessageWithRole));
@@ -309,7 +316,13 @@ export async function dispatchSendMessage(
 
   const previousMessagesWithoutErrors = previousMessages.filter(m => m.role !== 'error');
 
-  const chatWithNewMessage = previousMessagesWithoutErrors.concat({"role": "user", "content": newMessage});
+  const chatWithNewMessage = previousMessagesWithoutErrors.concat(newMessageWithRole);
+
+  const chatWithOnlyExpectedData = chatWithNewMessage.map(c => ({
+    "role": c.role,
+    "content": c.content
+  }));
+
   const sysEntry = writeSystemEntry(
     contact.meta, 
     groupMeta,
@@ -318,14 +331,23 @@ export async function dispatchSendMessage(
     contact.contactSystemEntryTemplate,
     promptContext
   );
-  chatCompletion(settings, [sysEntry].concat(chatWithNewMessage))
+  chatCompletion(settings, [sysEntry].concat(chatWithOnlyExpectedData))
     .then(response => batch(() => {
       dispatch(actionSetWaitingAnswer(false));
-      dispatch(actionAddMessage(response));
+      dispatch(actionAddMessage({
+        ...response,
+        contactId: contact.id,
+        timestamp: Date.now()
+      }));
       })  
     ).catch((e) => batch(() => {
       dispatch(actionSetWaitingAnswer(false));
-      dispatch(actionAddMessage({"role": 'error', "content": `${e.message}`}));
+      dispatch(actionAddMessage({
+        "role": 'error', 
+        "content": `${e.message}`,
+        contactId: contact.id,
+        timestamp: Date.now()
+      }));
     }));
 }
 
@@ -380,7 +402,12 @@ export async function dispatchAskBotToMessage(
       })
     }).catch((e) => batch(() => {
       dispatch(actionSetWaitingAnswer(false));
-      dispatch(actionAddMessage({"role": "assistant", "content": `{"plan": "${e.message}", "answer": "..."}`}));
+      dispatch(actionAddMessage({
+        "role": "assistant", 
+        "content": `{"plan": "${e.message}", "answer": "..."}`,
+        "contactId": chatContact.id,
+        "timestamp": Date.now()
+      }));
     }));
 }
 

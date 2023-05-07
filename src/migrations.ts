@@ -261,8 +261,33 @@ const migrations = [
 
         addAppState(newLoadedState);
         localStorage.setItem("currentVersion", "12");
-        //deleteAppState('11');
+        //deleteAppState('11'); Do not do this anymore, it is easier to recover
         console.log("Done migration from version 11 to 12");
+    },
+    async () => {
+        console.log("Running migration from version 12 to 13");
+        const loadedState = await getAppState('12');
+
+        const newLoadedState = {
+            ...loadedState,
+            version: '13',
+            volatileState: {
+                ...loadedState.volatileState,
+                screenStack: ['contacts' as AppScreen],
+                currentScreen: 'contacts' as AppScreen,
+            }
+        }
+
+        Object.entries(newLoadedState.contacts).forEach(([_key, contact]: [any, any]) => {
+            const current = Date.now();
+            for(let i = 0; i < contact.chats.length; i++){
+                contact.chats[i].timestamp = current + i;
+            }
+        });
+
+        addAppState(newLoadedState);
+        localStorage.setItem("currentVersion", "13");
+        console.log("Done migration from version 12 to 13");
     }
 ];
 

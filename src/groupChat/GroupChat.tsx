@@ -27,7 +27,7 @@ export default function GroupChat() {
   const dispatch = useAppDispatch();
 
   const handleSendMessage = (msg: string) => {
-    dispatch(actionAddMessage({"role": "user", "content": msg}));
+    dispatch(actionAddMessage({"role": "user", "content": msg, "contactId": "user", "timestamp": Date.now()}));
   };
   
   const askBotToSpeak = (id: string) => {
