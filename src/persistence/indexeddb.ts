@@ -5,6 +5,19 @@ const DB_VERSION = 10;
 const APP_STATE_STORE = "appState";
 const AVATAR_STORE = "avatar";
 
+export function deleteDB(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.deleteDatabase(DB_NAME);
+
+    request.onsuccess = (event) => {
+      resolve((event.target as IDBRequest)?.result as IDBDatabase);
+    };
+
+    request.onerror = (event) => {
+      reject((event.target as IDBRequest)?.error as DOMException);
+    };
+  });
+}
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {

@@ -48,27 +48,18 @@ export default function GroupChat() {
     );
   };
 
-  const groupInfo = () => {
-    dispatch(actionSetScreen('groupChatProfile'));
-  };
+  const groupInfo = () => dispatch(actionSetScreen('groupChatProfile'));
+  const showPlanning = () => dispatch(actionToggleShowPlanning());
 
-  const showPlanning = () => {
-    dispatch(actionToggleShowPlanning());
-  };
-
-  const notImplemented = () => {
-    batch(() => {
+  const notImplemented = () => batch(() => {
       dispatch(actionSetErrorMessage("Not available yet"));
       dispatch(actionSetScreen('error'));
-    })
-  };
+  });
 
-  const deleteContact = () => {
-    batch(() => {
-      dispatch(actionSetScreen('contacts'));
-      dispatch(actionRemoveContact(groupContact.id));
-    });
-  };
+  const deleteContact = () => batch(() => {
+    dispatch(actionSetScreen('contacts'));
+    dispatch(actionRemoveContact(groupContact.id));
+  });
 
   const centerItem = (<>
     <LocalAvatar id={groupAvatarMetaData.id} 

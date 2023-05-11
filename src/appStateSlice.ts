@@ -5,7 +5,7 @@ import type { RootState } from './store'
 
 import { chatCompletion, imageGeneration, listEngines, Message, RoleType } from './OpenAiApi'
 import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem, defaultSingleUserChatContext, defaultSystemEntry } from './prompts/promptGenerator';
-import { addAvatar, getAppState, updateAppState } from './persistence/indexeddb';
+import { addAvatar, deleteDB, getAppState, updateAppState } from './persistence/indexeddb';
 import migrations from './migrations';
 import { countWords } from './utils/StringUtils';
 
@@ -22,6 +22,7 @@ export type AppScreen = 'loading'
   | 'groupChatSelect' 
   | 'addContact'
   | 'error'
+  | 'errorWithDelete'
   | 'profile'
   | 'groupChatProfile';
 
@@ -263,6 +264,20 @@ export const appStateSlice = createSlice({
       contact.chats.filter(c => c.timestamp === action.payload)
         .forEach(c =>navigator.clipboard.writeText(c.content));
     },
+    clearStorage: (state: AppState) => {
+      localStorage.clear();
+      deleteDB();
+      const reloadedState = initialState;
+      state.version = reloadedState.version;
+      state.settings = reloadedState.settings;
+      state.volatileState.currentScreen = reloadedState.volatileState.currentScreen;
+      state.contacts = reloadedState.contacts;
+      state.groupChatsParticipants = reloadedState.groupChatsParticipants;
+      state.volatileState.chatId = reloadedState.volatileState.chatId;
+      state.volatileState.waitingAnswer = reloadedState.volatileState.waitingAnswer;
+      state.volatileState.errorMessage = reloadedState.volatileState.errorMessage;
+      state.volatileState.screenStack = reloadedState.volatileState.screenStack;
+    },
   },
 });
 
@@ -280,6 +295,7 @@ export const selectContacts = (state: RootState) => state.appState.contacts
 export const selectWaitingAnswer = (state: RootState) => state.appState.volatileState.waitingAnswer
 
 export const actionReloadState = (newState: AppState) => ({type: 'appState/reloadState', payload: newState})
+export const actionClearStorage = () => ({type: 'appState/clearStorage'})
 export const actionSetScreen = (screen: AppScreen) => ({type: 'appState/setScreen', payload: screen})
 export const actionGoToPreviousScreen = () => ({type: 'appState/goToPreviousScreen'})
 export const actionSetChatId = (chatId: string) => ({type: 'appState/setChatId', payload: chatId})
@@ -598,11 +614,11 @@ export async function dispatchActionReloadState(
       }
       dispatch(actionReloadState({ ...initialState,
         volatileState: {
-          currentScreen: 'error',
+          currentScreen: 'errorWithDelete',
           chatId: '',
           waitingAnswer: false,
           errorMessage: errorMessage,
-          screenStack: ['error']
+          screenStack: ['errorWithDelete']
         }
       }));
       return;

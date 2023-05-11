@@ -17,6 +17,7 @@ import GroupChatSelect from './groupChat/GroupChatSelect';
 import GroupChat from './groupChat/GroupChat';
 import { GroupChatProfile } from './profile/GroupChatProfile';
 import { Loading } from './loading/Loading';
+import { ErrorScreenWithDeleteButton } from './errorScreen/ErrorScreenWithDeleteButton';
 
 function assertUnreachable(_x: never): never {
     throw new Error("Didn't expect to get here");
@@ -40,6 +41,8 @@ function getCurrentScreenComponent(currentScreen: AppScreen): JSX.Element {
             return <GroupChat />;
         case 'error':
             return <ErrorScreen />;
+        case 'errorWithDelete':
+            return <ErrorScreenWithDeleteButton />;
         case 'profile':
             return <Profile />;
         case 'groupChatProfile':

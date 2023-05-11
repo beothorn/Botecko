@@ -44,7 +44,7 @@ export default function Contacts() {
   const notImplementedAbout = () => {
     batch(() => {
       dispatch(actionSetErrorMessage(`Add about here. version ${currentVersion}`));
-      dispatch(actionSetScreen('error'));
+      dispatch(actionSetScreen('errorWithDelete'));
     })
   };
 
