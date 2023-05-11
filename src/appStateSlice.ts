@@ -433,13 +433,13 @@ export async function dispatchAskBotToMessage(
       return {
         ...m,
         role: m.role,
-        content: `{"plan": "1-...2-...3-...4-...", "user": "${botContact.meta.name}", "answer": "${answer}"}`
+        content: `{"plan": "1-AI response.2-Character differences from AI by the profile.3-Corrections following MAIN GUIDELINE.4-Inner monologue.", "user": "${botContact.meta.name}", "answer": "${answer}"}`
       };
     }
     return {
       ...m,
       role: m.role,
-      content: `{"plan": "1-...2-...3-...4-...", "user": "${settings.userName}", "answer": "${m.content}"}`
+      content: `{"plan": "1-AI response.2-Character differences from AI by the profile.3-Corrections following MAIN GUIDELINE.4-Inner monologue.", "user": "${settings.userName}", "answer": "${m.content}"}`
     };
   });
 
