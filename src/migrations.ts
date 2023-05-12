@@ -315,7 +315,43 @@ const migrations = [
         addAppState(newLoadedState);
         localStorage.setItem("currentVersion", newVersion);
         console.log(`Done migration from version ${oldVersion} to ${newVersion}`);
-    }
+    },
+    async () => {
+        const oldVersion = '14';
+        const newVersion = '15';
+        console.log(`Running migration from version ${oldVersion} to ${newVersion}`);
+        const loadedState = await getAppState(oldVersion);
+        const newLoadedState = {
+            ...loadedState,
+            version: newVersion,
+            settings: {
+                ...loadedState.settings,
+                systemEntry: defaultSystemEntry,
+                profileGeneratorSystemEntry: defaultProfileGeneratorSystem,
+                profileGeneratorMessageEntry: defaultProfileGeneratorMessage,
+                singleBotSystemEntryContext: defaultSingleUserChatContext,
+                chatGroupSystemEntryContext: defaultGroupChatContext,
+            },
+            volatileState: {
+                ...loadedState.volatileState,
+                screenStack: ['contacts' as AppScreen],
+                currenScreen: 'contacts',
+            }
+        }
+
+        Object.entries(newLoadedState.contacts).forEach(async ([_key, contact]: [any, any]) => {
+            if(contact.type === 'bot'){
+                contact.contactSystemEntryTemplate = defaultSystemEntry;
+                contact.contextTemplate = defaultSingleUserChatContext;
+            }else{
+                delete newLoadedState.contacts[contact.id];
+            }
+        });
+
+        addAppState(newLoadedState);
+        localStorage.setItem("currentVersion", newVersion);
+        console.log(`Done migration from version ${oldVersion} to ${newVersion}`);
+    },
 ];
 
 export default migrations;

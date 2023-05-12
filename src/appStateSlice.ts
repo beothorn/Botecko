@@ -9,7 +9,7 @@ import { addAvatar, deleteDB, getAppState, updateAppState } from './persistence/
 import migrations from './migrations';
 import { countWords } from './utils/StringUtils';
 
-export const currentVersion = '14';
+export const currentVersion = '15';
 
 const MAX_WORD_SIZE = 2000;
 
@@ -252,6 +252,8 @@ export const appStateSlice = createSlice({
     },
     setWaitingAnswer: (state: AppState, action: PayloadAction<boolean>) => {
       state.volatileState.waitingAnswer = action.payload;
+      const name = (state.contacts[state.volatileState.chatId] as BotContact).meta.name;
+      state.contacts[state.volatileState.chatId].status = `${name} is typing...`;
       saveStateToPersistence(state);
     },
     deleteMessage: (state: AppState, action: PayloadAction<number>) => {
@@ -649,7 +651,8 @@ function writeSystemEntry(
     "%USER_INFO%": userShortInfo,
     "%META_JSON%": metaAsString,
     "%CHAT_GROUP_NAME%": groupMeta?.name || "",
-    "%CHAT_GROUP_DESCRIPTION%": groupMeta?.description || ""
+    "%CHAT_GROUP_DESCRIPTION%": groupMeta?.description || "",
+    "%DATE%": (new Date())+'' 
   }
 
   const systemPrompContext = replaceAllTokens(promptContext, tokens);

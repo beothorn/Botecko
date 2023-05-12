@@ -14,7 +14,8 @@ import { styled } from '@mui/material';
 import { countWords } from '../utils/StringUtils';
 
 const Participants = styled('div')({
-  display: 'flex'
+  display: 'flex',
+  flexWrap: 'wrap',
 });
 
 export default function GroupChat() {
