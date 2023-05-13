@@ -14,7 +14,7 @@ TODO: Break down this file, break down state.
 This is too big :(
 */
 
-export const currentVersion = '15';
+export const currentVersion = '16';
 
 const MAX_WORD_SIZE = 2000;
 
@@ -24,7 +24,6 @@ export type AppScreen = 'welcome'
   | 'settings' 
   | 'contacts'
   | 'chat' 
-  | 'groupChat' 
   | 'groupChatSelect' 
   | 'addContact'
   | 'error'
@@ -233,11 +232,21 @@ export const appStateSlice = createSlice({
       contact.chats = contact.chats?.concat(action.payload) ?? [];
       if(action.payload.role === 'assistant'){
         const maxMessageSizeOnContactList = 40;
-        const lastMessageFull:string = JSON.parse(action.payload.content).answer;
+        let parsedChatMessage = {
+          message:""
+        };
+        try{
+          parsedChatMessage = JSON.parse(action.payload.content);
+        }catch(e){  
+          parsedChatMessage = {
+            message:""
+          }
+        }
+        const lastMessageFull:string = JSON.parse(action.payload.content).message;
         if(lastMessageFull.length > maxMessageSizeOnContactList){
-          state.contacts[state.volatileState.chatId].status = JSON.parse(action.payload.content).answer.slice(0, maxMessageSizeOnContactList)+"...";  
+          state.contacts[state.volatileState.chatId].status = parsedChatMessage.message.slice(0, maxMessageSizeOnContactList)+"...";  
         }else{
-          state.contacts[state.volatileState.chatId].status = JSON.parse(action.payload.content).answer;  
+          state.contacts[state.volatileState.chatId].status = parsedChatMessage.message;  
         }
       }else{
         state.contacts[state.volatileState.chatId].status = action.payload.content;
@@ -433,21 +442,25 @@ export async function dispatchAskBotToMessage(
     if(m.role === 'assistant'){
       const botContact = chatContact.contacts.find(contact => contact.id === m.contactId) as BotContact;
       let answer = "";
+      let name = ""
       try{
-        answer = JSON.parse(m.content).answer;
+        const parsedMsg = JSON.parse(m.content);
+        answer = parsedMsg.answer;
+        name = parsedMsg.name;
       }catch(e){
         answer = m.content;
+        name = botContact.meta.name;
       }
       return {
         ...m,
         role: m.role,
-        content: `{"plan": "1-AI response.2-Character differences from AI by the profile.3-Corrections following MAIN GUIDELINE.4-Inner monologue.", "user": "${botContact.meta.name}", "answer": "${answer}"}`
+        content: `{"plan": "1-AI response.2-Character differences from AI by the profile.3-Corrections following MAIN GUIDELINE.4-Inner monologue.", "name": "${name}", "message": "${answer}"}`
       };
     }
     return {
       ...m,
       role: m.role,
-      content: `{"plan": "1-AI response.2-Character differences from AI by the profile.3-Corrections following MAIN GUIDELINE.4-Inner monologue.", "user": "${settings.userName}", "answer": "${m.content}"}`
+      content: `{"plan": "1-AI response.2-Character differences from AI by the profile.3-Corrections following MAIN GUIDELINE.4-Inner monologue.", "name": "${settings.userName}", "message": "${m.content}"}`
     };
   });
 
@@ -482,8 +495,8 @@ export async function dispatchAskBotToMessage(
       dispatch(actionSetWaitingAnswer(false));
       dispatch(actionAddMessage({
         role: "assistant", 
-        content: `{"plan": "${e.message}", "answer": "..."}`,
-        wordCount: countWords(`{"plan": "${e.message}", "answer": "..."}`),
+        content: `{"plan": "${e.message}", "message": "..."}`,
+        wordCount: countWords(`{"plan": "${e.message}", "message": "..."}`),
         contactId: chatContact.id,
         timestamp: Date.now()
       }));

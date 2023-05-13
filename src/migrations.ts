@@ -352,6 +352,57 @@ const migrations = [
         localStorage.setItem("currentVersion", newVersion);
         console.log(`Done migration from version ${oldVersion} to ${newVersion}`);
     },
+    async () => {
+        const oldVersion = '15';
+        const newVersion = '16';
+        console.log(`Running migration from version ${oldVersion} to ${newVersion}`);
+        const loadedState = await getAppState(oldVersion);
+        const newLoadedState = {
+            ...loadedState,
+            version: newVersion,
+            settings: {
+                ...loadedState.settings,
+                systemEntry: defaultSystemEntry,
+                profileGeneratorSystemEntry: defaultProfileGeneratorSystem,
+                profileGeneratorMessageEntry: defaultProfileGeneratorMessage,
+                singleBotSystemEntryContext: defaultSingleUserChatContext,
+                chatGroupSystemEntryContext: defaultGroupChatContext,
+            },
+            volatileState: {
+                ...loadedState.volatileState,
+                screenStack: ['contacts' as AppScreen],
+                currenScreen: 'contacts',
+            }
+        }
+
+        Object.entries(newLoadedState.contacts).forEach(async ([_key, contact]: [any, any]) => {
+            if(contact.type === 'bot'){
+                contact.contactSystemEntryTemplate = defaultSystemEntry;
+                contact.contextTemplate = defaultSingleUserChatContext;
+                const name = contact.meta.name;
+                contact.chats = contact.chats.map((c: any) => {
+                    if(c.role == "user"){
+                        return {
+                            ...c,
+                            content: `{"name":"${newLoadedState.settings.userName}","message":"${c.content}"}`
+                        }
+                    }else{
+                        const parsed = JSON.parse(c.content);
+                        return {
+                            ...c,
+                            content: `{"name":"${name}","plan":"${parsed.plan}","message":"${parsed.answer}"}`
+                        }
+                    }
+                })
+            }else{
+                delete newLoadedState.contacts[contact.id];
+            }
+        });
+
+        addAppState(newLoadedState);
+        localStorage.setItem("currentVersion", newVersion);
+        console.log(`Done migration from version ${oldVersion} to ${newVersion}`);
+    },
 ];
 
 export default migrations;

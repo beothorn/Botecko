@@ -1,7 +1,7 @@
 import React from 'react';
 import List from '@mui/material/List';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { actionRemoveContact, actionSetChatId, actionSetErrorMessage, actionSetScreen, Contact, currentVersion, selectContacts } from '../appStateSlice';
+import { actionRemoveContact, actionSetChatId, actionSetErrorMessage, actionSetScreen, currentVersion, selectContacts } from '../appStateSlice';
 import { Button, ListItemButton } from '@mui/material';
 import Screen from '../screens/screen';
 import { ScreenTitle } from '../screens/screen';
@@ -11,14 +11,11 @@ import AvatarWithDetails from '../components/AvatarWithDetails';
 export default function Contacts() {
   const dispatch = useAppDispatch();
   const contacts = useAppSelector(selectContacts) ?? [];
-  const gotoChat = (key: string, contact: Contact) => {
-    dispatch(actionSetChatId(key));
-    if (contact.type === 'bot') {
-       dispatch(actionSetScreen('chat'));
-    }
-    if (contact.type === 'group') {
-      dispatch(actionSetScreen('groupChat'));
-    }
+  const gotoChat = (key: string) => {
+    batch(() => {
+      dispatch(actionSetChatId(key));
+      dispatch(actionSetScreen('chat'));
+    })
   };
 
   const addContact = () => {
@@ -64,7 +61,7 @@ export default function Contacts() {
       {Object.entries(contacts).map(([key, contact]) => (
         <ListItemButton 
           key={contact.id} 
-          onClick={() => contact.type !== 'loading' ? gotoChat(key, contact) : removeContact(key)}
+          onClick={() => contact.type !== 'loading' ? gotoChat(key) : removeContact(key)}
         >
           <AvatarWithDetails contact={contact}/>  
         </ListItemButton>

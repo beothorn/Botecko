@@ -14,7 +14,6 @@ import { AddContact } from './addContact/AddContact';
 import { styled } from '@mui/material';
 import { Profile } from './profile/Profile';
 import GroupChatSelect from './groupChat/GroupChatSelect';
-import GroupChat from './groupChat/GroupChat';
 import { GroupChatProfile } from './profile/GroupChatProfile';
 import { Loading } from './loading/Loading';
 import { ErrorScreenWithDeleteButton } from './errorScreen/ErrorScreenWithDeleteButton';
@@ -40,8 +39,6 @@ function getCurrentScreenComponent(currentScreen: AppScreen): JSX.Element {
             return <AddContact />;
         case 'chat':
             return <Chat />;
-        case 'groupChat':
-            return <GroupChat />;
         case 'error':
             return <ErrorScreen />;
         case 'errorWithDelete':

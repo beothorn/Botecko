@@ -1,42 +1,84 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { selectSettings, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning, actionSetErrorMessage, BotContact, actionDeleteMessage, actionCopyMessage } from '../appStateSlice';
+import { selectSettings, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning, actionSetErrorMessage, BotContact, actionDeleteMessage, actionCopyMessage, GroupChatContact, actionAddMessage, dispatchAskBotToMessage, selectCurrentContactsInGroupChat } from '../appStateSlice';
 import { batch } from 'react-redux';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
 import ChatBubble, { ChatBubbleProps } from '../components/ChatBubble';
 import LocalAvatar from '../components/LocalAvatar';
 import ChatEntry from '../components/ChatEntry';
+import { countWords } from '../utils/StringUtils';
+import { styled } from '@mui/material';
+
+const Participants = styled('div')({
+  display: 'flex',
+  flexWrap: 'wrap',
+});
 
 export default function Chat() {
   const dispatch = useAppDispatch();
 
-  const currentContact = useAppSelector(selectCurrentContact) as BotContact;
+  let currentContact = useAppSelector(selectCurrentContact);
   if(currentContact === undefined){
     // Invalid state
     dispatch(actionSetScreen('contacts'))
     return <></>;
   }
+  const singleChat = currentContact.id.endsWith("bot");
+  let contacts: BotContact[] = [];
+  if(singleChat){
+    currentContact = useAppSelector(selectCurrentContact) as BotContact;
+  }else{
+    currentContact = useAppSelector(selectCurrentContact) as GroupChatContact;
+    contacts = useAppSelector(selectCurrentContactsInGroupChat);
+  }
   const settings = useAppSelector(selectSettings);
   const chatHistory = useAppSelector(selectChatHistory) ?? [];
+  
+  
   const metaData = currentContact.meta;
   const avatarMetaData = currentContact.avatarMeta;
   const isWaitingAnswer = useAppSelector(selectWaitingAnswer);
 
   const handleSendMessage = (msg: string) => {
-    dispatchSendMessage(
+    if(singleChat){
+      dispatchSendMessage(
+        dispatch, 
+        currentContact as BotContact, 
+        settings, 
+        chatHistory, 
+        msg,
+        (currentContact as BotContact).contextTemplate,
+        null
+      );
+    }else{
+      dispatch(actionAddMessage({
+        role: "user", 
+        content: msg, 
+        wordCount: countWords(msg),
+        contactId: "user", 
+        timestamp: Date.now()}));
+    }
+  };
+
+  const askBotToSpeak = (id: string) => {
+    dispatchAskBotToMessage(
       dispatch, 
-      currentContact, 
+      id,
+      (currentContact as GroupChatContact), 
       settings, 
       chatHistory, 
-      msg,
-      currentContact.contextTemplate,
-      null
+      (currentContact as GroupChatContact).contextTemplate,
+      (currentContact as GroupChatContact).meta
     );
   };
 
-  const contactInfo = () => {
-    dispatch(actionSetScreen('profile'));
+  const info = () => {
+    if(singleChat){
+      dispatch(actionSetScreen('profile'));
+    }else{
+      dispatch(actionSetScreen('groupChatProfile'))
+    }
   };
 
   const showPlanning = () => {
@@ -61,14 +103,14 @@ export default function Chat() {
     <LocalAvatar id={avatarMetaData.id} 
       prompt={avatarMetaData.prompt}
       sx={{mr: 2}}
-      onClick={() => contactInfo()}
+      onClick={() => info()}
     />
     <ScreenTitle title={metaData.name} 
-      onClick={() => contactInfo()}/>
+      onClick={() => info()}/>
   </>)
 
   const menuItems = {
-    "Contact info": contactInfo,
+    "Contact info": info,
     "Delete Contact": deleteContact,
     "Delete History": notImplemented,
     "Export Contact": notImplemented,
@@ -83,14 +125,21 @@ export default function Chat() {
   const chatBubbles = chatHistory
     .flatMap((m): ChatBubbleProps[] => {
       if(m.role === "assistant"){
-        const messageWithPlan = JSON.parse(m.content)
+        const messageWithPlan = JSON.parse(m.content);
+        let avatarId = "1232bot";
+        if(singleChat){
+          avatarId = avatarMetaData.id;
+        }else{
+          avatarId = contacts.find(c => c.meta.name === messageWithPlan.name)?.avatarMeta.id || "";
+        }
+
         if(settings.showThought){
           return [
             {"role": "thought", "content": messageWithPlan.plan, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: copyText, onEdit: print},
-            {"role": "assistant", "content": messageWithPlan.answer, avatarId: avatarMetaData.id, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: copyText, onEdit: print},
+            {"role": "assistant", "content": messageWithPlan.message, avatarId: avatarId, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: copyText, onEdit: print},
           ];
         }else{
-          return [{"role": "assistant", "content": messageWithPlan.answer, avatarId: avatarMetaData.id, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: copyText, onEdit: print}];
+          return [{"role": "assistant", "content": messageWithPlan.message, avatarId: avatarId, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: copyText, onEdit: print}];
         }
       }
       if(m.role === "system"){
@@ -115,6 +164,22 @@ export default function Chat() {
 
   const contactName = metaData.name;
 
+  let participants: JSX.Element[] = [];
+
+  if(!singleChat){
+    participants = contacts.map((contact) => (<LocalAvatar
+      key={contact.id}
+      id={contact.avatarMeta.id}
+      prompt={contact.avatarMeta.prompt}
+      sx={{
+          width: '4rem',
+          height: '4rem',
+          mb: '1rem'
+      }}
+      onClick={() => askBotToSpeak(contact.id)}
+    />));
+  }
+
   return (<Screen
     leftItem={<BackButton/>}
     centerItem={centerItem}
@@ -125,9 +190,12 @@ export default function Chat() {
     <ChatEntry handleSendMessage={(msg) => handleSendMessage(msg)}>
       {chatBubbles}
       {isWaitingAnswer && <ChatBubble
-          content={`${contactName} is typing...`}
+          content={`${singleChat?contactName:"Someone"} is typing...`}
           role={'assistant'}
         />}
+      {
+        (!singleChat) && <Participants>{participants}</Participants>
+      }
     </ChatEntry>
   </Screen>);
 }
