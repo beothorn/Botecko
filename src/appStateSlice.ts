@@ -9,11 +9,17 @@ import { addAvatar, deleteDB, getAppState, updateAppState } from './persistence/
 import migrations from './migrations';
 import { countWords } from './utils/StringUtils';
 
+/*
+TODO: Break down this file, break down state.
+This is too big :(
+*/
+
 export const currentVersion = '15';
 
 const MAX_WORD_SIZE = 2000;
 
-export type AppScreen = 'loading' 
+export type AppScreen = 'welcome'
+  | 'loading' 
   | 'testOpenAiToken' 
   | 'settings' 
   | 'contacts'
@@ -586,7 +592,7 @@ export async function dispatchActionReloadState(
     localStorage.setItem("currentVersion", currentVersion);
     dispatch(actionReloadState({ ...initialState,
       volatileState: {
-        currentScreen: 'testOpenAiToken',
+        currentScreen: 'welcome',
         chatId: '',
         waitingAnswer: false,
         errorMessage: 'errorMessage',

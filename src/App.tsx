@@ -18,6 +18,7 @@ import GroupChat from './groupChat/GroupChat';
 import { GroupChatProfile } from './profile/GroupChatProfile';
 import { Loading } from './loading/Loading';
 import { ErrorScreenWithDeleteButton } from './errorScreen/ErrorScreenWithDeleteButton';
+import { Welcome } from './welcome/Welcome';
 
 function assertUnreachable(_x: never): never {
     throw new Error("Didn't expect to get here");
@@ -25,6 +26,8 @@ function assertUnreachable(_x: never): never {
 
 function getCurrentScreenComponent(currentScreen: AppScreen): JSX.Element {
     switch (currentScreen) {
+        case 'welcome':
+            return <Welcome />;
         case 'loading':
             return <Loading />;
         case 'contacts':

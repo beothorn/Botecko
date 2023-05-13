@@ -9,6 +9,7 @@ import { batch } from 'react-redux';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
 import { styled, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
 
 const AddContactForm = styled('form')(({theme}) => ({
     display: "flex",
@@ -44,29 +45,31 @@ export function AddContact() {
         leftItem = {<BackButton/>}
         centerItem = {<ScreenTitle title='Adding Contact' />}
     >
-        <Typography sx={{marginBottom: '1rem', color: 'white'}} variant="h5" gutterBottom>
-            Here you can add a small description for your new contact and everything else will be generated. For example:
-        </Typography>
-        <Typography sx={{marginBottom: '1rem', color: 'white'}} variant="h5" gutterBottom>
-            A construction worker that is always available for consulting.
-        </Typography>
-        <Typography sx={{marginBottom: '1rem', color: 'white'}} variant="h5" gutterBottom>
-            A German teacher that speaks english and focus on grammar.
-        </Typography>
-        <Typography sx={{marginBottom: '1rem', color: 'white'}} variant="h5" gutterBottom>
-            Be as general or specific as you want.
-        </Typography>
-        <AddContactForm>
-            <TextField 
-                value={profile}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-                required size="small" 
-                id="profile" 
-                label="Contact description" 
-                variant="outlined" 
-            />
-            <Button sx={{marginLeft: 1}} variant="contained" onClick={generateContact}>Generate new Contact</Button>  
-        </AddContactForm>
+        <Box sx={{ padding: '2rem', backgroundColor: '#333' }}>
+            <Typography sx={{marginBottom: '1rem', color: 'white'}} variant="h5" gutterBottom>
+                Here you can add a small description for your new contact and everything else will be generated. For example:
+            </Typography>
+            <Typography sx={{marginBottom: '1rem', color: 'white'}} variant="h5" gutterBottom>
+                "A construction worker that is always available for consulting."
+            </Typography>
+            <Typography sx={{marginBottom: '1rem', color: 'white'}} variant="h5" gutterBottom>
+                "A German teacher that speaks english and focus on grammar."
+            </Typography>
+            <Typography sx={{marginBottom: '1rem', color: 'white'}} variant="h5" gutterBottom>
+                Be as general or specific as you want.
+            </Typography>
+            <AddContactForm>
+                <TextField 
+                    value={profile}
+                    onChange={handleChange}
+                    onKeyDown={handleKeyDown}
+                    required size="small" 
+                    id="profile" 
+                    label="Contact description" 
+                    variant="outlined" 
+                />
+                <Button sx={{marginLeft: 1}} variant="contained" onClick={generateContact}>Generate new Contact</Button>  
+            </AddContactForm>
+        </Box>
     </Screen>;
 }

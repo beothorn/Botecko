@@ -9,14 +9,19 @@ import LocalAvatar from '../components/LocalAvatar';
 import ChatEntry from '../components/ChatEntry';
 
 export default function Chat() {
+  const dispatch = useAppDispatch();
+
+  const currentContact = useAppSelector(selectCurrentContact) as BotContact;
+  if(currentContact === undefined){
+    // Invalid state
+    dispatch(actionSetScreen('contacts'))
+    return <></>;
+  }
   const settings = useAppSelector(selectSettings);
   const chatHistory = useAppSelector(selectChatHistory) ?? [];
-  const currentContact = useAppSelector(selectCurrentContact) as BotContact;
   const metaData = currentContact.meta;
   const avatarMetaData = currentContact.avatarMeta;
   const isWaitingAnswer = useAppSelector(selectWaitingAnswer);
-
-  const dispatch = useAppDispatch();
 
   const handleSendMessage = (msg: string) => {
     dispatchSendMessage(

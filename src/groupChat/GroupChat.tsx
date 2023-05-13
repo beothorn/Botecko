@@ -19,14 +19,20 @@ const Participants = styled('div')({
 });
 
 export default function GroupChat() {
+  const dispatch = useAppDispatch();
+
   const settings = useAppSelector(selectSettings);
-  const chatHistory = useAppSelector(selectChatHistory) ?? [];
   const groupContact = useAppSelector(selectCurrentContact) as GroupChatContact;
+  if(groupContact === undefined){
+    // Invalid state
+    dispatch(actionSetScreen('contacts'))
+    return <></>;
+  }
+  const chatHistory = useAppSelector(selectChatHistory) ?? [];
   const contacts = useAppSelector(selectCurrentContactsInGroupChat);
   const groupAvatarMetaData = groupContact.avatarMeta;
   const isWaitingAnswer = useAppSelector(selectWaitingAnswer);
 
-  const dispatch = useAppDispatch();
 
   const handleSendMessage = (msg: string) => {
     dispatch(actionAddMessage({
