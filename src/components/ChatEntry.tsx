@@ -63,9 +63,9 @@ export default function ChatEntry({
 
   return (<Root ref={rootRef}>
     <ChatWrapper/>
-        <ChatContainer>
-            {children}
-        </ChatContainer>
+    <ChatContainer>
+        {children}
+    </ChatContainer>
     <InputContainer>
       <MessageInput
         fullWidth

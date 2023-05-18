@@ -1,5 +1,5 @@
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
-import { BotContact, ChatMessage, ContactMeta, GroupChatContact, GroupMeta, Settings, currentVersion, initialState } from "./AppState";
+import { BotContact, ChatMessage, GroupChatContact, GroupMeta, Settings, currentVersion, initialState } from "./AppState";
 import { Message, RoleType, chatCompletion, imageGeneration, listEngines } from "./OpenAiApi";
 import { batch } from "react-redux";
 import { actionAddContact, actionAddMessage, actionReloadState, actionRemoveContact, actionSetErrorMessage, actionSetScreen, actionSetSettings, actionSetWaitingAnswer } from "./actions";
@@ -62,7 +62,8 @@ export async function dispatchSendMessage(
     const chatWithNewMessage: ChatMessage[] = previousMessages.concat(newMessageWithRole);
 
     const sysEntry = writeSystemEntry(
-        contact.meta,
+        contact.meta.name,
+        JSON.stringify(contact.meta),
         groupMeta,
         settings.userName,
         settings.userShortInfo,
@@ -134,7 +135,8 @@ export async function dispatchAskBotToMessage(
 
     dispatch(actionSetWaitingAnswer(true));
     const sysEntry = writeSystemEntry(
-        botContact.meta,
+        botContact.meta.name,
+        JSON.stringify(botContact.meta),
         groupMeta,
         settings.userName,
         settings.userShortInfo,
@@ -345,22 +347,21 @@ function createBotContactFromMeta(
     };
 }
 
-function writeSystemEntry(
-    meta: ContactMeta,
+export function writeSystemEntry(
+    name: string,
+    metaAsString: string,
     groupMeta: GroupMeta | null,
     userName: string,
     userShortInfo: string,
     systemEntry: string,
     promptContext: string
 ): Message {
-    const metaAsString = JSON.stringify(meta);
-
     if (!systemEntry) {
         systemEntry = defaultSystemEntry;
     }
 
     const tokens = {
-        "%NAME%": meta.name,
+        "%NAME%": name,
         "%USER_NAME%": userName,
         "%USER_INFO%": userShortInfo,
         "%META_JSON%": metaAsString,

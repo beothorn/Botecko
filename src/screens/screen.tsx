@@ -61,7 +61,7 @@ export default function Screen({ children, menuItems, leftItem, centerItem, barP
     };
 
     return (<>
-    <AppBarStyled position={barPosition || "static"}>
+    <AppBarStyled position={barPosition || "sticky"}>
         <Toolbar>
           {leftItem}
           {centerItem}

@@ -14,7 +14,7 @@ import {
   actionSetErrorMessage, actionSetScreen, actionToggleShowPlanning
 } from '../actions';
 import { BotContact, GroupChatContact } from '../AppState';
-import { dispatchAskBotToMessage, dispatchSendMessage } from '../dispatches';
+import { dispatchAskBotToMessage, dispatchSendMessage, writeSystemEntry } from '../dispatches';
 
 const Participants = styled('div')({
   display: 'flex',
@@ -40,7 +40,6 @@ export default function Chat() {
   }
   const settings = useAppSelector(selectSettings);
   const chatHistory = useAppSelector(selectChatHistory) ?? [];
-
 
   const metaData = currentContact.meta;
   const avatarMetaData = currentContact.avatarMeta;
@@ -133,7 +132,7 @@ export default function Chat() {
     .flatMap((m): ChatBubbleProps[] => {
       if (m.role === "assistant") {
         const messageWithPlan = JSON.parse(m.content);
-        let avatarId = "1232bot";
+        let avatarId = "";
         if (singleChat) {
           avatarId = avatarMetaData.id;
         } else {
@@ -196,14 +195,29 @@ export default function Chat() {
     />));
   }
 
+  const systemPrompt = writeSystemEntry(
+    currentContact.meta.name,
+    JSON.stringify(currentContact.meta),
+    null,
+    settings.userName,
+    settings.userShortInfo,
+    (currentContact as BotContact).contactSystemEntryTemplate,
+    (currentContact as BotContact).contextTemplate
+  )
+  const systemPromptBubble = <ChatBubble
+    key={'sytemEntry'}
+    content={systemPrompt.content}
+    role={'system'}
+  />;
+
   return (<Screen
     leftItem={<BackButton />}
     centerItem={centerItem}
     menuItems={menuItems}
-    barPosition='absolute'
     backgroungImg='carbon'
   >
     <ChatEntry handleSendMessage={(msg) => handleSendMessage(msg)}>
+      {settings.showThought && systemPromptBubble}
       {chatBubbles}
       {isWaitingAnswer && <ChatBubble
         content={`${singleChat ? contactName : "Someone"} is typing...`}
