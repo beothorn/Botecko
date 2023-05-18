@@ -1,22 +1,21 @@
 import axios from 'axios';
-import { Settings } from './appStateSlice';
 
 const openAiUrl = 'https://api.openai.com/v1';
 const model = "gpt-4";
 
-export type RoleType = 'user' | 'system' | 'assistant' | 'thought' | 'error';
+export type RoleType = 'user' | 'system' | 'assistant';
 
 export type Message = {
     role: RoleType;
     content: string;
 };
 
-export const chatCompletion = (settings: Settings, messages: Message[]): Promise<Message> => axios.post(`${openAiUrl}/chat/completions`, {
+export const chatCompletion = (openAiKey: string, messages: Message[]): Promise<Message> => axios.post(`${openAiUrl}/chat/completions`, {
     "model": model,
     "messages": messages
 }, {
     headers: {
-        'Authorization': `Bearer ${settings.openAiKey}`,
+        'Authorization': `Bearer ${openAiKey}`,
         'Content-Type': 'application/json'
     }
 }).then((result) => {
@@ -25,14 +24,14 @@ export const chatCompletion = (settings: Settings, messages: Message[]): Promise
     return response;
 });
 
-export const imageGeneration = (settings: Settings, prompt: string): Promise<string> => axios.post(`${openAiUrl}/images/generations`, {
+export const imageGeneration = (openAiKey: string, prompt: string): Promise<string> => axios.post(`${openAiUrl}/images/generations`, {
     "prompt": prompt,
     "n": 1,
     "size": "256x256",
     "response_format": "b64_json"
 }, {
     headers: {
-        'Authorization': `Bearer ${settings.openAiKey}`,
+        'Authorization': `Bearer ${openAiKey}`,
         'Content-Type': 'application/json'
     }
 }).then((result) => {
@@ -41,9 +40,9 @@ export const imageGeneration = (settings: Settings, prompt: string): Promise<str
     return response;
 });
 
-export const listEngines = (settings: Settings) => axios.get(`${openAiUrl}/engines`, {
+export const listEngines = (openAiKey: string) => axios.get(`${openAiUrl}/engines`, {
     headers: {
-        'Authorization': `Bearer ${settings.openAiKey}`,
+        'Authorization': `Bearer ${openAiKey}`,
         'Content-Type': 'application/json'
     }
 });

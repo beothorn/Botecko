@@ -1,15 +1,16 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { useAppSelector } from '../hooks'
-import { ContactMeta, selectCurrentContact } from '../appStateSlice';
+import { useAppSelector } from '../hooks';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
 import LocalAvatar from '../components/LocalAvatar';
+import { ContactMeta } from '../AppState';
+import { selectCurrentContact } from '../selectors';
 
 export function Profile() {
     const currentContact = useAppSelector(selectCurrentContact);
-    if(currentContact.type !== 'bot'){
+    if (currentContact.type !== 'bot') {
         return (
             <>INVALID STATE</>
         )
@@ -18,7 +19,7 @@ export function Profile() {
     const avatarMetaData = currentContact.avatarMeta;
     return (
         <Screen
-            leftItem={<BackButton/>}
+            leftItem={<BackButton />}
             centerItem={<ScreenTitle title={metaData.name} />}
         >
             <Box sx={{

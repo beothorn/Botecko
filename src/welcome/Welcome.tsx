@@ -5,9 +5,9 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 
 import { useAppDispatch } from '../hooks';
-import { actionSetScreen } from '../appStateSlice';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
+import { actionSetScreen } from '../actions';
 
 export function Welcome() {
   const dispatch = useAppDispatch();

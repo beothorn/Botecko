@@ -4,13 +4,14 @@ import { batch } from 'react-redux';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
-import { useAppSelector, useAppDispatch } from '../hooks'
-import { actionSetScreen, actionSetSettings, selectSettings } from '../appStateSlice';
+import { useAppSelector, useAppDispatch } from '../hooks';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
 import { Checkbox, FormControlLabel, styled } from '@mui/material';
+import { selectSettings } from '../selectors';
+import { actionSetScreen, actionSetSettings } from '../actions';
 
-const SettingsForm = styled('form')(({theme}) => ({
+const SettingsForm = styled('form')(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
     gap: "1rem",
@@ -45,8 +46,8 @@ export default function Settings() {
     }
 
     return <Screen
-        leftItem = {<BackButton/>}
-        centerItem = {<ScreenTitle title='Settings' />}
+        leftItem={<BackButton />}
+        centerItem={<ScreenTitle title='Settings' />}
     >
         <SettingsForm>
             <TextField
@@ -85,13 +86,13 @@ export default function Settings() {
                 label="Model"
                 variant="outlined"
             />
-            <FormControlLabel control={<Checkbox 
+            <FormControlLabel control={<Checkbox
                 checked={settings.showThought}
                 onChange={(event) => handleCheckboxChange(event, "showThought")}
                 required
                 size="small"
                 id="Show Thoughts" />} label="showThought" />
-            <Button onClick={updateKey}>Save settings</Button>      
+            <Button onClick={updateKey}>Save settings</Button>
         </SettingsForm>
     </Screen>;
 }

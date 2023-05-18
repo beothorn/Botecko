@@ -1,4 +1,4 @@
-import { AppState, AvatarImg } from "../appStateSlice";
+import { AppState, AvatarImg } from "../AppState";
 
 const DB_NAME = "BoteckoDB";
 const DB_VERSION = 10;
@@ -22,10 +22,10 @@ export function deleteDB(): Promise<IDBDatabase> {
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
-    
+
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBRequest)?.result as IDBDatabase;
-      if(event.oldVersion === 1){
+      if (event.oldVersion === 1) {
         console.log("First Version")
       }
       if (!db.objectStoreNames.contains(APP_STATE_STORE)) {
@@ -34,12 +34,12 @@ function openDB(): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains(AVATAR_STORE)) {
         db.createObjectStore(AVATAR_STORE, { keyPath: "id" });
       }
-      if(event.oldVersion <= 8){
+      if (event.oldVersion <= 8) {
         const tx = (event.target as IDBRequest)?.transaction as IDBTransaction;
         const store = tx.objectStore(APP_STATE_STORE);
         store.createIndex('versionIndex', 'version');
       }
-      if(event.oldVersion <= 9){
+      if (event.oldVersion <= 9) {
         // do nothing
       }
     };
@@ -54,7 +54,7 @@ function openDB(): Promise<IDBDatabase> {
   });
 }
 
-export function addAppState(appState: AppState){
+export function addAppState(appState: AppState) {
   return openDB()
     .then((db) => {
       const transaction = db.transaction([APP_STATE_STORE], "readwrite");
@@ -71,7 +71,7 @@ export function addAppState(appState: AppState){
     .then((transaction: IDBTransaction) => transaction.commit());
 }
 
-export function deleteAppState(version: string){
+export function deleteAppState(version: string) {
   return openDB()
     .then((db) => {
       const transaction = db.transaction([APP_STATE_STORE], "readwrite");
@@ -98,15 +98,15 @@ export function deleteAppState(version: string){
 
 const avatarCache: Record<string, AvatarImg> = {};
 
-export function addAvatar(id: string, img: string){
+export function addAvatar(id: string, img: string) {
   return openDB()
     .then((db) => {
       const transaction = db.transaction([AVATAR_STORE], "readwrite");
       const store = transaction.objectStore(AVATAR_STORE);
       return new Promise<IDBTransaction>((resolve, reject) => {
-        const request = store.add({id, img});
+        const request = store.add({ id, img });
         request.onsuccess = () => {
-          avatarCache[id] = {id, img};
+          avatarCache[id] = { id, img };
           resolve(transaction);
         }
         request.onerror = () => {
@@ -118,7 +118,7 @@ export function addAvatar(id: string, img: string){
     .then((transaction: IDBTransaction) => transaction.commit());
 }
 
-export function updateAppState(appState: AppState): Promise<IDBRequest<IDBValidKey>>{
+export function updateAppState(appState: AppState): Promise<IDBRequest<IDBValidKey>> {
   const appStateCopy = JSON.parse(JSON.stringify(appState));
   console.log(appStateCopy);
   return openDB()
@@ -127,8 +127,8 @@ export function updateAppState(appState: AppState): Promise<IDBRequest<IDBValidK
     .then((store) => store.put(appStateCopy));
 }
 
-export function updateAvatar(id: string, img: string): Promise<IDBRequest<IDBValidKey>>{
-  const appStateCopy = JSON.parse(JSON.stringify({id, img}));
+export function updateAvatar(id: string, img: string): Promise<IDBRequest<IDBValidKey>> {
+  const appStateCopy = JSON.parse(JSON.stringify({ id, img }));
   console.log(appStateCopy);
   return openDB()
     .then((db) => db.transaction([AVATAR_STORE], "readwrite"))
@@ -136,7 +136,7 @@ export function updateAvatar(id: string, img: string): Promise<IDBRequest<IDBVal
     .then((store) => store.put(appStateCopy));
 }
 
-export function getAppState(version: string){
+export function getAppState(version: string) {
   return openDB()
     .then((db) => {
       const transaction = db.transaction([APP_STATE_STORE], "readonly");
@@ -152,8 +152,8 @@ export function getAppState(version: string){
     });
 }
 
-export function getAvatar(id: string){
-  if(avatarCache[id]){
+export function getAvatar(id: string) {
+  if (avatarCache[id]) {
     return Promise.resolve(avatarCache[id]);
   }
   return openDB()

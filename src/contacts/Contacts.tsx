@@ -1,12 +1,14 @@
 import React from 'react';
 import List from '@mui/material/List';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { actionRemoveContact, actionSetChatId, actionSetErrorMessage, actionSetScreen, currentVersion, selectContacts } from '../appStateSlice';
 import { Button, ListItemButton } from '@mui/material';
 import Screen from '../screens/screen';
 import { ScreenTitle } from '../screens/screen';
 import { batch } from 'react-redux';
 import AvatarWithDetails from '../components/AvatarWithDetails';
+import { selectContacts } from '../selectors';
+import { actionRemoveContact, actionSetChatId, actionSetErrorMessage, actionSetScreen } from '../actions';
+import { currentVersion } from '../AppState';
 
 export default function Contacts() {
   const dispatch = useAppDispatch();
@@ -59,11 +61,11 @@ export default function Contacts() {
   >
     <List>
       {Object.entries(contacts).map(([key, contact]) => (
-        <ListItemButton 
-          key={contact.id} 
+        <ListItemButton
+          key={contact.id}
           onClick={() => contact.type !== 'loading' ? gotoChat(key) : removeContact(key)}
         >
-          <AvatarWithDetails contact={contact}/>  
+          <AvatarWithDetails contact={contact} />
         </ListItemButton>
       ))}
     </List>

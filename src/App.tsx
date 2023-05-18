@@ -7,7 +7,7 @@ import { ErrorScreen } from './errorScreen/ErrorScreen';
 import { TestOpenAiToken } from './testOpenAiToken/TestOpenAiToken';
 
 import { useAppSelector } from './hooks';
-import { selectScreen, AppScreen } from './appStateSlice';
+import { AppScreen } from './AppState';
 
 import Box from '@mui/material/Box';
 import { AddContact } from './addContact/AddContact';
@@ -18,6 +18,7 @@ import { GroupChatProfile } from './profile/GroupChatProfile';
 import { Loading } from './loading/Loading';
 import { ErrorScreenWithDeleteButton } from './errorScreen/ErrorScreenWithDeleteButton';
 import { Welcome } from './welcome/Welcome';
+import { selectScreen } from './selectors';
 
 function assertUnreachable(_x: never): never {
     throw new Error("Didn't expect to get here");
@@ -53,7 +54,7 @@ function getCurrentScreenComponent(currentScreen: AppScreen): JSX.Element {
     return assertUnreachable(currentScreen);
 }
 
-export const StyledBox = styled(Box)(({theme}) => ({
+export const StyledBox = styled(Box)(({ theme }) => ({
     background: theme.palette.background.default
 }));
 
@@ -65,7 +66,7 @@ export default function App() {
 
     return <StyledBox height="100vh" display="flex" flexDirection="column">
         <Box flex={1} overflow="auto">
-        {currentScreenComponent}
+            {currentScreenComponent}
         </Box>
     </StyledBox>
 }

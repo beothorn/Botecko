@@ -1,0 +1,16 @@
+import { AppScreen, AppState, ChatMessage, Contact, Settings } from "./AppState"
+
+export const actionReloadState = (newState: AppState) => ({ type: 'appState/reloadState', payload: newState })
+export const actionClearStorage = () => ({ type: 'appState/clearStorage' })
+export const actionSetScreen = (screen: AppScreen) => ({ type: 'appState/setScreen', payload: screen })
+export const actionGoToPreviousScreen = () => ({ type: 'appState/goToPreviousScreen' })
+export const actionSetChatId = (chatId: string) => ({ type: 'appState/setChatId', payload: chatId })
+export const actionSetSettings = (settings: Settings) => ({ type: 'appState/setSettings', payload: settings })
+export const actionToggleShowPlanning = () => ({ type: 'appState/toggleShowPlanning' })
+export const actionSetErrorMessage = (error: string) => ({ type: 'appState/setErrorMessage', payload: error })
+export const actionAddMessage = (newMessage: ChatMessage) => ({ type: 'appState/addMessage', payload: newMessage })
+export const actionAddContact = (newContact: Contact) => ({ type: 'appState/addContact', payload: newContact })
+export const actionRemoveContact = (id: string) => ({ type: 'appState/removeContact', payload: id })
+export const actionSetWaitingAnswer = (waitingAnswer: boolean) => ({ type: 'appState/setWaitingAnswer', payload: waitingAnswer })
+export const actionDeleteMessage = (timestamp: number) => ({ type: 'appState/deleteMessage', payload: timestamp })
+export const actionCopyMessage = (timestamp: number) => ({ type: 'appState/copyMessage', payload: timestamp })

@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import {
   Paper,
   Typography,
-  IconButton, 
+  IconButton,
   MenuItem,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import StyledMenu from './StyledMenu';
 import LocalAvatar from './LocalAvatar';
-import { RoleType } from '../OpenAiApi';
+import { BoteckoRoleType } from '../AppState';
 
 type ChatBubbleStyledProps = {
   className?: string;
@@ -21,7 +21,7 @@ type ChatBubbleStyledProps = {
 };
 
 export type ChatBubbleProps = {
-  role: RoleType;
+  role: BoteckoRoleType;
   content: string;
   timestamp?: number;
   onDelete?: (timestamp: number) => void;
@@ -42,15 +42,15 @@ function ChatBubbleStyled({ className, children, timestamp, onDelete, onEdit, on
   };
 
   return (
-    <Paper className={className} elevation={3} 
-    style={{ position: 'relative', display: 'inline-block' }}>
+    <Paper className={className} elevation={3}
+      style={{ position: 'relative', display: 'inline-block' }}>
       <IconButton
         edge="end"
         color="inherit"
         onClick={handleClick}
         style={{ position: 'absolute', top: '-0.2rem', right: '0.2rem' }}
       >
-        <MoreVertIcon  fontSize="small" />
+        <MoreVertIcon fontSize="small" />
       </IconButton>
       <StyledMenu
         anchorEl={anchorEl}
@@ -106,10 +106,10 @@ const ChatBubbleSystem = styled(ChatBubbleStyled)(({ theme }) => ({
   alignSelf: 'flex-end',
 }));
 
-export default function ChatBubble({ content, role, avatarId, timestamp, onEdit, onDelete, onCopy }: ChatBubbleProps){
+export default function ChatBubble({ content, role, avatarId, timestamp, onEdit, onDelete, onCopy }: ChatBubbleProps) {
 
   const message = <>
-    {avatarId && <LocalAvatar sx={{float: "left", marginRight: "0.2rem",}} id={avatarId} />}
+    {avatarId && <LocalAvatar sx={{ float: "left", marginRight: "0.2rem", }} id={avatarId} />}
     <div>
       <Typography variant="body1">
         {content}

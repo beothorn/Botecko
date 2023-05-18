@@ -1,6 +1,5 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { selectSettings, selectChatHistory, selectWaitingAnswer, dispatchSendMessage, actionSetScreen, actionRemoveContact, selectCurrentContact, actionToggleShowPlanning, actionSetErrorMessage, BotContact, actionDeleteMessage, actionCopyMessage, GroupChatContact, actionAddMessage, dispatchAskBotToMessage, selectCurrentContactsInGroupChat } from '../appStateSlice';
 import { batch } from 'react-redux';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
@@ -9,6 +8,11 @@ import LocalAvatar from '../components/LocalAvatar';
 import ChatEntry from '../components/ChatEntry';
 import { countWords } from '../utils/StringUtils';
 import { styled } from '@mui/material';
+import { selectChatHistory, selectCurrentContact, selectCurrentContactsInGroupChat, selectSettings, selectWaitingAnswer } from '../selectors';
+import { actionAddMessage, actionCopyMessage, actionDeleteMessage, actionRemoveContact, 
+  actionSetErrorMessage, actionSetScreen, actionToggleShowPlanning } from '../actions';
+import { BotContact, GroupChatContact } from '../AppState';
+import { dispatchAskBotToMessage, dispatchSendMessage } from '../dispatches';
 
 const Participants = styled('div')({
   display: 'flex',

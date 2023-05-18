@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import List from '@mui/material/List';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { actionSetScreen, dispatchCreateGroupChat, selectContacts, selectSettings } from '../appStateSlice';
 import Screen from '../screens/screen';
 import { ScreenTitle } from '../screens/screen';
 import AvatarWithDetails from '../components/AvatarWithDetails';
 import BackButton from '../screens/backButton';
 import { Button, Checkbox, ListItem, TextField } from '@mui/material';
 import { batch } from 'react-redux';
+import { selectContacts, selectSettings } from '../selectors';
+import { actionSetScreen } from '../actions';
+import { dispatchCreateGroupChat } from '../dispatches';
 
 type GroupChatSelectState = {
   groupName: string,
-  description: string,  
+  description: string,
   selected: string[]
 }
 
@@ -27,27 +29,27 @@ export default function GroupChatSelect() {
 
   const settings = useAppSelector(selectSettings);
 
-  const select = (key: string,  checked: boolean) => {
+  const select = (key: string, checked: boolean) => {
     if (checked) {
-      setChatSelect({...chatSelect, selected: [...chatSelect.selected, key]});
-    }else{
-      setChatSelect({...chatSelect, selected: chatSelect.selected.filter(s => s !== key)});
+      setChatSelect({ ...chatSelect, selected: [...chatSelect.selected, key] });
+    } else {
+      setChatSelect({ ...chatSelect, selected: chatSelect.selected.filter(s => s !== key) });
     }
   };
 
   const setGroupName = (groupName: string) => {
-    setChatSelect({...chatSelect, groupName: groupName});
+    setChatSelect({ ...chatSelect, groupName: groupName });
   };
 
   const setGroupDescription = (description: string) => {
-    setChatSelect({...chatSelect, description: description});
+    setChatSelect({ ...chatSelect, description: description });
   };
 
   const createChat = () => {
-    if (chatSelect.groupName !== '' && chatSelect.selected.length > 1) { 
+    if (chatSelect.groupName !== '' && chatSelect.selected.length > 1) {
       batch(() => {
         dispatchCreateGroupChat(
-          dispatch, 
+          dispatch,
           settings,
           chatSelect.groupName,
           chatSelect.description,
@@ -60,44 +62,44 @@ export default function GroupChatSelect() {
   }
 
   return (<Screen
-    leftItem={<BackButton/>}
+    leftItem={<BackButton />}
     centerItem={<ScreenTitle title="Select Contacts" />}
   >
     <List>
-      <ListItem> 
+      <ListItem>
         <TextField
-            required
-            value={chatSelect.groupName}
-            onChange={e => setGroupName(e.target.value)}
-            size="small"
-            id="groupName"
-            label="Group Name"
-            variant="outlined"
+          required
+          value={chatSelect.groupName}
+          onChange={e => setGroupName(e.target.value)}
+          size="small"
+          id="groupName"
+          label="Group Name"
+          variant="outlined"
         />
       </ListItem>
-      <ListItem> 
+      <ListItem>
         <TextField
-            required
-            value={chatSelect.description}
-            onChange={e => setGroupDescription(e.target.value)}
-            size="small"
-            id="groupDescription"
-            label="Group Description"
-            variant="outlined"
+          required
+          value={chatSelect.description}
+          onChange={e => setGroupDescription(e.target.value)}
+          size="small"
+          id="groupDescription"
+          label="Group Description"
+          variant="outlined"
         />
       </ListItem>
-      <ListItem> 
+      <ListItem>
         <Button onClick={() => createChat()}>Start Chat</Button>
       </ListItem>
       {Object.entries(contacts).map(([key, contact]) => (
-        <ListItem 
-          key={contact.id} 
+        <ListItem
+          key={contact.id}
         >
-          <Checkbox 
+          <Checkbox
             checked={chatSelect.selected.includes(key)}
-            onChange={(_e, checked) => select(key, checked)} 
+            onChange={(_e, checked) => select(key, checked)}
           />
-          <AvatarWithDetails contact={contact}/>  
+          <AvatarWithDetails contact={contact} />
         </ListItem>
       ))}
     </List>

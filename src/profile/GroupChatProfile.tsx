@@ -2,14 +2,15 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useAppSelector } from '../hooks'
-import { GroupMeta, selectCurrentContact } from '../appStateSlice';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
 import LocalAvatar from '../components/LocalAvatar';
+import { selectCurrentContact } from '../selectors';
+import { GroupMeta } from '../AppState';
 
 export function GroupChatProfile() {
     const currentContact = useAppSelector(selectCurrentContact);
-    if(currentContact.type !== 'group'){
+    if (currentContact.type !== 'group') {
         return (
             <>INVALID STATE</>
         )
@@ -18,7 +19,7 @@ export function GroupChatProfile() {
     const avatarMetaData = currentContact.avatarMeta;
     return (
         <Screen
-            leftItem={<BackButton/>}
+            leftItem={<BackButton />}
             centerItem={<ScreenTitle title={metaData.name} />}
         >
             <Box sx={{

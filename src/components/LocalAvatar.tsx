@@ -1,9 +1,9 @@
 import { Avatar, SxProps, Theme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { selectSettings } from '../appStateSlice';
 import { useAppSelector } from '../hooks';
 import { imageGeneration } from '../OpenAiApi';
 import { addAvatar, getAvatar, updateAvatar } from '../persistence/indexeddb';
+import { selectSettings } from '../selectors';
 
 type LocalAvatarProps = {
   id: string;
@@ -17,28 +17,28 @@ export default function LocalAvatar({ id, prompt, sx, onClick }: LocalAvatarProp
   const settings = useAppSelector(selectSettings);
   useEffect(() => {
     getAvatar(id).then(avatar => {
-      if(avatar && avatar.img !== '' ){
+      if (avatar && avatar.img !== '') {
         setBase64Img(avatar.img);
-      }else{
-        if(prompt){
-          imageGeneration(settings, prompt as string)
-              .then(img => {
-                if(avatar?.img === ''){
-                  updateAvatar(id, img)
-                }else{
-                  addAvatar(id, img);
-                }
-                setBase64Img(img);
-              } );
+      } else {
+        if (prompt) {
+          imageGeneration(settings.openAiKey, prompt as string)
+            .then(img => {
+              if (avatar?.img === '') {
+                updateAvatar(id, img)
+              } else {
+                addAvatar(id, img);
+              }
+              setBase64Img(img);
+            });
         }
-      }       
+      }
     })
   }, [id]);
 
-  return <Avatar 
-        src={`data:image/png;base64, ${base64Img}`} 
-        alt={prompt}
-        sx={sx}
-        onClick={onClick}
+  return <Avatar
+    src={`data:image/png;base64, ${base64Img}`}
+    alt={prompt}
+    sx={sx}
+    onClick={onClick}
   />;
 }

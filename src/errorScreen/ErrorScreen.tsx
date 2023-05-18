@@ -3,10 +3,11 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
-import { useAppDispatch, useAppSelector } from '../hooks'
-import { actionSetScreen, selectErrorMessage } from '../appStateSlice';
+import { useAppDispatch, useAppSelector } from '../hooks';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
+import { selectErrorMessage } from '../selectors';
+import { actionSetScreen } from '../actions';
 
 export function ErrorScreen() {
     const dispatch = useAppDispatch()

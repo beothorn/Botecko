@@ -5,7 +5,7 @@ import App from './App';
 import { Provider } from 'react-redux'
 import store from './store'
 import { ThemeProvider, createTheme } from '@mui/material';
-import { dispatchActionReloadState } from './appStateSlice';
+import { dispatchActionReloadState } from './dispatches';
 
 const rootElement = document.getElementById('root');
 if(!rootElement){

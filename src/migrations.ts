@@ -1,4 +1,4 @@
-import { AppScreen } from "./appStateSlice";
+import { AppScreen } from "./AppState";
 import { addAppState, addAvatar, deleteAppState, getAppState } from "./persistence/indexeddb";
 import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem, defaultSingleUserChatContext, defaultSystemEntry } from "./prompts/promptGenerator";
 import { countWords } from './utils/StringUtils';
@@ -6,14 +6,14 @@ import { countWords } from './utils/StringUtils';
 
 const cleanUpAvatars = (contacts: any) => {
     Object.entries(contacts).forEach(async ([_key, contact]: [any, any]) => {
-        if(contact.avatarMeta.id !== ''){
-            try{
+        if (contact.avatarMeta.id !== '') {
+            try {
                 await addAvatar(
-                    contact.avatarMeta.id, 
+                    contact.avatarMeta.id,
                     localStorage.getItem(contact.avatarMeta.id) || ''
                 );
                 localStorage.removeItem(contact.avatarMeta.id);
-            }catch(e){
+            } catch (e) {
                 console.error(e);
             }
         }
@@ -111,14 +111,14 @@ const migrations = [
             "chatId": loadedInitialState.chatId,
             "waitingAnswer": loadedInitialState.waitingAnswer,
             "errorMessage": loadedInitialState.errorMessage,
-            "screenStack": loadedInitialState.screenStack       
+            "screenStack": loadedInitialState.screenStack
         };
 
         delete loadedInitialState.currentScreen;
         delete loadedInitialState.chatId;
         delete loadedInitialState.waitingAnswer;
         delete loadedInitialState.errorMessage;
-        delete loadedInitialState.screenStack; 
+        delete loadedInitialState.screenStack;
 
         loadedInitialState.version = "7";
         localStorage.setItem("7", JSON.stringify(loadedInitialState));
@@ -129,24 +129,24 @@ const migrations = [
         console.log("Running migration from version 7 to 8");
         const storedState = localStorage.getItem("7") || "{}";
         const loadedInitialState = JSON.parse(storedState);
-        
+
         loadedInitialState.version = "8";
 
-        try{
+        try {
             await addAppState(loadedInitialState);
-        }catch(e){
+        } catch (e) {
             console.error(e);
         }
 
 
         Object.entries(loadedInitialState.contacts).forEach(async ([_key, contact]: [any, any]) => {
-            if(contact.avatarMeta.id !== ''){
-                try{
+            if (contact.avatarMeta.id !== '') {
+                try {
                     await addAvatar(
-                        contact.avatarMeta.id, 
+                        contact.avatarMeta.id,
                         localStorage.getItem(contact.avatarMeta.id) || ''
                     );
-                }catch(e){
+                } catch (e) {
                     console.error(e);
                 }
             }
@@ -173,7 +173,7 @@ const migrations = [
         }
 
         Object.entries(newLoadedState.contacts).forEach(async ([_key, contact]: [any, any]) => {
-            if(contact.type === 'bot'){
+            if (contact.type === 'bot') {
                 contact.contactSystemEntryTemplate = defaultSystemEntry;
                 contact.contextTemplate = defaultSingleUserChatContext;
             }
@@ -206,10 +206,10 @@ const migrations = [
         }
 
         Object.entries(newLoadedState.contacts).forEach(async ([_key, contact]: [any, any]) => {
-            if(contact.type === 'bot'){
+            if (contact.type === 'bot') {
                 contact.contactSystemEntryTemplate = defaultSystemEntry;
                 contact.contextTemplate = defaultSingleUserChatContext;
-            }else{
+            } else {
                 delete newLoadedState.contacts[contact.id];
             }
         });
@@ -253,7 +253,7 @@ const migrations = [
         console.log(JSON.stringify(Object.entries(newLoadedState.contacts)));
 
         Object.entries(newLoadedState.contacts).forEach(([_key, contact]: [any, any]) => {
-            if(contact.type === 'group'){
+            if (contact.type === 'group') {
                 delete newLoadedState.contacts[contact.id];
             }
         });
@@ -281,7 +281,7 @@ const migrations = [
 
         Object.entries(newLoadedState.contacts).forEach(([_key, contact]: [any, any]) => {
             const current = Date.now();
-            for(let i = 0; i < contact.chats.length; i++){
+            for (let i = 0; i < contact.chats.length; i++) {
                 contact.chats[i].timestamp = current + i;
             }
         });
@@ -307,7 +307,7 @@ const migrations = [
         }
 
         Object.entries(newLoadedState.contacts).forEach(([_key, contact]: [any, any]) => {
-            for(let i = 0; i < contact.chats.length; i++){
+            for (let i = 0; i < contact.chats.length; i++) {
                 contact.chats[i].wordCount = countWords(contact.chats[i].content);
             }
         });
@@ -340,10 +340,10 @@ const migrations = [
         }
 
         Object.entries(newLoadedState.contacts).forEach(async ([_key, contact]: [any, any]) => {
-            if(contact.type === 'bot'){
+            if (contact.type === 'bot') {
                 contact.contactSystemEntryTemplate = defaultSystemEntry;
                 contact.contextTemplate = defaultSingleUserChatContext;
-            }else{
+            } else {
                 delete newLoadedState.contacts[contact.id];
             }
         });
@@ -376,17 +376,17 @@ const migrations = [
         }
 
         Object.entries(newLoadedState.contacts).forEach(async ([_key, contact]: [any, any]) => {
-            if(contact.type === 'bot'){
+            if (contact.type === 'bot') {
                 contact.contactSystemEntryTemplate = defaultSystemEntry;
                 contact.contextTemplate = defaultSingleUserChatContext;
                 const name = contact.meta.name;
                 contact.chats = contact.chats.map((c: any) => {
-                    if(c.role == "user"){
+                    if (c.role == "user") {
                         return {
                             ...c,
                             content: `{"name":"${newLoadedState.settings.userName}","message":"${c.content}"}`
                         }
-                    }else{
+                    } else {
                         const parsed = JSON.parse(c.content);
                         return {
                             ...c,
@@ -394,7 +394,7 @@ const migrations = [
                         }
                     }
                 })
-            }else{
+            } else {
                 delete newLoadedState.contacts[contact.id];
             }
         });
