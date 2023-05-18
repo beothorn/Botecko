@@ -13,4 +13,5 @@ export const actionAddContact = (newContact: Contact) => ({ type: 'appState/addC
 export const actionRemoveContact = (id: string) => ({ type: 'appState/removeContact', payload: id })
 export const actionSetWaitingAnswer = (waitingAnswer: boolean) => ({ type: 'appState/setWaitingAnswer', payload: waitingAnswer })
 export const actionDeleteMessage = (timestamp: number) => ({ type: 'appState/deleteMessage', payload: timestamp })
+export const actionDeleteHistory = () => ({ type: 'appState/deleteHistory'})
 export const actionCopyMessage = (timestamp: number) => ({ type: 'appState/copyMessage', payload: timestamp })

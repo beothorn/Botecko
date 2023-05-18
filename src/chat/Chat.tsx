@@ -9,8 +9,10 @@ import ChatEntry from '../components/ChatEntry';
 import { countWords } from '../utils/StringUtils';
 import { styled } from '@mui/material';
 import { selectChatHistory, selectCurrentContact, selectCurrentContactsInGroupChat, selectSettings, selectWaitingAnswer } from '../selectors';
-import { actionAddMessage, actionCopyMessage, actionDeleteMessage, actionRemoveContact, 
-  actionSetErrorMessage, actionSetScreen, actionToggleShowPlanning } from '../actions';
+import {
+  actionAddMessage, actionCopyMessage, actionDeleteHistory, actionDeleteMessage, actionRemoveContact,
+  actionSetErrorMessage, actionSetScreen, actionToggleShowPlanning
+} from '../actions';
 import { BotContact, GroupChatContact } from '../AppState';
 import { dispatchAskBotToMessage, dispatchSendMessage } from '../dispatches';
 
@@ -23,71 +25,70 @@ export default function Chat() {
   const dispatch = useAppDispatch();
 
   let currentContact = useAppSelector(selectCurrentContact);
-  if(currentContact === undefined){
+  if (currentContact === undefined) {
     // Invalid state
     dispatch(actionSetScreen('contacts'))
     return <></>;
   }
   const singleChat = currentContact.id.endsWith("bot");
   let contacts: BotContact[] = [];
-  if(singleChat){
+  if (singleChat) {
     currentContact = useAppSelector(selectCurrentContact) as BotContact;
-  }else{
+  } else {
     currentContact = useAppSelector(selectCurrentContact) as GroupChatContact;
     contacts = useAppSelector(selectCurrentContactsInGroupChat);
   }
   const settings = useAppSelector(selectSettings);
   const chatHistory = useAppSelector(selectChatHistory) ?? [];
-  
-  
+
+
   const metaData = currentContact.meta;
   const avatarMetaData = currentContact.avatarMeta;
   const isWaitingAnswer = useAppSelector(selectWaitingAnswer);
 
   const handleSendMessage = (msg: string) => {
-    if(singleChat){
+    if (singleChat) {
       dispatchSendMessage(
-        dispatch, 
-        currentContact as BotContact, 
-        settings, 
-        chatHistory, 
+        dispatch,
+        currentContact as BotContact,
+        settings,
+        chatHistory,
         msg,
         (currentContact as BotContact).contextTemplate,
         null
       );
-    }else{
+    } else {
       dispatch(actionAddMessage({
-        role: "user", 
-        content: msg, 
+        role: "user",
+        content: msg,
         wordCount: countWords(msg),
-        contactId: "user", 
-        timestamp: Date.now()}));
+        contactId: "user",
+        timestamp: Date.now()
+      }));
     }
   };
 
   const askBotToSpeak = (id: string) => {
     dispatchAskBotToMessage(
-      dispatch, 
+      dispatch,
       id,
-      (currentContact as GroupChatContact), 
-      settings, 
-      chatHistory, 
+      (currentContact as GroupChatContact),
+      settings,
+      chatHistory,
       (currentContact as GroupChatContact).contextTemplate,
       (currentContact as GroupChatContact).meta
     );
   };
 
   const info = () => {
-    if(singleChat){
+    if (singleChat) {
       dispatch(actionSetScreen('profile'));
-    }else{
+    } else {
       dispatch(actionSetScreen('groupChatProfile'))
     }
   };
 
-  const showPlanning = () => {
-    dispatch(actionToggleShowPlanning());
-  };
+  const showPlanning = () => dispatch(actionToggleShowPlanning());
 
   const notImplemented = () => {
     batch(() => {
@@ -95,6 +96,8 @@ export default function Chat() {
       dispatch(actionSetScreen('error'));
     })
   };
+
+  const deleteHistory = () => dispatch(actionDeleteHistory());
 
   const deleteContact = () => {
     batch(() => {
@@ -104,88 +107,97 @@ export default function Chat() {
   };
 
   const centerItem = (<>
-    <LocalAvatar id={avatarMetaData.id} 
+    <LocalAvatar id={avatarMetaData.id}
       prompt={avatarMetaData.prompt}
-      sx={{mr: 2}}
+      sx={{ mr: 2 }}
       onClick={() => info()}
     />
-    <ScreenTitle title={metaData.name} 
-      onClick={() => info()}/>
+    <ScreenTitle title={metaData.name}
+      onClick={() => info()} />
   </>)
 
   const menuItems = {
     "Contact info": info,
     "Delete Contact": deleteContact,
-    "Delete History": notImplemented,
+    "Delete History": deleteHistory,
     "Export Contact": notImplemented,
     "Toggle planning": showPlanning,
   }
 
-  const print = (timestamp: number) => {console.log(`${timestamp}`)};
+  const print = (timestamp: number) => { console.log(`${timestamp}`) };
 
   const deleteMessage = (timestamp: number) => dispatch(actionDeleteMessage(timestamp));
   const copyText = (timestamp: number) => dispatch(actionCopyMessage(timestamp));
 
   const chatBubbles = chatHistory
     .flatMap((m): ChatBubbleProps[] => {
-      if(m.role === "assistant"){
+      if (m.role === "assistant") {
         const messageWithPlan = JSON.parse(m.content);
         let avatarId = "1232bot";
-        if(singleChat){
+        if (singleChat) {
           avatarId = avatarMetaData.id;
-        }else{
+        } else {
           avatarId = contacts.find(c => c.meta.name === messageWithPlan.name)?.avatarMeta.id || "";
         }
 
-        if(settings.showThought){
+        if (settings.showThought) {
           return [
-            {"role": "thought", "content": messageWithPlan.plan, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: copyText, onEdit: print},
-            {"role": "assistant", "content": messageWithPlan.message, avatarId: avatarId, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: copyText, onEdit: print},
+            {
+              "role": "thought", "content": messageWithPlan.plan, timestamp: m.timestamp,
+              onDelete: deleteMessage, onCopy: copyText, onEdit: print
+            },
+            {
+              "role": "assistant", "content": messageWithPlan.message, avatarId: avatarId, timestamp: m.timestamp,
+              onDelete: deleteMessage, onCopy: copyText, onEdit: print
+            },
           ];
-        }else{
-          return [{"role": "assistant", "content": messageWithPlan.message, avatarId: avatarId, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: copyText, onEdit: print}];
+        } else {
+          return [{
+            "role": "assistant", "content": messageWithPlan.message, avatarId: avatarId, timestamp: m.timestamp,
+            onDelete: deleteMessage, onCopy: copyText, onEdit: print
+          }];
         }
       }
-      if(m.role === "system"){
+      if (m.role === "system") {
         return [
-          {"role": "system", "content": m.content, timestamp: m.timestamp, onCopy: copyText}
+          { "role": "system", "content": m.content, timestamp: m.timestamp, onCopy: copyText }
         ];
       }
-      return [{"role": "user", "content": m.content, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: copyText, onEdit: print}];
+      return [{ "role": m.role, "content": m.content, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: copyText, onEdit: print }];
     })
     .map((message, index) => (
-    <ChatBubble
-      key={index}
-      content={message.content}
-      role={message.role}
-      avatarId={message.avatarId}
-      timestamp={message.timestamp}
-      onDelete={message.onDelete}
-      onCopy={message.onCopy}
-      onEdit={message.onEdit}
-    />
-  )); 
+      <ChatBubble
+        key={index}
+        content={message.content}
+        role={message.role}
+        avatarId={message.avatarId}
+        timestamp={message.timestamp}
+        onDelete={message.onDelete}
+        onCopy={message.onCopy}
+        onEdit={message.onEdit}
+      />
+    ));
 
   const contactName = metaData.name;
 
   let participants: JSX.Element[] = [];
 
-  if(!singleChat){
+  if (!singleChat) {
     participants = contacts.map((contact) => (<LocalAvatar
       key={contact.id}
       id={contact.avatarMeta.id}
       prompt={contact.avatarMeta.prompt}
       sx={{
-          width: '4rem',
-          height: '4rem',
-          mb: '1rem'
+        width: '4rem',
+        height: '4rem',
+        mb: '1rem'
       }}
       onClick={() => askBotToSpeak(contact.id)}
     />));
   }
 
   return (<Screen
-    leftItem={<BackButton/>}
+    leftItem={<BackButton />}
     centerItem={centerItem}
     menuItems={menuItems}
     barPosition='absolute'
@@ -194,9 +206,9 @@ export default function Chat() {
     <ChatEntry handleSendMessage={(msg) => handleSendMessage(msg)}>
       {chatBubbles}
       {isWaitingAnswer && <ChatBubble
-          content={`${singleChat?contactName:"Someone"} is typing...`}
-          role={'assistant'}
-        />}
+        content={`${singleChat ? contactName : "Someone"} is typing...`}
+        role={'assistant'}
+      />}
       {
         (!singleChat) && <Participants>{participants}</Participants>
       }

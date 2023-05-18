@@ -106,6 +106,16 @@ const ChatBubbleSystem = styled(ChatBubbleStyled)(({ theme }) => ({
   alignSelf: 'flex-end',
 }));
 
+const ChatBubbleError = styled(ChatBubbleStyled)(({ theme }) => ({
+  backgroundColor: 'yellow',
+  color: 'black',
+  padding: theme.spacing(1),
+  borderRadius: '5px 5px 5px 5px',
+  maxWidth: '100%',
+  margin: `${theme.spacing(1)} ${theme.spacing(1)} ${theme.spacing(1)} 0px`,
+  alignSelf: 'flex-end',
+}));
+
 export default function ChatBubble({ content, role, avatarId, timestamp, onEdit, onDelete, onCopy }: ChatBubbleProps) {
 
   const message = <>
@@ -120,7 +130,7 @@ export default function ChatBubble({ content, role, avatarId, timestamp, onEdit,
   return (<>
     {role === 'user' && <ChatBubbleUser timestamp={timestamp} onEdit={onEdit} onDelete={onDelete} onCopy={onCopy}>{message}</ChatBubbleUser>}
     {role === 'system' && <ChatBubbleSystem timestamp={timestamp} onEdit={onEdit} onDelete={onDelete} onCopy={onCopy}>{message}</ChatBubbleSystem>}
-    {role === 'error' && <ChatBubbleSystem timestamp={timestamp} onEdit={onEdit} onDelete={onDelete} onCopy={onCopy}>{message}</ChatBubbleSystem>}
+    {role === 'error' && <ChatBubbleError timestamp={timestamp} onEdit={onEdit} onDelete={onDelete} onCopy={onCopy}>{message}</ChatBubbleError>}
     {role === 'assistant' && <ChatBubbleAssistant timestamp={timestamp} onEdit={onEdit} onDelete={onDelete} onCopy={onCopy}>{message}</ChatBubbleAssistant>}
     {role === 'thought' && <ChatBubbleThought timestamp={timestamp} onEdit={onEdit} onDelete={onDelete} onCopy={onCopy}>{message}</ChatBubbleThought>}
   </>);

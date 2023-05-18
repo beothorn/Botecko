@@ -86,7 +86,7 @@ export async function dispatchSendMessage(
             dispatch(actionSetWaitingAnswer(false));
             dispatch(actionAddMessage({
                 role: 'error',
-                content: `${e.message}`,
+                content: `${JSON.stringify(e, null, 2)}`,
                 wordCount: countWords(e.message),
                 contactId: contact.id,
                 timestamp: Date.now()
