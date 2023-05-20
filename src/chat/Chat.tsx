@@ -131,7 +131,19 @@ export default function Chat() {
   const chatBubbles = chatHistory
     .flatMap((m): ChatBubbleProps[] => {
       if (m.role === "assistant") {
-        const messageWithPlan = JSON.parse(m.content);
+        let messageWithPlan = {
+          plan:"",
+          name:"",
+          message: m.content
+        };
+        try{
+          messageWithPlan = JSON.parse(m.content);
+        }catch (e) {
+          return [{
+            "role": "error", 
+            "content": JSON.stringify(e)
+          }];
+        }
         let avatarId = "";
         if (singleChat) {
           avatarId = avatarMetaData.id;

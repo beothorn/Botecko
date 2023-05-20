@@ -65,10 +65,10 @@ const reducers = {
         parsedChatMessage = JSON.parse(action.payload.content);
       } catch (e) {
         parsedChatMessage = {
-          message: ""
+          message: "Parse Error"
         }
       }
-      const lastMessageFull: string = JSON.parse(action.payload.content).message;
+      const lastMessageFull: string = parsedChatMessage?.message || "Parse Error";
       if (lastMessageFull.length > maxMessageSizeOnContactList) {
         state.contacts[state.volatileState.chatId].status = parsedChatMessage.message.slice(0, maxMessageSizeOnContactList) + "...";
       } else {

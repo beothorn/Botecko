@@ -1,14 +1,17 @@
-import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem, defaultSingleUserChatContext, defaultSystemEntry } from "./prompts/promptGenerator";
+import {
+  defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem,
+  defaultSingleUserChatContext, defaultSystemEntry
+} from "./prompts/promptGenerator";
 
-export const currentVersion = '16';
+export const currentVersion = '17';
 
 export type AppScreen = 'welcome'
-  | 'loading' 
-  | 'testOpenAiToken' 
-  | 'settings' 
+  | 'loading'
+  | 'testOpenAiToken'
+  | 'settings'
   | 'contacts'
-  | 'chat' 
-  | 'groupChatSelect' 
+  | 'chat'
+  | 'groupChatSelect'
   | 'addContact'
   | 'error'
   | 'errorWithDelete'
@@ -121,8 +124,6 @@ export type AvatarImg = {
   id: string,
   img: string
 }
-
-
 
 export const initialState: AppState = {
   version: currentVersion,
