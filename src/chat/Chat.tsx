@@ -133,16 +133,27 @@ export default function Chat() {
     .flatMap((m): ChatBubbleProps[] => {
       if (m.role === "assistant") {
         let messageParsed = {
-          plan:"",
-          name:"",
+          plan: "",
+          name: "",
           message: m.content
         };
-        try{
+        try {
           messageParsed = JSON.parse(m.content);
-        }catch (e) {
+        } catch (e: any) {
           console.error(e);
-          return [{
-            role: "error", 
+          return [
+          {
+            role: "error",
+            timestamp: JSON.stringify(e, null, 2),
+            content: m.content,
+            onDelete: deleteMessage, onCopy: copyText, onEdit: print
+          },{
+            role: "error",
+            timestamp: e.message,
+            content: m.content,
+            onDelete: deleteMessage, onCopy: copyText, onEdit: print
+          }, {
+            role: "error",
             timestamp: m.timestamp,
             content: m.content,
             onDelete: deleteMessage, onCopy: copyText, onEdit: print
@@ -180,22 +191,33 @@ export default function Chat() {
       }
       if (m.role === "user") {
         let messageParsed = {
-          name:"",
+          name: "",
           message: m.content
         };
-        try{
+        try {
           messageParsed = JSON.parse(m.content);
-        }catch (e) {
+        } catch (e: any) {
           console.error(e);
-          return [{
-            role: "error", 
+          return [
+          {
+            role: "error",
+            timestamp: JSON.stringify(e, null, 2),
+            content: m.content,
+            onDelete: deleteMessage, onCopy: copyText, onEdit: print
+          },{
+            role: "error",
+            timestamp: e.message,
+            content: m.content,
+            onDelete: deleteMessage, onCopy: copyText, onEdit: print
+          }, {
+            role: "error",
             timestamp: m.timestamp,
             content: m.content,
             onDelete: deleteMessage, onCopy: copyText, onEdit: print
           }];
         }
         return [{
-          role: "user", 
+          role: "user",
           timestamp: m.timestamp,
           content: messageParsed.message,
           onDelete: deleteMessage, onCopy: copyText, onEdit: print
