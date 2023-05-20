@@ -138,7 +138,7 @@ export default function Chat() {
           message: m.content
         };
         try {
-          messageParsed = JSON.parse(m.content);
+          messageParsed = JSON.parse(m.content.replaceAll(/[\u0000-\u001F\u007F-\u009F]/g, ""));
         } catch (e: any) {
           console.error(e);
           return [
@@ -195,7 +195,7 @@ export default function Chat() {
           message: m.content
         };
         try {
-          messageParsed = JSON.parse(m.content);
+          messageParsed = JSON.parse(m.content.replaceAll(/[\u0000-\u001F\u007F-\u009F]/g, ""));
         } catch (e: any) {
           console.error(e);
           return [
