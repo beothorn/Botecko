@@ -144,13 +144,13 @@ export default function Chat() {
           return [
           {
             role: "error",
-            timestamp: JSON.stringify(e, null, 2),
-            content: m.content,
+            timestamp: m.timestamp,
+            content: JSON.stringify(e, null, 2),
             onDelete: deleteMessage, onCopy: copyText, onEdit: print
           },{
             role: "error",
-            timestamp: e.message,
-            content: m.content,
+            timestamp: m.timestamp,
+            content: e.message,
             onDelete: deleteMessage, onCopy: copyText, onEdit: print
           }, {
             role: "error",
@@ -201,17 +201,14 @@ export default function Chat() {
           return [
           {
             role: "error",
-            timestamp: JSON.stringify(e, null, 2),
-            content: m.content,
+            content: JSON.stringify(e, null, 2),
             onDelete: deleteMessage, onCopy: copyText, onEdit: print
           },{
             role: "error",
-            timestamp: e.message,
-            content: m.content,
+            content: e.message,
             onDelete: deleteMessage, onCopy: copyText, onEdit: print
           }, {
             role: "error",
-            timestamp: m.timestamp,
             content: m.content,
             onDelete: deleteMessage, onCopy: copyText, onEdit: print
           }];
