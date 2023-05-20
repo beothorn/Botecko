@@ -9,6 +9,7 @@ export const actionSetSettings = (settings: Settings) => ({ type: 'appState/setS
 export const actionToggleShowPlanning = () => ({ type: 'appState/toggleShowPlanning' })
 export const actionSetErrorMessage = (error: string) => ({ type: 'appState/setErrorMessage', payload: error })
 export const actionAddMessage = (newMessage: ChatMessage) => ({ type: 'appState/addMessage', payload: newMessage })
+export const actionSetStatus = (statusMessage: string) => ({ type: 'appState/setStatus', payload: statusMessage })
 export const actionAddContact = (newContact: Contact) => ({ type: 'appState/addContact', payload: newContact })
 export const actionRemoveContact = (id: string) => ({ type: 'appState/removeContact', payload: id })
 export const actionSetWaitingAnswer = (waitingAnswer: boolean) => ({ type: 'appState/setWaitingAnswer', payload: waitingAnswer })

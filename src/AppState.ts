@@ -3,7 +3,7 @@ import {
   defaultSingleUserChatContext, defaultSystemEntry
 } from "./prompts/promptGenerator";
 
-export const currentVersion = '17';
+export const currentVersion = '18';
 
 export type AppScreen = 'welcome'
   | 'loading'
@@ -45,10 +45,17 @@ type AvatarMeta = {
 export type BoteckoRoleType = 'user' | 'system' | 'assistant' | 'thought' | 'error';
 
 // If any value is changed here, a new version and migration is needed
+export type ChatMessageContent = {
+  name: string;
+  message: string;
+  plan?: string;
+}
+
+// If any value is changed here, a new version and migration is needed
 export type ChatMessage = {
   contactId: string;
   role: BoteckoRoleType;
-  content: string;
+  content: ChatMessageContent;
   timestamp: number;
   wordCount: number;
 }

@@ -1,12 +1,13 @@
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
-import { BotContact, ChatMessage, GroupChatContact, GroupMeta, Settings, currentVersion, initialState } from "./AppState";
+import { BotContact, ChatMessage, GroupChatContact, GroupMeta, Settings, currentVersion, initialState, ChatMessageContent } from './AppState';
 import { Message, RoleType, chatCompletion, imageGeneration, listEngines } from "./OpenAiApi";
 import { batch } from "react-redux";
-import { actionAddContact, actionAddMessage, actionReloadState, actionRemoveContact, actionSetErrorMessage, actionSetScreen, actionSetSettings, actionSetWaitingAnswer } from "./actions";
+import { actionAddContact, actionAddMessage, actionReloadState, actionRemoveContact, actionSetErrorMessage, actionSetScreen, actionSetSettings, actionSetStatus, actionSetWaitingAnswer } from "./actions";
 import { countWords } from "./utils/StringUtils";
 import { addAvatar, getAppState } from "./persistence/indexeddb";
 import migrations from "./migrations";
 import { defaultSystemEntry } from "./prompts/promptGenerator";
+import { removeSpecialCharsAndParse } from "./utils/ParsingUtils";
 
 const MAX_WORD_SIZE = 2000;
 
@@ -43,7 +44,7 @@ export async function dispatchSendMessage(
     contact: BotContact,
     settings: Settings,
     previousMessages: ChatMessage[],
-    newMessage: string,
+    newMessage: ChatMessageContent,
     promptContext: string,
     groupMeta: GroupMeta | null
 ) {
@@ -51,12 +52,13 @@ export async function dispatchSendMessage(
         "contactId": "user",
         "role": "user",
         "content": newMessage,
-        "wordCount": countWords(newMessage),
+        "wordCount": countWords(JSON.stringify(newMessage)),
         "timestamp": Date.now()
     };
     batch(() => {
-        dispatch(actionSetWaitingAnswer(true));
         dispatch(actionAddMessage(newMessageWithRole));
+        dispatch(actionSetStatus(newMessage.message));
+        dispatch(actionSetWaitingAnswer(true));
     })
 
     const chatWithNewMessage: ChatMessage[] = previousMessages.concat(newMessageWithRole);
@@ -75,19 +77,21 @@ export async function dispatchSendMessage(
 
     chatCompletion(settings.openAiKey, finalPrompt)
         .then(response => batch(() => {
-            dispatch(actionSetWaitingAnswer(false));
-            dispatch(actionAddMessage({
-                ...response,
-                wordCount: countWords(response.content),
-                contactId: contact.id,
-                timestamp: Date.now()
-            }));
+            addResponseMessage(
+                dispatch,
+                contact.meta.name,
+                contact.id,
+                response
+            );
         })
         ).catch((e) => batch(() => {
             dispatch(actionSetWaitingAnswer(false));
             dispatch(actionAddMessage({
                 role: 'error',
-                content: `${JSON.stringify(e, null, 2)}`,
+                content: {
+                    name: contact.meta.name,
+                    message: `${JSON.stringify(e, null, 2)}`
+                },
                 wordCount: countWords(e.message),
                 contactId: contact.id,
                 timestamp: Date.now()
@@ -105,36 +109,22 @@ export async function dispatchAskBotToMessage(
     groupMeta: GroupMeta | null
 ) {
 
-    const messagesWithAuthor: ChatMessage[] = previousMessages.map(m => {
-        if (m.role === 'assistant') {
-            const botContact = chatContact.contacts.find(contact => contact.id === m.contactId) as BotContact;
-            let answer = "";
-            let name = ""
-            try {
-                const parsedMsg = JSON.parse(m.content);
-                answer = parsedMsg.answer;
-                name = parsedMsg.name;
-            } catch (e) {
-                console.error(e);
-                answer = m.content;
-                name = botContact.meta.name;
-            }
-            return {
-                ...m,
-                role: m.role,
-                content: `{"plan": "1-AI response.2-Character differences from AI by the profile.3-Corrections following MAIN GUIDELINE.4-Inner monologue.", "name": "${name}", "message": "${answer}"}`
-            };
-        }
-        return {
+    const messagesWithHiddenPlan: ChatMessage[] = previousMessages.map(m => ({
             ...m,
-            role: m.role,
-            content: `{"plan": "1-AI response.2-Character differences from AI by the profile.3-Corrections following MAIN GUIDELINE.4-Inner monologue.", "name": "${settings.userName}", "message": "${m.content}"}`
-        };
-    });
+            content: {
+                plan: "1-AI.2-Analyze.3-Differences.4-Inner monologue.", 
+                name: m.content.name, 
+                message: m.content.message
+            }
+        })
+    );
 
     const botContact = chatContact.contacts.find(contact => contact.id === botId) as BotContact;
 
-    dispatch(actionSetWaitingAnswer(true));
+    batch(() => {
+        dispatch(actionSetWaitingAnswer(true));
+        dispatch(actionSetStatus("Someone is typing"));
+    });    
     const sysEntry = writeSystemEntry(
         botContact.meta.name,
         JSON.stringify(botContact.meta),
@@ -145,31 +135,63 @@ export async function dispatchAskBotToMessage(
         promptContext
     );
 
-    const finalPrompt = cleanAndLimitMessagesSize(sysEntry, messagesWithAuthor);
+    const finalPrompt = cleanAndLimitMessagesSize(sysEntry, messagesWithHiddenPlan);
 
     chatCompletion(settings.openAiKey, finalPrompt)
         .then(response => {
-            const chatMsg = {
-                role: response.role,
-                content: response.content,
-                wordCount: countWords(response.content),
-                contactId: botId,
-                timestamp: Date.now(),
-            };
-            batch(() => {
-                dispatch(actionSetWaitingAnswer(false));
-                dispatch(actionAddMessage(chatMsg));
-            })
+            addResponseMessage(
+                dispatch,
+                botContact.meta.name,
+                chatContact.id,
+                response
+            );
         }).catch((e) => batch(() => {
+            const errorMsg = {
+                name: "SystemMessage",
+                plan: e.message, 
+                message: "..."
+            };
             dispatch(actionSetWaitingAnswer(false));
             dispatch(actionAddMessage({
-                role: "assistant",
-                content: `{"plan": "${e.message}", "message": "..."}`,
-                wordCount: countWords(`{"plan": "${e.message}", "message": "..."}`),
+                role: "error",
+                content: errorMsg,
+                wordCount: countWords(JSON.stringify(errorMsg)),
                 contactId: chatContact.id,
                 timestamp: Date.now()
             }));
         }));
+}
+
+function addResponseMessage(
+    dispatch: Dispatch<AnyAction>,
+    name: string, 
+    contactId: string, 
+    response: Message
+){
+    // Hopefully the AI formatted the response correctly
+    let content: ChatMessageContent;
+    try{
+        content = removeSpecialCharsAndParse(response.content);
+    }catch(e: any){
+        console.error(e);
+        content = {
+            name: name,
+            message: response.content
+        };
+    }
+
+    const chatMsg = {
+        role: response.role,
+        content,
+        wordCount: countWords(response.content),
+        contactId: contactId,
+        timestamp: Date.now(),
+    };
+    batch(() => {
+        dispatch(actionSetWaitingAnswer(false));
+        dispatch(actionAddMessage(chatMsg));
+        dispatch(actionSetStatus(content.message));
+    })
 }
 
 export async function dispatchCreateGroupChat(
@@ -296,6 +318,7 @@ export async function dispatchActionReloadState(
     const loadedState = await getAppState(currentVersion);
     dispatch(actionReloadState(loadedState));
 }
+
 function cleanAndLimitMessagesSize(sysEntry: Message, messages: ChatMessage[]): Message[] {
     const messagesWithoutErrors: ChatMessage[] = messages.filter(m => m.role !== 'error');
 
@@ -318,7 +341,7 @@ function cleanAndLimitMessagesSize(sysEntry: Message, messages: ChatMessage[]): 
 
     const chatWithOnlyExpectedData: Message[] = chatWithLimitedSize.map(c => ({
         "role": c.role as RoleType,
-        "content": c.content
+        "content": JSON.stringify(c.content)
     }));
 
     return [sysEntry].concat(chatWithOnlyExpectedData)

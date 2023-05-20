@@ -56,27 +56,15 @@ const reducers = {
   addMessage: (state: AppState, action: PayloadAction<ChatMessage>) => {
     const contact = state.contacts[state.volatileState.chatId];
     contact.chats = contact.chats?.concat(action.payload) ?? [];
-    if (action.payload.role === 'assistant') {
-      const maxMessageSizeOnContactList = 40;
-      let parsedChatMessage = {
-        message: ""
-      };
-      try {
-        parsedChatMessage = JSON.parse(action.payload.content);
-      } catch (e) {
-        console.error(e);
-        parsedChatMessage = {
-          message: "Parse Error"
-        }
-      }
-      const lastMessageFull: string = parsedChatMessage?.message || "Parse Error";
-      if (lastMessageFull.length > maxMessageSizeOnContactList) {
-        state.contacts[state.volatileState.chatId].status = parsedChatMessage.message.slice(0, maxMessageSizeOnContactList) + "...";
-      } else {
-        state.contacts[state.volatileState.chatId].status = parsedChatMessage.message;
-      }
+    saveStateToPersistence(state);
+  },
+  setStatus: (state: AppState, action: PayloadAction<string>) => {
+    const maxMessageSizeOnContactList = 40;
+    const lastMessageFull: string = action.payload;
+    if (lastMessageFull.length > maxMessageSizeOnContactList) {
+      state.contacts[state.volatileState.chatId].status = lastMessageFull.slice(0, maxMessageSizeOnContactList) + "...";
     } else {
-      state.contacts[state.volatileState.chatId].status = action.payload.content;
+      state.contacts[state.volatileState.chatId].status = lastMessageFull;
     }
     saveStateToPersistence(state);
   },
@@ -111,7 +99,7 @@ const reducers = {
   copyMessage: (state: AppState, action: PayloadAction<number>) => {
     const contact = state.contacts[state.volatileState.chatId];
     contact.chats.filter(c => c.timestamp === action.payload)
-      .forEach(c => navigator.clipboard.writeText(c.content));
+      .forEach(c => navigator.clipboard.writeText(JSON.stringify(c.content)));
   },
   clearStorage: (state: AppState) => {
     localStorage.clear();

@@ -1,6 +1,7 @@
 import { AppScreen } from "./AppState";
 import { addAppState, addAvatar, deleteAppState, getAppState } from "./persistence/indexeddb";
 import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem, defaultSingleUserChatContext, defaultSystemEntry } from "./prompts/promptGenerator";
+import { removeSpecialCharsAndParse } from "./utils/ParsingUtils";
 import { countWords } from './utils/StringUtils';
 
 
@@ -435,6 +436,44 @@ const migrations = [
             } else {
                 delete newLoadedState.contacts[contact.id];
             }
+        });
+
+        addAppState(newLoadedState);
+        localStorage.setItem("currentVersion", newVersion);
+        console.log(`Done migration from version ${oldVersion} to ${newVersion}`);
+    },
+    async () => {
+        const oldVersion = '17';
+        const newVersion = '18';
+        console.log(`Running migration from version ${oldVersion} to ${newVersion}`);
+        const loadedState = await getAppState(oldVersion);
+        const newLoadedState = {
+            ...loadedState,
+            version: newVersion,
+            volatileState: {
+                ...loadedState.volatileState,
+                screenStack: ['contacts' as AppScreen],
+                currenScreen: 'contacts',
+            }
+        }
+
+        // REPLACE PROMPTS
+        Object.entries(newLoadedState.contacts).forEach(async ([_key, contact]: [any, any]) => {
+            contact.chats = contact.chats.map((chat: any) => {
+                let content;
+                try{
+                    content = removeSpecialCharsAndParse(chat.content);
+                }catch(e: any){
+                    content = {
+                        name: contact.meta.name,
+                        message: chat.content.replaceAll(/[\u0000-\u001F\u007F-\u009F]/g, "")
+                    };
+                }
+                return{
+                    ...chat,
+                    content
+                }
+            });
         });
 
         addAppState(newLoadedState);

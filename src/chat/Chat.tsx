@@ -11,9 +11,9 @@ import { styled } from '@mui/material';
 import { selectChatHistory, selectCurrentContact, selectCurrentContactsInGroupChat, selectSettings, selectWaitingAnswer } from '../selectors';
 import {
   actionAddMessage, actionCopyMessage, actionDeleteHistory, actionDeleteMessage, actionRemoveContact,
-  actionSetErrorMessage, actionSetScreen, actionToggleShowPlanning
+  actionSetErrorMessage, actionSetScreen, actionSetStatus, actionToggleShowPlanning
 } from '../actions';
-import { BotContact, GroupChatContact } from '../AppState';
+import { BotContact, BoteckoRoleType, ChatMessageContent, GroupChatContact } from '../AppState';
 import { dispatchAskBotToMessage, dispatchSendMessage, writeSystemEntry } from '../dispatches';
 
 const Participants = styled('div')({
@@ -46,7 +46,10 @@ export default function Chat() {
   const isWaitingAnswer = useAppSelector(selectWaitingAnswer);
 
   const handleSendMessage = (msg: string) => {
-    const messageAsUserMessage = `{"name":"${settings.userName}","message": "${msg.replaceAll('"', '\\\\"')}"}`;
+    const messageAsUserMessage = {
+      name: settings.userName,
+      message: msg.replaceAll('"', '\\\\"')
+    };
     if (singleChat) {
       dispatchSendMessage(
         dispatch,
@@ -58,13 +61,17 @@ export default function Chat() {
         null
       );
     } else {
-      dispatch(actionAddMessage({
-        role: "user",
+      const msgToAdd = {
+        role: "user" as BoteckoRoleType,
         content: messageAsUserMessage,
         wordCount: countWords(msg),
         contactId: "user",
         timestamp: Date.now()
-      }));
+      };
+      batch(() => {
+        dispatch(actionAddMessage(msgToAdd));
+        dispatch(actionSetStatus(messageAsUserMessage.message));
+      });
     }
   };
 
@@ -129,98 +136,45 @@ export default function Chat() {
   const deleteMessage = (timestamp: number) => dispatch(actionDeleteMessage(timestamp));
   const copyText = (timestamp: number) => dispatch(actionCopyMessage(timestamp));
 
-  const chatBubbles = chatHistory
+  const chatBubbles: JSX.Element[] = chatHistory
     .flatMap((m): ChatBubbleProps[] => {
+      const content: ChatMessageContent = m.content;
+      const message: string = m.content.message;
       if (m.role === "assistant") {
-        let messageParsed = {
-          plan: "",
-          name: "",
-          message: m.content
-        };
-        try {
-          messageParsed = JSON.parse(m.content.replaceAll(/[\u0000-\u001F\u007F-\u009F]/g, ""));
-        } catch (e: any) {
-          console.error(e);
-          return [
-          {
-            role: "error",
-            timestamp: m.timestamp,
-            content: JSON.stringify(e, null, 2),
-            onDelete: deleteMessage, onCopy: copyText, onEdit: print
-          },{
-            role: "error",
-            timestamp: m.timestamp,
-            content: e.message,
-            onDelete: deleteMessage, onCopy: copyText, onEdit: print
-          }, {
-            role: "error",
-            timestamp: m.timestamp,
-            content: m.content,
-            onDelete: deleteMessage, onCopy: copyText, onEdit: print
-          }];
-        }
+        
         let avatarId = "";
         if (singleChat) {
           avatarId = avatarMetaData.id;
         } else {
-          avatarId = contacts.find(c => c.meta.name === messageParsed.name)?.avatarMeta.id || "";
+          avatarId = contacts.find(c => c.meta.name === content.name)?.avatarMeta.id || "";
         }
 
+        const bubbles: ChatBubbleProps[] = [];
+
         if (settings.showThought) {
-          return [
-            {
-              "role": "thought", "content": messageParsed.plan, timestamp: m.timestamp,
-              onDelete: deleteMessage, onCopy: copyText, onEdit: print
-            },
-            {
-              "role": "assistant", "content": messageParsed.message, avatarId: avatarId, timestamp: m.timestamp,
-              onDelete: deleteMessage, onCopy: copyText, onEdit: print
-            },
-          ];
-        } else {
-          return [{
-            "role": "assistant", "content": messageParsed.message, avatarId: avatarId, timestamp: m.timestamp,
+          bubbles.push({
+            role: "thought", 
+            content: content.plan || "Plan not available",  
+            avatarId: avatarId, 
+            timestamp: m.timestamp,
             onDelete: deleteMessage, onCopy: copyText, onEdit: print
-          }];
+          });
         }
-      }
-      if (m.role === "system") {
-        return [
-          { "role": "system", "content": m.content, timestamp: m.timestamp, onCopy: copyText }
-        ];
-      }
-      if (m.role === "user") {
-        let messageParsed = {
-          name: "",
-          message: m.content
-        };
-        try {
-          messageParsed = JSON.parse(m.content.replaceAll(/[\u0000-\u001F\u007F-\u009F]/g, ""));
-        } catch (e: any) {
-          console.error(e);
-          return [
-          {
-            role: "error",
-            content: JSON.stringify(e, null, 2),
-            onDelete: deleteMessage, onCopy: copyText, onEdit: print
-          },{
-            role: "error",
-            content: e.message,
-            onDelete: deleteMessage, onCopy: copyText, onEdit: print
-          }, {
-            role: "error",
-            content: m.content,
-            onDelete: deleteMessage, onCopy: copyText, onEdit: print
-          }];
-        }
-        return [{
-          role: "user",
+        bubbles.push({
+          role: "assistant", 
+          content: message, 
+          avatarId: avatarId, 
           timestamp: m.timestamp,
-          content: messageParsed.message,
           onDelete: deleteMessage, onCopy: copyText, onEdit: print
-        }];
+        })
+        return bubbles;
       }
-      return [{ "role": m.role, "content": m.content, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: copyText, onEdit: print }];
+      return [{ 
+        role: m.role, 
+        content: message, 
+        timestamp: m.timestamp, 
+        onDelete: deleteMessage, onCopy: copyText, onEdit: print 
+      }];
     })
     .map((message, index) => (
       <ChatBubble
