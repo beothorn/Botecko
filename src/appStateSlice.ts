@@ -64,6 +64,7 @@ const reducers = {
       try {
         parsedChatMessage = JSON.parse(action.payload.content);
       } catch (e) {
+        console.error(e);
         parsedChatMessage = {
           message: "Parse Error"
         }

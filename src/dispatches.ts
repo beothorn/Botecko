@@ -115,6 +115,7 @@ export async function dispatchAskBotToMessage(
                 answer = parsedMsg.answer;
                 name = parsedMsg.name;
             } catch (e) {
+                console.error(e);
                 answer = m.content;
                 name = botContact.meta.name;
             }

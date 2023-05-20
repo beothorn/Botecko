@@ -46,20 +46,21 @@ export default function Chat() {
   const isWaitingAnswer = useAppSelector(selectWaitingAnswer);
 
   const handleSendMessage = (msg: string) => {
+    const messageAsUserMessage = `{"name":"${settings.userName}","message": "${msg.replaceAll('"', '\\\\"')}"}`;
     if (singleChat) {
       dispatchSendMessage(
         dispatch,
         currentContact as BotContact,
         settings,
         chatHistory,
-        msg,
+        messageAsUserMessage,
         (currentContact as BotContact).contextTemplate,
         null
       );
     } else {
       dispatch(actionAddMessage({
         role: "user",
-        content: msg,
+        content: messageAsUserMessage,
         wordCount: countWords(msg),
         contactId: "user",
         timestamp: Date.now()
@@ -131,40 +132,43 @@ export default function Chat() {
   const chatBubbles = chatHistory
     .flatMap((m): ChatBubbleProps[] => {
       if (m.role === "assistant") {
-        let messageWithPlan = {
+        let messageParsed = {
           plan:"",
           name:"",
           message: m.content
         };
         try{
-          messageWithPlan = JSON.parse(m.content);
+          messageParsed = JSON.parse(m.content);
         }catch (e) {
+          console.error(e);
           return [{
-            "role": "error", 
-            "content": JSON.stringify(e)+'\n'+m.content
+            role: "error", 
+            timestamp: m.timestamp,
+            content: m.content,
+            onDelete: deleteMessage, onCopy: copyText, onEdit: print
           }];
         }
         let avatarId = "";
         if (singleChat) {
           avatarId = avatarMetaData.id;
         } else {
-          avatarId = contacts.find(c => c.meta.name === messageWithPlan.name)?.avatarMeta.id || "";
+          avatarId = contacts.find(c => c.meta.name === messageParsed.name)?.avatarMeta.id || "";
         }
 
         if (settings.showThought) {
           return [
             {
-              "role": "thought", "content": messageWithPlan.plan, timestamp: m.timestamp,
+              "role": "thought", "content": messageParsed.plan, timestamp: m.timestamp,
               onDelete: deleteMessage, onCopy: copyText, onEdit: print
             },
             {
-              "role": "assistant", "content": messageWithPlan.message, avatarId: avatarId, timestamp: m.timestamp,
+              "role": "assistant", "content": messageParsed.message, avatarId: avatarId, timestamp: m.timestamp,
               onDelete: deleteMessage, onCopy: copyText, onEdit: print
             },
           ];
         } else {
           return [{
-            "role": "assistant", "content": messageWithPlan.message, avatarId: avatarId, timestamp: m.timestamp,
+            "role": "assistant", "content": messageParsed.message, avatarId: avatarId, timestamp: m.timestamp,
             onDelete: deleteMessage, onCopy: copyText, onEdit: print
           }];
         }
@@ -173,6 +177,29 @@ export default function Chat() {
         return [
           { "role": "system", "content": m.content, timestamp: m.timestamp, onCopy: copyText }
         ];
+      }
+      if (m.role === "user") {
+        let messageParsed = {
+          name:"",
+          message: m.content
+        };
+        try{
+          messageParsed = JSON.parse(m.content);
+        }catch (e) {
+          console.error(e);
+          return [{
+            role: "error", 
+            timestamp: m.timestamp,
+            content: m.content,
+            onDelete: deleteMessage, onCopy: copyText, onEdit: print
+          }];
+        }
+        return [{
+          role: "user", 
+          timestamp: m.timestamp,
+          content: messageParsed.message,
+          onDelete: deleteMessage, onCopy: copyText, onEdit: print
+        }];
       }
       return [{ "role": m.role, "content": m.content, timestamp: m.timestamp, onDelete: deleteMessage, onCopy: copyText, onEdit: print }];
     })
