@@ -141,7 +141,7 @@ export default function Chat() {
         }catch (e) {
           return [{
             "role": "error", 
-            "content": JSON.stringify(e)
+            "content": JSON.stringify(e)+'\n'+m.content
           }];
         }
         let avatarId = "";
