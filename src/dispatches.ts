@@ -1,8 +1,12 @@
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
-import { BotContact, ChatMessage, GroupChatContact, GroupMeta, Settings, currentVersion, initialState, ChatMessageContent } from './AppState';
-import { Message, RoleType, chatCompletion, imageGeneration, listEngines } from "./OpenAiApi";
+import { BotContact, ChatMessage, GroupChatContact, GroupMeta, Settings, 
+    currentVersion, initialState, ChatMessageContent } from './AppState';
+import { Message, RoleType } from "./api/chatApi";
+import { chatCompletion, imageGeneration, listEngines } from "./api/client/OpenAiApi";
 import { batch } from "react-redux";
-import { actionAddContact, actionAddMessage, actionReloadState, actionRemoveContact, actionSetErrorMessage, actionSetScreen, actionSetSettings, actionSetStatus, actionSetWaitingAnswer } from "./actions";
+import { actionAddContact, actionAddMessage, actionReloadState, 
+    actionRemoveContact, actionSetErrorMessage, actionSetScreen, 
+    actionSetSettings, actionSetStatus, actionSetWaitingAnswer } from "./actions";
 import { countWords } from "./utils/StringUtils";
 import { addAvatar, getAppState } from "./persistence/indexeddb";
 import migrations from "./migrations";
@@ -73,9 +77,11 @@ export async function dispatchSendMessage(
         promptContext
     );
 
+    const currentChatCompletion = chatCompletion; // TODO: Get from settings
+
     const finalPrompt = cleanAndLimitMessagesSize(sysEntry, chatWithNewMessage);
 
-    chatCompletion(settings.openAiKey, finalPrompt)
+    currentChatCompletion(settings.openAiKey, finalPrompt)
         .then(response => batch(() => {
             addResponseMessage(
                 dispatch,
@@ -125,6 +131,7 @@ export async function dispatchAskBotToMessage(
         dispatch(actionSetWaitingAnswer(true));
         dispatch(actionSetStatus("Someone is typing"));
     });    
+
     const sysEntry = writeSystemEntry(
         botContact.meta.name,
         JSON.stringify(botContact.meta),
@@ -135,9 +142,11 @@ export async function dispatchAskBotToMessage(
         promptContext
     );
 
+    const currentChatCompletion = chatCompletion; // TODO: Get from settings
+
     const finalPrompt = cleanAndLimitMessagesSize(sysEntry, messagesWithHiddenPlan);
 
-    chatCompletion(settings.openAiKey, finalPrompt)
+    currentChatCompletion(settings.openAiKey, finalPrompt)
         .then(response => {
             addResponseMessage(
                 dispatch,
@@ -250,13 +259,16 @@ export async function dispatchCreateContact(
         status: contactDescription,
     }))
 
-    chatCompletion(settings.openAiKey, generateContact(
+    const currentChatCompletion = chatCompletion; // TODO: Get from settings
+    const currentImageGeneration = imageGeneration; // TODO: Get from settings
+
+    currentChatCompletion(settings.openAiKey, generateContact(
         contactDescription,
         settings.profileGeneratorSystemEntry,
         settings.profileGeneratorMessageEntry))
         .then(response => {
             const responseJson: MetaFromAI = JSON.parse(response.content);
-            imageGeneration(settings.openAiKey, responseJson.avatar)
+            currentImageGeneration(settings.openAiKey, responseJson.avatar)
                 .then(img => dispatch(actionAddContact(createBotContactFromMeta(id, settings, responseJson, img))))
                 .catch(() => dispatch(actionAddContact(createBotContactFromMeta(id, settings, responseJson, ""))));
         }).catch(() => dispatch(actionRemoveContact(id)));

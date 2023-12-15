@@ -1,16 +1,11 @@
 import axios from 'axios';
+import { Message, ChatCompletion } from '../chatApi'
+import { B64Image, ImageGeneration } from '../imageApi'
 
 const openAiUrl = 'https://api.openai.com/v1';
 const model = "gpt-4";
 
-export type RoleType = 'user' | 'system' | 'assistant';
-
-export type Message = {
-    role: RoleType;
-    content: string;
-};
-
-export const chatCompletion = (openAiKey: string, messages: Message[]): Promise<Message> => axios.post(`${openAiUrl}/chat/completions`, {
+export const chatCompletion: ChatCompletion = (openAiKey: string, messages: Message[]): Promise<Message> => axios.post(`${openAiUrl}/chat/completions`, {
     "model": model,
     "messages": messages
 }, {
@@ -24,7 +19,7 @@ export const chatCompletion = (openAiKey: string, messages: Message[]): Promise<
     return response;
 });
 
-export const imageGeneration = (openAiKey: string, prompt: string): Promise<string> => axios.post(`${openAiUrl}/images/generations`, {
+export const imageGeneration: ImageGeneration = (openAiKey: string, prompt: string): Promise<B64Image> => axios.post(`${openAiUrl}/images/generations`, {
     "prompt": prompt,
     "n": 1,
     "size": "256x256",
