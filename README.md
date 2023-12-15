@@ -8,7 +8,7 @@ You can get one [here](https://platform.openai.com/account/api-keys)
 
 This is running entirely on your browser. The only network calls are the ones for the openAi API.  
 
-## Features (or why this is different from just using ChatGPT)
+## Features  
 
 - Conversations are stored on your browser.  
 - With one sentence you can create any character, including an avatar

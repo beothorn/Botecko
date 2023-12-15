@@ -84,6 +84,19 @@ export default function Settings() {
                 label="OpenAi key"
                 variant="outlined"
             />
+            <FormControl fullWidth>
+                <InputLabel id="model-select-label">Model</InputLabel>
+                <SelectStyled
+                    labelId="model-select-label"
+                    id="model-select"
+                    value={settings.model}
+                    label="Model"
+                    onChange={(event: any) => handleSelectChange(event, "model")}
+                >
+                    <MenuItem value={'gpt-4'}>gpt-4</MenuItem>
+                    <MenuItem value={'gpt-3.5-turbo'}>gpt-3.5-turbo</MenuItem>
+                </SelectStyled>
+            </FormControl>
             <TextField
                 value={settings.userName}
                 onChange={(event) => handleChange(event, "userName")}
@@ -102,19 +115,6 @@ export default function Settings() {
                 label="User short info"
                 variant="outlined"
             />
-            <FormControl fullWidth>
-                <InputLabel id="model-select-label">Model</InputLabel>
-                <SelectStyled
-                    labelId="model-select-label"
-                    id="model-select"
-                    value={settings.model}
-                    label="Model"
-                    onChange={(event: any) => handleSelectChange(event, "model")}
-                >
-                    <MenuItem value={'gpt-4'}>gpt-4</MenuItem>
-                    <MenuItem value={'gpt-3.5-turbo'}>gpt-3.5-turbo</MenuItem>
-                </SelectStyled>
-            </FormControl>
             <FormControlLabel control={<Checkbox
                 checked={settings.showThought}
                 onChange={(event) => handleCheckboxChange(event, "showThought")}

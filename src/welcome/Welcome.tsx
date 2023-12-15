@@ -2,7 +2,6 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
 
 import { useAppDispatch } from '../hooks';
 import Screen, { ScreenTitle } from '../screens/screen';
@@ -27,19 +26,15 @@ export function Welcome() {
           An instant chat app where all contacts are bots.
         </Typography>
         <Typography variant="body1" gutterBottom sx={{ color: 'white' }}>
-          This is a client for the OpenAI API, so you need an API key. You can get
-          one{' '}
-          <Link href="https://platform.openai.com/account/api-keys">
-            here
-          </Link>
-          .
+          This is a client for LLM API. It currently supports openAI GPT and google Gemini. 
+          You will you need an API key.
         </Typography>
         <Typography variant="body1" gutterBottom sx={{ color: 'white' }}>
           This is running entirely on your browser. The only network calls are
           the ones for the OpenAI API.
         </Typography>
         <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
-          Features (or why this is different from just using ChatGPT)
+          Features:
         </Typography>
         <ul>
           <Typography component="li" sx={{ color: 'white' }}>
