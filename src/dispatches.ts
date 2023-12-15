@@ -2,7 +2,8 @@ import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 import { BotContact, ChatMessage, GroupChatContact, GroupMeta, Settings, 
     currentVersion, initialState, ChatMessageContent } from './AppState';
 import { Message, RoleType } from "./api/chatApi";
-import { chatCompletion, imageGeneration, listEngines } from "./api/client/OpenAiApi";
+import { chatCompletion } from "./api/client/GeminiAPI";
+import { imageGeneration, listEngines } from "./api/client/OpenAiApi";
 import { batch } from "react-redux";
 import { actionAddContact, actionAddMessage, actionReloadState, 
     actionRemoveContact, actionSetErrorMessage, actionSetScreen, 
@@ -275,23 +276,28 @@ export async function dispatchCreateContact(
 
 }
 
+function loadInitialState(dispatch: Dispatch<AnyAction>){
+    localStorage.setItem("currentVersion", currentVersion);
+    dispatch(actionReloadState({
+        ...initialState,
+        volatileState: {
+            currentScreen: 'welcome',
+            chatId: '',
+            waitingAnswer: false,
+            errorMessage: 'errorMessage',
+            screenStack: ['contacts']
+        }
+    }));
+}
+
+
 export async function dispatchActionReloadState(
     dispatch: Dispatch<AnyAction>
 ) {
     const currentInstalledVersion = localStorage.getItem("currentVersion");
     const isFirstTime = currentInstalledVersion === null;
     if (isFirstTime) {
-        localStorage.setItem("currentVersion", currentVersion);
-        dispatch(actionReloadState({
-            ...initialState,
-            volatileState: {
-                currentScreen: 'welcome',
-                chatId: '',
-                waitingAnswer: false,
-                errorMessage: 'errorMessage',
-                screenStack: ['contacts']
-            }
-        }));
+        loadInitialState(dispatch);
         return;
     }
     const storedStateVersion = Number(currentInstalledVersion);
@@ -314,7 +320,7 @@ export async function dispatchActionReloadState(
                 errorMessage = errorMessage + ' keys:' + keys;
             }
             dispatch(actionReloadState({
-                ...initialState,
+                ... initialState,
                 volatileState: {
                     currentScreen: 'errorWithDelete',
                     chatId: '',
@@ -328,6 +334,12 @@ export async function dispatchActionReloadState(
     }
     console.log(`Reloading state`);
     const loadedState = await getAppState(currentVersion);
+    // loadedState can be null if version exists but no db :(
+    if(!loadedState) {
+        loadInitialState(dispatch);
+        return;
+    }
+
     dispatch(actionReloadState(loadedState));
 }
 

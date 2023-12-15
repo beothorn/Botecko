@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { Message, ChatCompletion } from '../chatApi'
-import { B64Image, ImageGeneration } from '../imageApi'
 
-// On Message, roletype 'assistant' must be converted to model
 
 type GeminiRoleType = 'user' | 'model';
 
@@ -94,7 +92,12 @@ RESPONSE
  */
 
 const convertMessagesToGeminiMessage = (messages: Message[]): GeminiMessage[] => {
-    return [];
+    return messages.map(m => ({
+        role: (m.role === 'user'? 'user': (m.role === 'system'? 'user': 'model')), 
+        parts: [{
+            text: m.content
+        }]
+    }));
 }
 
 export const chatCompletion: ChatCompletion = (apiKey: string, messages: Message[]): Promise<Message> => 
@@ -105,7 +108,7 @@ export const chatCompletion: ChatCompletion = (apiKey: string, messages: Message
         'Content-Type': 'application/json'
     }
 }).then((result) => {
+    console.log(result.data);
     const response = result.data.candidates[0].content.parts[0].text;
-    console.log(response);
     return response;
 });

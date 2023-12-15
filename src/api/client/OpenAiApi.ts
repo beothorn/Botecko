@@ -14,8 +14,8 @@ export const chatCompletion: ChatCompletion = (openAiKey: string, messages: Mess
         'Content-Type': 'application/json'
     }
 }).then((result) => {
+    console.log(result.data);
     const response = result.data.choices[0].message;
-    console.log(response);
     return response;
 });
 
@@ -30,7 +30,7 @@ export const imageGeneration: ImageGeneration = (openAiKey: string, prompt: stri
         'Content-Type': 'application/json'
     }
 }).then((result) => {
-    console.log(result);
+    console.log(result.data);
     const response = result.data.data[0].b64_json;
     return response;
 });
