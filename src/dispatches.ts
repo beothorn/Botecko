@@ -2,7 +2,7 @@ import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 import { BotContact, ChatMessage, GroupChatContact, GroupMeta, Settings, 
     currentVersion, initialState, ChatMessageContent } from './AppState';
 import { Message, RoleType } from "./api/chatApi";
-import { chatCompletion } from "./api/client/GeminiAPI";
+import { chatCompletion, directQuery, extractAIChatResponse, extractAIProfileResponse  } from "./api/client/GeminiAPI";
 import { imageGeneration, listEngines } from "./api/client/OpenAiApi";
 import { batch } from "react-redux";
 import { actionAddContact, actionAddMessage, actionReloadState, 
@@ -12,11 +12,10 @@ import { countWords } from "./utils/StringUtils";
 import { addAvatar, getAppState } from "./persistence/indexeddb";
 import migrations from "./migrations";
 import { defaultSystemEntry } from "./prompts/promptGenerator";
-import { removeSpecialCharsAndParse } from "./utils/ParsingUtils";
 
 const MAX_WORD_SIZE = 2000;
 
-type MetaFromAI = {
+export type MetaFromAI = {
     userProfile: string,
     name: string,
     background: string,
@@ -181,7 +180,8 @@ function addResponseMessage(
     // Hopefully the AI formatted the response correctly
     let content: ChatMessageContent;
     try{
-        content = removeSpecialCharsAndParse(response.content);
+        const currentExtractResponse = extractAIChatResponse; // TODO: Get from settings
+        content = currentExtractResponse(response);
     }catch(e: any){
         console.error(e);
         content = {
@@ -260,19 +260,26 @@ export async function dispatchCreateContact(
         status: contactDescription,
     }))
 
-    const currentChatCompletion = chatCompletion; // TODO: Get from settings
+    const currentDirectQuery = directQuery; // TODO: Get from settings
     const currentImageGeneration = imageGeneration; // TODO: Get from settings
+    const currentExtractResponse = extractAIProfileResponse; // TODO: Get from settings
 
-    currentChatCompletion(settings.openAiKey, generateContact(
+    // Open Ai has system entry, gemini doesn't
+
+
+    currentDirectQuery(settings.openAiKey, generateContactString(
         contactDescription,
         settings.profileGeneratorSystemEntry,
         settings.profileGeneratorMessageEntry))
         .then(response => {
-            const responseJson: MetaFromAI = JSON.parse(response.content);
+            const responseJson: MetaFromAI = currentExtractResponse(response);
             currentImageGeneration(settings.openAiKey, responseJson.avatar)
                 .then(img => dispatch(actionAddContact(createBotContactFromMeta(id, settings, responseJson, img))))
                 .catch(() => dispatch(actionAddContact(createBotContactFromMeta(id, settings, responseJson, ""))));
-        }).catch(() => dispatch(actionRemoveContact(id)));
+        }).catch((e) => {
+            console.error(e);
+            dispatch(actionRemoveContact(id));
+        });
 
 }
 
@@ -320,7 +327,7 @@ export async function dispatchActionReloadState(
                 errorMessage = errorMessage + ' keys:' + keys;
             }
             dispatch(actionReloadState({
-                ... initialState,
+                ...initialState,
                 volatileState: {
                     currentScreen: 'errorWithDelete',
                     chatId: '',
@@ -439,4 +446,9 @@ function generateContact(profileDescription: string, profileGeneratorSystem: str
         { "role": "system", "content": profileGeneratorSystem },
         { "role": "user", "content": profileGeneratorMessage.replaceAll('%PROFILE%', profileDescription) }
     ]
+}
+
+function generateContactString(profileDescription: string, profileGeneratorSystem: string, profileGeneratorMessage: string): string {
+    const asMessages: Message[] = generateContact(profileDescription, profileGeneratorSystem, profileGeneratorMessage);
+    return `${asMessages[0].content} ${asMessages[1].content}`;
 }

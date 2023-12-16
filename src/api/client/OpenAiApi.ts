@@ -1,6 +1,9 @@
 import axios from 'axios';
-import { Message, ChatCompletion } from '../chatApi'
-import { B64Image, ImageGeneration } from '../imageApi'
+import { MetaFromAI } from '../../dispatches';
+import { Message, ChatCompletion, ExtractAIProfileResponse, ExtractAIChatResponse } from '../chatApi';
+import { B64Image, ImageGeneration } from '../imageApi';
+import { ChatMessageContent } from '../../AppState';
+import { removeSpecialCharsAndParse } from "../../utils/ParsingUtils";
 
 const openAiUrl = 'https://api.openai.com/v1';
 const model = "gpt-4";
@@ -41,3 +44,11 @@ export const listEngines = (openAiKey: string) => axios.get(`${openAiUrl}/engine
         'Content-Type': 'application/json'
     }
 });
+
+export const extractAIProfileResponse: ExtractAIProfileResponse = (response: any): MetaFromAI => {
+    return removeSpecialCharsAndParse(response.content);
+}
+
+export const extractAIChatResponse: ExtractAIChatResponse = (response: any): ChatMessageContent => {
+    return removeSpecialCharsAndParse(response.content);
+}

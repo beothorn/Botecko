@@ -1,5 +1,8 @@
 import axios from 'axios';
-import { Message, ChatCompletion } from '../chatApi'
+import { MetaFromAI } from '../../dispatches'
+import { Message, ChatCompletion, DirectQuery, ExtractAIProfileResponse, ExtractAIChatResponse } from '../chatApi'
+import { ChatMessageContent } from '../../AppState';
+import { removeSpecialCharsAndParse } from "../../utils/ParsingUtils";
 
 
 type GeminiRoleType = 'user' | 'model';
@@ -9,95 +12,49 @@ type GeminiPartTextOnly = {
 }
 
 type GeminiMessage = {
-    role: GeminiRoleType;
+    role?: GeminiRoleType;
     parts: GeminiPartTextOnly[];
 };
 
-/**
-
-curl https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent\?key\=blabla \            
-    -H 'Content-Type: application/json' \
-    -X POST \
-    -d '{
-      "contents": [
-        {"role":"user",                                 
-         "parts":[{
-           "text": "Write the first line of a story about a magic backpack."}]},
-        {"role": "model",
-         "parts":[{
-           "text": "In the bustling city of Meadow brook, lived a young girl named Sophie. She was a bright and curious soul with an imaginative mind."}]},
-        {"role": "user",
-         "parts":[{
-           "text": "Can you set it in a quiet village in 1600s France?"}]},
-      ]
-    }'
-
-RESPONSE
-
-{
-  "candidates": [
-    {
-      "content": {
-        "parts": [
-          {
-            "text": "In the heart of the tranquil village of Verdemere, nestled amidst the rolling hills of 1600s France, lived a young maiden named Antoinette. She possessed an insatiable thirst for knowledge and a heart brimming with curiosity.\n\nOne fateful day, as Antoinette wandered through the forest, she stumbled upon a hidden glen. There, nestled beneath a majestic oak tree, lay a satchel of worn leather, imbued with an aura of ancient magic."
-          }
-        ],
-        "role": "model"
-      },
-      "finishReason": "STOP",
-      "index": 0,
-      "safetyRatings": [
-        {
-          "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-          "probability": "NEGLIGIBLE"
-        },
-        {
-          "category": "HARM_CATEGORY_HATE_SPEECH",
-          "probability": "NEGLIGIBLE"
-        },
-        {
-          "category": "HARM_CATEGORY_HARASSMENT",
-          "probability": "NEGLIGIBLE"
-        },
-        {
-          "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-          "probability": "NEGLIGIBLE"
-        }
-      ]
-    }
-  ],
-  "promptFeedback": {
-    "safetyRatings": [
-      {
-        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-        "probability": "NEGLIGIBLE"
-      },
-      {
-        "category": "HARM_CATEGORY_HATE_SPEECH",
-        "probability": "NEGLIGIBLE"
-      },
-      {
-        "category": "HARM_CATEGORY_HARASSMENT",
-        "probability": "NEGLIGIBLE"
-      },
-      {
-        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-        "probability": "NEGLIGIBLE"
-      }
-    ]
-  }
-}
-
- */
-
 const convertMessagesToGeminiMessage = (messages: Message[]): GeminiMessage[] => {
-    return messages.map(m => ({
-        role: (m.role === 'user'? 'user': (m.role === 'system'? 'user': 'model')), 
+// Gemini is very sensitive to order, messages must be user - model - user (always starting with user)
+
+    const geminiMessages: GeminiMessage[] = messages.map(m => ({
+        role: (m.role !== 'user'? 'model': 'user'), 
         parts: [{
             text: m.content
         }]
     }));
+
+    const geminiMessagesNormalized: GeminiMessage[] = []
+
+    let previousMessage: GeminiMessage;
+
+    if (geminiMessages[0].role != 'user') {
+        geminiMessagesNormalized.push({
+            role: "user",
+            parts: [{text: ''}]
+        });
+    }
+
+    previousMessage = geminiMessages[0];
+
+    for (let index = 1; index < geminiMessages.length; index++) {
+        const element = geminiMessages[index];
+        if (previousMessage.role === element.role) {
+            const msgJson = JSON.parse(element.parts[0].text);
+            console.log(msgJson);
+            const previousMessageMsgJson = JSON.parse(previousMessage.parts[0].text);
+            previousMessageMsgJson.message = `${previousMessageMsgJson.message} ${msgJson.message}` ;
+            previousMessage.parts[0].text = JSON.stringify(previousMessageMsgJson); 
+        } else {
+            geminiMessagesNormalized.push(previousMessage);
+            previousMessage = element;
+        }
+    }
+    geminiMessagesNormalized.push(previousMessage);
+
+    return geminiMessagesNormalized;
 }
 
 export const chatCompletion: ChatCompletion = (apiKey: string, messages: Message[]): Promise<Message> => 
@@ -110,5 +67,33 @@ export const chatCompletion: ChatCompletion = (apiKey: string, messages: Message
 }).then((result) => {
     console.log(result.data);
     const response = result.data.candidates[0].content.parts[0].text;
+    return {
+        role: 'assistant',
+        content: response
+    };
+});
+
+export const directQuery: DirectQuery = (apiKey: string, query: string): Promise<Message> => 
+    axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+    "contents": {
+        "parts": [{
+            "text": query
+        }]
+    }
+}, {
+    headers: {
+        'Content-Type': 'application/json'
+    }
+}).then((result) => {
+    console.log(result.data);
+    const response = result.data.candidates[0].content.parts[0].text;
     return response;
 });
+
+export const extractAIProfileResponse: ExtractAIProfileResponse = (response: any): MetaFromAI => {
+    return removeSpecialCharsAndParse(response);
+}
+
+export const extractAIChatResponse: ExtractAIChatResponse = (response: any): ChatMessageContent => {
+    return JSON.parse(response.content);
+}
