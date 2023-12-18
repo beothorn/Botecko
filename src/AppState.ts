@@ -2,6 +2,8 @@ import {
   defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem,
   defaultSingleUserChatContext, defaultSystemEntry
 } from "./prompts/promptGenerator";
+import { TextProvider } from './api/chatApi';
+import { ImageProvider } from './api/imageApi';
 
 export const currentVersion = '18';
 
@@ -97,10 +99,13 @@ export type Contact = BotContact | GroupChatContact | LoadingContact
 
 // If any value is changed here, a new version and migration is needed
 export type Settings = {
+  geminiKey: string,
   openAiKey: string,
   userName: string,
   userShortInfo: string,
-  model: string,
+  profileGeneration: TextProvider,
+  chatResponse: TextProvider,
+  avatarGeneration: ImageProvider,
   systemEntry: string,
   singleBotSystemEntryContext: string,
   chatGroupSystemEntryContext: string,
@@ -136,9 +141,12 @@ export const initialState: AppState = {
   version: currentVersion,
   settings: {
     openAiKey: "",
+    geminiKey: "",
     userName: "",
     userShortInfo: "",
-    model: "gpt-4",
+    profileGeneration: 'gpt-3.5-turbo',
+    chatResponse: 'gpt-3.5-turbo',
+    avatarGeneration: 'dall-e-2',
     systemEntry: defaultSystemEntry,
     profileGeneratorSystemEntry: defaultProfileGeneratorSystem,
     profileGeneratorMessageEntry: defaultProfileGeneratorMessage,

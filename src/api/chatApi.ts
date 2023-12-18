@@ -3,6 +3,9 @@ import { ChatMessageContent } from '../AppState';
 
 export type RoleType = 'user' | 'system' | 'assistant';
 
+export const TextProviders = ['gpt-3.5-turbo', 'gpt-4', 'gemini-pro']  as const;
+export type TextProvider = typeof TextProviders[number];
+
 export type Message = {
     role: RoleType;
     content: string;
