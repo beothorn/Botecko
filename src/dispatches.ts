@@ -2,7 +2,8 @@ import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 import { BotContact, ChatMessage, GroupChatContact, GroupMeta, Settings, 
     currentVersion, initialState, ChatMessageContent } from './AppState';
 import { Message, RoleType } from "./api/chatApi";
-import { chatCompletion, directQuery, extractAIChatResponse, extractAIProfileResponse  } from "./api/client/GeminiAPI";
+import { chatCompletion as chatCompletionGemini, directQuery, 
+    extractAIChatResponse, extractAIProfileResponse  } from "./api/client/GeminiAPI";
 import { imageGeneration, listEngines } from "./api/client/OpenAiApi";
 import { batch } from "react-redux";
 import { actionAddContact, actionAddMessage, actionReloadState, 
@@ -77,7 +78,9 @@ export async function dispatchSendMessage(
         promptContext
     );
 
-    const currentChatCompletion = chatCompletion; // TODO: Get from settings
+    let currentChatCompletion = chatCompletionGemini; // TODO: Get from settings
+
+    if (settings.chatResponse === '')
 
     const finalPrompt = cleanAndLimitMessagesSize(sysEntry, chatWithNewMessage);
 
@@ -142,7 +145,7 @@ export async function dispatchAskBotToMessage(
         promptContext
     );
 
-    const currentChatCompletion = chatCompletion; // TODO: Get from settings
+    const currentChatCompletion = chatCompletionGemini; // TODO: Get from settings
 
     const finalPrompt = cleanAndLimitMessagesSize(sysEntry, messagesWithHiddenPlan);
 

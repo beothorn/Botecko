@@ -46,6 +46,10 @@ const FormControlStyled = styled(FormControl)(() => ({
     marginBottom: '1rem'
 }));
 
+const TextFieldStyled = styled(TextField)(() => ({
+    marginBottom: '1rem'
+}));
+
 function ProviderSelector({
         name, 
         providers,
@@ -120,8 +124,8 @@ export default function SettingsScreen() {
     >
         <SettingsForm>
             <BoxWithTitle title="API Keys">
-                <TextField
-                    value={settings.openAiKey}
+                <TextFieldStyled
+                    value={settings.openAiKey || ""}
                     onChange={(event) => handleChange(event, "openAiKey")}
                     size="small"
                     id="openAiKey"
@@ -129,8 +133,8 @@ export default function SettingsScreen() {
                     variant="outlined"
                     fullWidth
                 />
-                <TextField
-                    value={settings.geminiKey}
+                <TextFieldStyled
+                    value={settings.geminiKey || ""}
                     onChange={(event) => handleChange(event, "geminiKey")}
                     size="small"
                     id="geminiKey"
@@ -161,7 +165,7 @@ export default function SettingsScreen() {
             </BoxWithTitle>    
             
             <BoxWithTitle title="Bot Context">
-                <TextField
+                <TextFieldStyled
                     value={settings.userName}
                     onChange={(event) => handleChange(event, "userName")}
                     size="small"
@@ -170,7 +174,7 @@ export default function SettingsScreen() {
                     variant="outlined"
                     fullWidth
                 />
-                <TextField
+                <TextFieldStyled
                     value={settings.userShortInfo}
                     onChange={(event) => handleChange(event, "userShortInfo")}
                     size="small"
