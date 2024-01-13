@@ -14,4 +14,4 @@ export default function BoxWithTitle({ title, children }: BoxWithTitleProps){
         </Typography>
         {children}
     </Box>);
-};
+}

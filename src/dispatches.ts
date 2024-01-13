@@ -62,7 +62,7 @@ export async function dispatchSendMessage(
 
     const finalPrompt = cleanAndLimitMessagesSize(sysEntry, chatWithNewMessage);
 
-    let currentChatCompletion = getChatCompletion(settings);
+    const currentChatCompletion = getChatCompletion(settings);
 
     currentChatCompletion(finalPrompt)
         .then(response => batch(() => {
@@ -126,7 +126,7 @@ export async function dispatchAskBotToMessage(
         promptContext
     );
 
-    let currentChatCompletion = getChatCompletion(settings);
+    const currentChatCompletion = getChatCompletion(settings);
     
     const finalPrompt = cleanAndLimitMessagesSize(sysEntry, messagesWithHiddenPlan);
 
