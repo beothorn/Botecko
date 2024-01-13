@@ -1,10 +1,13 @@
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 import { BotContact, ChatMessage, GroupChatContact, GroupMeta, Settings, 
     currentVersion, initialState, ChatMessageContent } from './AppState';
-import { Message, RoleType } from "./api/chatApi";
-import { chatCompletion as chatCompletionGemini, directQuery, 
-    extractAIChatResponse, extractAIProfileResponse  } from "./api/client/GeminiAPI";
-import { imageGeneration, listEngines } from "./api/client/OpenAiApi";
+import { Message, TextProvider, RoleType } from "./api/chatApi";
+import { chatCompletion as chatCompletionGemini, directQuery as directQueryGemini, 
+    extractAIChatResponse as extractAIChatResponseGemini, 
+    extractAIProfileResponse as extractAIProfileResponseGemini  } from "./api/client/GeminiAPI";
+import { extractAIChatResponse as extractAIChatResponseOpenAi,
+    extractAIProfileResponse as extractAIProfileResponseOpenAi, 
+    chatCompletionGPT3, chatCompletionGPT4, imageGeneration, listEngines } from "./api/client/OpenAiApi";
 import { batch } from "react-redux";
 import { actionAddContact, actionAddMessage, actionReloadState, 
     actionRemoveContact, actionSetErrorMessage, actionSetScreen, 
@@ -78,16 +81,15 @@ export async function dispatchSendMessage(
         promptContext
     );
 
-    let currentChatCompletion = chatCompletionGemini; // TODO: Get from settings
-
-    if (settings.chatResponse === '')
-
     const finalPrompt = cleanAndLimitMessagesSize(sysEntry, chatWithNewMessage);
 
-    currentChatCompletion(settings.openAiKey, finalPrompt)
+    let currentChatCompletion = getChatCompletion(settings);
+
+    currentChatCompletion(finalPrompt)
         .then(response => batch(() => {
             addResponseMessage(
                 dispatch,
+                settings,
                 contact.meta.name,
                 contact.id,
                 response
@@ -145,14 +147,15 @@ export async function dispatchAskBotToMessage(
         promptContext
     );
 
-    const currentChatCompletion = chatCompletionGemini; // TODO: Get from settings
-
+    let currentChatCompletion = getChatCompletion(settings);
+    
     const finalPrompt = cleanAndLimitMessagesSize(sysEntry, messagesWithHiddenPlan);
 
-    currentChatCompletion(settings.openAiKey, finalPrompt)
+    currentChatCompletion(finalPrompt)
         .then(response => {
             addResponseMessage(
                 dispatch,
+                settings,
                 botContact.meta.name,
                 chatContact.id,
                 response
@@ -174,8 +177,70 @@ export async function dispatchAskBotToMessage(
         }));
 }
 
+function assertUnreachable(_x: never): never {
+    throw new Error("Didn't expect to get here");
+}
+
+function getChatCompletion(settings: Settings): (finalPrompt: Message[]) => Promise<Message> {
+    switch (settings.chatResponse) {
+        case 'gpt-3.5-turbo':
+            return (finalPrompt: Message[]) => chatCompletionGPT3(settings.openAiKey, finalPrompt);
+        case 'gpt-4':
+            return (finalPrompt: Message[]) => chatCompletionGPT4(settings.openAiKey, finalPrompt);
+        case 'gemini-pro':
+            return (finalPrompt: Message[]) => chatCompletionGemini(settings.geminiKey, finalPrompt);
+    }
+    return assertUnreachable(settings.chatResponse);
+}
+
+function getChatResponse(configuredResponseModel: TextProvider): (response: any) => ChatMessageContent {
+    switch (configuredResponseModel) {
+        case 'gpt-3.5-turbo':
+            return extractAIChatResponseOpenAi;
+        case 'gpt-4':
+            return extractAIChatResponseOpenAi;
+        case 'gemini-pro':
+            return extractAIChatResponseGemini;
+    }
+    return assertUnreachable(configuredResponseModel);
+}
+
+function getProfileResponse(configuredResponseModel: TextProvider): (response: any) => MetaFromAI {
+    switch (configuredResponseModel) {
+        case 'gpt-3.5-turbo':
+            return extractAIProfileResponseOpenAi;
+        case 'gpt-4':
+            return extractAIProfileResponseOpenAi;
+        case 'gemini-pro':
+            return extractAIProfileResponseGemini;
+    }
+    return assertUnreachable(configuredResponseModel);
+}
+
+function getCurrentGenerateContact(settings: Settings): (contactDescription: string) => Promise<Message> {
+    switch (settings.profileGeneration) {
+        case 'gpt-3.5-turbo':
+            return (contactDescription: string) => chatCompletionGPT3(settings.openAiKey, generateContact(
+                contactDescription,
+                settings.profileGeneratorSystemEntry,
+                settings.profileGeneratorMessageEntry));
+        case 'gpt-4':
+            return (contactDescription: string) => chatCompletionGPT4(settings.openAiKey, generateContact(
+                contactDescription,
+                settings.profileGeneratorSystemEntry,
+                settings.profileGeneratorMessageEntry));
+        case 'gemini-pro':
+            return (contactDescription: string) => directQueryGemini(settings.geminiKey, generateContactString(
+                contactDescription,
+                settings.profileGeneratorSystemEntry,
+                settings.profileGeneratorMessageEntry));
+    }
+    return assertUnreachable(settings.profileGeneration);
+}
+
 function addResponseMessage(
     dispatch: Dispatch<AnyAction>,
+    settings: Settings,
     name: string, 
     contactId: string, 
     response: Message
@@ -183,7 +248,7 @@ function addResponseMessage(
     // Hopefully the AI formatted the response correctly
     let content: ChatMessageContent;
     try{
-        const currentExtractResponse = extractAIChatResponse; // TODO: Get from settings
+        const currentExtractResponse = getChatResponse(settings.chatResponse); // TODO: Get from settings
         content = currentExtractResponse(response);
     }catch(e: any){
         console.error(e);
@@ -263,17 +328,11 @@ export async function dispatchCreateContact(
         status: contactDescription,
     }))
 
-    const currentDirectQuery = directQuery; // TODO: Get from settings
+    const currentGenContact = getCurrentGenerateContact(settings);
     const currentImageGeneration = imageGeneration; // TODO: Get from settings
-    const currentExtractResponse = extractAIProfileResponse; // TODO: Get from settings
+    const currentExtractResponse = getProfileResponse(settings.profileGeneration);
 
-    // Open Ai has system entry, gemini doesn't
-
-
-    currentDirectQuery(settings.openAiKey, generateContactString(
-        contactDescription,
-        settings.profileGeneratorSystemEntry,
-        settings.profileGeneratorMessageEntry))
+    currentGenContact(contactDescription)
         .then(response => {
             const responseJson: MetaFromAI = currentExtractResponse(response);
             currentImageGeneration(settings.openAiKey, responseJson.avatar)

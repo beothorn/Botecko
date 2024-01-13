@@ -11,7 +11,8 @@ export type Message = {
     content: string;
 };
 
-export type ChatCompletion = (apiKey: string, messages: Message[]) => Promise<Message>;
+export type ChatCompletion = (apiKey: string, model: string, messages: Message[]) => Promise<Message>;
+export type ChatCompletionDefaultModel = (apiKey: string, messages: Message[]) => Promise<Message>;
 export type DirectQuery = (apiKey: string, query: string) => Promise<Message>; 
 export type ExtractAIProfileResponse = (response: any) => MetaFromAI;
 export type ExtractAIChatResponse = (response: any) => ChatMessageContent; 

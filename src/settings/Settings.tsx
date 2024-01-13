@@ -61,8 +61,7 @@ function ProviderSelector({
         settings: Settings, 
         handleSelectChange: any
     }) {
-    const nameField = name.replace(/\s+/g, '')
-        .toLowerCase().replace(/(^|[-_])(\w)/g, (_, __, c) => c.toUpperCase());
+    const nameField = name.replace(/^\w/, (m) => m.toLowerCase()).replace(/\s+/g, '');
     const nameFieldIndex = nameField as keyof Settings;
     const nameId = name.toLowerCase().replace(/\s+/g, '-');
     const labelId = nameId +"-label";

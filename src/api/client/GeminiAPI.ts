@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { MetaFromAI } from '../../dispatches'
-import { Message, ChatCompletion, DirectQuery, ExtractAIProfileResponse, ExtractAIChatResponse } from '../chatApi'
+import { Message, DirectQuery, ExtractAIProfileResponse, ExtractAIChatResponse, ChatCompletionDefaultModel } from '../chatApi'
 import { ChatMessageContent } from '../../AppState';
 import { removeSpecialCharsAndParse } from "../../utils/ParsingUtils";
 
@@ -57,7 +57,7 @@ const convertMessagesToGeminiMessage = (messages: Message[]): GeminiMessage[] =>
     return geminiMessagesNormalized;
 }
 
-export const chatCompletion: ChatCompletion = (apiKey: string, messages: Message[]): Promise<Message> => 
+export const chatCompletion: ChatCompletionDefaultModel = (apiKey: string, messages: Message[]): Promise<Message> => 
     axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
     "contents": convertMessagesToGeminiMessage(messages)
 }, {

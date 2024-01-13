@@ -1,14 +1,13 @@
 import axios from 'axios';
 import { MetaFromAI } from '../../dispatches';
-import { Message, ChatCompletion, ExtractAIProfileResponse, ExtractAIChatResponse } from '../chatApi';
+import { Message, ChatCompletion, ExtractAIProfileResponse, ExtractAIChatResponse, ChatCompletionDefaultModel } from '../chatApi';
 import { B64Image, ImageGeneration } from '../imageApi';
 import { ChatMessageContent } from '../../AppState';
 import { removeSpecialCharsAndParse } from "../../utils/ParsingUtils";
 
 const openAiUrl = 'https://api.openai.com/v1';
-const model = "gpt-4";
 
-export const chatCompletion: ChatCompletion = (openAiKey: string, messages: Message[]): Promise<Message> => axios.post(`${openAiUrl}/chat/completions`, {
+const chatCompletionWithModel: ChatCompletion = (openAiKey: string, model: string, messages: Message[]): Promise<Message> => axios.post(`${openAiUrl}/chat/completions`, {
     "model": model,
     "messages": messages
 }, {
@@ -21,6 +20,12 @@ export const chatCompletion: ChatCompletion = (openAiKey: string, messages: Mess
     const response = result.data.choices[0].message;
     return response;
 });
+
+export const chatCompletionGPT3: ChatCompletionDefaultModel = (openAiKey: string, messages: Message[]): Promise<Message> =>
+    chatCompletionWithModel(openAiKey, 'gpt-3.5-turbo', messages);
+
+export const chatCompletionGPT4: ChatCompletionDefaultModel = (openAiKey: string, messages: Message[]): Promise<Message> =>
+    chatCompletionWithModel(openAiKey, 'gpt-4', messages);
 
 export const imageGeneration: ImageGeneration = (openAiKey: string, prompt: string): Promise<B64Image> => axios.post(`${openAiUrl}/images/generations`, {
     "prompt": prompt,

@@ -31,7 +31,7 @@ export function Welcome() {
         </Typography>
         <Typography variant="body1" gutterBottom sx={{ color: 'white' }}>
           This is running entirely on your browser. The only network calls are
-          the ones for the OpenAI API.
+          the ones for the LLM Provider API.
         </Typography>
         <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
           Features:
