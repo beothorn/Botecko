@@ -1,7 +1,7 @@
 import { Avatar, SxProps, Theme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '../hooks';
-import { imageGeneration } from '../api/client/OpenAiApi';
+import { getCurrentImageGeneration } from '../api/imageApi';
 import { addAvatar, getAvatar, updateAvatar } from '../persistence/indexeddb';
 import { selectSettings } from '../selectors';
 
@@ -21,8 +21,8 @@ export default function LocalAvatar({ id, prompt, sx, onClick }: LocalAvatarProp
         setBase64Img(avatar.img);
       } else {
         if (prompt) {
-          const currentImageGeneration = imageGeneration; // TODO: Get from settings
-          currentImageGeneration(settings.openAiKey, prompt as string)
+          const currentImageGeneration = getCurrentImageGeneration(settings);
+          currentImageGeneration(prompt as string)
             .then(img => {
               if (avatar?.img === '') {
                 updateAvatar(id, img)

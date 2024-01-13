@@ -1,13 +1,8 @@
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 import { BotContact, ChatMessage, GroupChatContact, GroupMeta, Settings, 
     currentVersion, initialState, ChatMessageContent } from './AppState';
-import { Message, TextProvider, RoleType } from "./api/chatApi";
-import { chatCompletion as chatCompletionGemini, directQuery as directQueryGemini, 
-    extractAIChatResponse as extractAIChatResponseGemini, 
-    extractAIProfileResponse as extractAIProfileResponseGemini  } from "./api/client/GeminiAPI";
-import { extractAIChatResponse as extractAIChatResponseOpenAi,
-    extractAIProfileResponse as extractAIProfileResponseOpenAi, 
-    chatCompletionGPT3, chatCompletionGPT4, imageGeneration } from "./api/client/OpenAiApi";
+import { Message, RoleType, getChatCompletion, getChatResponse, 
+    getCurrentGenerateContact, getProfileResponse } from "./api/chatApi";
 import { batch } from "react-redux";
 import { actionAddContact, actionAddMessage, actionReloadState, 
     actionRemoveContact, actionSetStatus, actionSetWaitingAnswer } from "./actions";
@@ -15,6 +10,7 @@ import { countWords } from "./utils/StringUtils";
 import { addAvatar, getAppState } from "./persistence/indexeddb";
 import migrations from "./migrations";
 import { defaultSystemEntry } from "./prompts/promptGenerator";
+import { getCurrentImageGeneration } from "./api/imageApi";
 
 const MAX_WORD_SIZE = 2000;
 
@@ -160,67 +156,6 @@ export async function dispatchAskBotToMessage(
         }));
 }
 
-function assertUnreachable(_x: never): never {
-    throw new Error("Didn't expect to get here");
-}
-
-function getChatCompletion(settings: Settings): (finalPrompt: Message[]) => Promise<Message> {
-    switch (settings.chatResponse) {
-        case 'gpt-3.5-turbo':
-            return (finalPrompt: Message[]) => chatCompletionGPT3(settings.openAiKey, finalPrompt);
-        case 'gpt-4':
-            return (finalPrompt: Message[]) => chatCompletionGPT4(settings.openAiKey, finalPrompt);
-        case 'gemini-pro':
-            return (finalPrompt: Message[]) => chatCompletionGemini(settings.geminiKey, finalPrompt);
-    }
-    return assertUnreachable(settings.chatResponse);
-}
-
-function getChatResponse(configuredResponseModel: TextProvider): (response: any) => ChatMessageContent {
-    switch (configuredResponseModel) {
-        case 'gpt-3.5-turbo':
-            return extractAIChatResponseOpenAi;
-        case 'gpt-4':
-            return extractAIChatResponseOpenAi;
-        case 'gemini-pro':
-            return extractAIChatResponseGemini;
-    }
-    return assertUnreachable(configuredResponseModel);
-}
-
-function getProfileResponse(configuredResponseModel: TextProvider): (response: any) => MetaFromAI {
-    switch (configuredResponseModel) {
-        case 'gpt-3.5-turbo':
-            return extractAIProfileResponseOpenAi;
-        case 'gpt-4':
-            return extractAIProfileResponseOpenAi;
-        case 'gemini-pro':
-            return extractAIProfileResponseGemini;
-    }
-    return assertUnreachable(configuredResponseModel);
-}
-
-function getCurrentGenerateContact(settings: Settings): (contactDescription: string) => Promise<Message> {
-    switch (settings.profileGeneration) {
-        case 'gpt-3.5-turbo':
-            return (contactDescription: string) => chatCompletionGPT3(settings.openAiKey, generateContact(
-                contactDescription,
-                settings.profileGeneratorSystemEntry,
-                settings.profileGeneratorMessageEntry));
-        case 'gpt-4':
-            return (contactDescription: string) => chatCompletionGPT4(settings.openAiKey, generateContact(
-                contactDescription,
-                settings.profileGeneratorSystemEntry,
-                settings.profileGeneratorMessageEntry));
-        case 'gemini-pro':
-            return (contactDescription: string) => directQueryGemini(settings.geminiKey, generateContactString(
-                contactDescription,
-                settings.profileGeneratorSystemEntry,
-                settings.profileGeneratorMessageEntry));
-    }
-    return assertUnreachable(settings.profileGeneration);
-}
-
 function addResponseMessage(
     dispatch: Dispatch<AnyAction>,
     settings: Settings,
@@ -312,13 +247,13 @@ export async function dispatchCreateContact(
     }))
 
     const currentGenContact = getCurrentGenerateContact(settings);
-    const currentImageGeneration = imageGeneration; // TODO: Get from settings
+    const currentImageGeneration = getCurrentImageGeneration(settings);
     const currentExtractResponse = getProfileResponse(settings.profileGeneration);
 
     currentGenContact(contactDescription)
         .then(response => {
             const responseJson: MetaFromAI = currentExtractResponse(response);
-            currentImageGeneration(settings.openAiKey, responseJson.avatar)
+            currentImageGeneration(responseJson.avatar)
                 .then(img => dispatch(actionAddContact(createBotContactFromMeta(id, settings, responseJson, img))))
                 .catch(() => dispatch(actionAddContact(createBotContactFromMeta(id, settings, responseJson, ""))));
         }).catch((e) => {
@@ -484,16 +419,4 @@ function replaceAllTokens(str: string, tokens: Record<string, string>): string {
         result = result.replaceAll(key, value);
     }
     return result;
-}
-
-function generateContact(profileDescription: string, profileGeneratorSystem: string, profileGeneratorMessage: string): Message[] {
-    return [
-        { "role": "system", "content": profileGeneratorSystem },
-        { "role": "user", "content": profileGeneratorMessage.replaceAll('%PROFILE%', profileDescription) }
-    ]
-}
-
-function generateContactString(profileDescription: string, profileGeneratorSystem: string, profileGeneratorMessage: string): string {
-    const asMessages: Message[] = generateContact(profileDescription, profileGeneratorSystem, profileGeneratorMessage);
-    return `${asMessages[0].content} ${asMessages[1].content}`;
 }

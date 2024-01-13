@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { MetaFromAI } from '../../dispatches';
 import { Message, ChatCompletion, ExtractAIProfileResponse, ExtractAIChatResponse, ChatCompletionDefaultModel } from '../chatApi';
-import { B64Image, ImageGeneration } from '../imageApi';
+import { B64Image, ImageGeneration, ImageGenerationDefaultModel } from '../imageApi';
 import { ChatMessageContent } from '../../AppState';
 import { removeSpecialCharsAndParse } from "../../utils/ParsingUtils";
 
@@ -27,10 +27,11 @@ export const chatCompletionGPT3: ChatCompletionDefaultModel = (openAiKey: string
 export const chatCompletionGPT4: ChatCompletionDefaultModel = (openAiKey: string, messages: Message[]): Promise<Message> =>
     chatCompletionWithModel(openAiKey, 'gpt-4', messages);
 
-export const imageGeneration: ImageGeneration = (openAiKey: string, prompt: string): Promise<B64Image> => axios.post(`${openAiUrl}/images/generations`, {
+const imageGenerationWithModel: ImageGeneration = (openAiKey: string, model: string, size: string, prompt: string): Promise<B64Image> => axios.post(`${openAiUrl}/images/generations`, {
     "prompt": prompt,
+    "model": model,
     "n": 1,
-    "size": "256x256",
+    "size": size,
     "response_format": "b64_json"
 }, {
     headers: {
@@ -42,6 +43,12 @@ export const imageGeneration: ImageGeneration = (openAiKey: string, prompt: stri
     const response = result.data.data[0].b64_json;
     return response;
 });
+
+export const imageGenerationDalle2: ImageGenerationDefaultModel = (openAiKey: string, prompt: string): Promise<B64Image> => 
+    imageGenerationWithModel(openAiKey, "dall-e-2", "256x256", prompt);
+
+export const imageGenerationDalle3: ImageGenerationDefaultModel = (openAiKey: string, prompt: string): Promise<B64Image> => 
+    imageGenerationWithModel(openAiKey, "dall-e-3", "1024x1024", prompt);
 
 export const extractAIProfileResponse: ExtractAIProfileResponse = (response: any): MetaFromAI => {
     return removeSpecialCharsAndParse(response.content);
