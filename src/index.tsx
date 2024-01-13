@@ -28,6 +28,15 @@ const theme = createTheme({
       secondary: '#666',
     }
   },
+  components: {
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: '#222',
+        },
+      },
+    },
+  },
 });
 
 dispatchActionReloadState(store.dispatch);

@@ -4,7 +4,6 @@ import Contacts from './contacts/Contacts';
 import Chat from './chat/Chat';
 import Settings from './settings/Settings';
 import { ErrorScreen } from './errorScreen/ErrorScreen';
-import { TestOpenAiToken } from './testOpenAiToken/TestOpenAiToken';
 
 import { useAppSelector } from './hooks';
 import { AppScreen } from './AppState';
@@ -34,8 +33,6 @@ function getCurrentScreenComponent(currentScreen: AppScreen): JSX.Element {
             return <Contacts />;
         case 'settings':
             return <Settings />;
-        case 'testOpenAiToken':
-            return <TestOpenAiToken />;
         case 'addContact':
             return <AddContact />;
         case 'chat':

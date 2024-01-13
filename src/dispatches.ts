@@ -1,17 +1,20 @@
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
-import { BotContact, ChatMessage, GroupChatContact, GroupMeta, Settings, currentVersion, initialState, ChatMessageContent } from './AppState';
-import { Message, RoleType, chatCompletion, imageGeneration, listEngines } from "./OpenAiApi";
+import { BotContact, ChatMessage, GroupChatContact, GroupMeta, Settings, 
+    currentVersion, initialState, ChatMessageContent } from './AppState';
+import { Message, RoleType, getChatCompletion, getChatResponse, 
+    getCurrentGenerateContact, getProfileResponse } from "./api/chatApi";
 import { batch } from "react-redux";
-import { actionAddContact, actionAddMessage, actionReloadState, actionRemoveContact, actionSetErrorMessage, actionSetScreen, actionSetSettings, actionSetStatus, actionSetWaitingAnswer } from "./actions";
+import { actionAddContact, actionAddMessage, actionReloadState, 
+    actionRemoveContact, actionSetStatus, actionSetWaitingAnswer } from "./actions";
 import { countWords } from "./utils/StringUtils";
 import { addAvatar, getAppState } from "./persistence/indexeddb";
 import migrations from "./migrations";
 import { defaultSystemEntry } from "./prompts/promptGenerator";
-import { removeSpecialCharsAndParse } from "./utils/ParsingUtils";
+import { getCurrentImageGeneration } from "./api/imageApi";
 
 const MAX_WORD_SIZE = 2000;
 
-type MetaFromAI = {
+export type MetaFromAI = {
     userProfile: string,
     name: string,
     background: string,
@@ -21,22 +24,6 @@ type MetaFromAI = {
     dislikes: string,
     chatCharacteristics: string,
     avatar: string
-}
-
-export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>, settings: Settings) {
-    listEngines(settings.openAiKey)
-        .then(() => {
-            return batch(() => {
-                dispatch(actionSetSettings(settings));
-                dispatch(actionSetScreen('contacts'));
-            })
-        })
-        .catch(() => {
-            batch(() => {
-                dispatch(actionSetErrorMessage("Bad openAI key"));
-                dispatch(actionSetScreen('error'));
-            })
-        });
 }
 
 export async function dispatchSendMessage(
@@ -75,10 +62,13 @@ export async function dispatchSendMessage(
 
     const finalPrompt = cleanAndLimitMessagesSize(sysEntry, chatWithNewMessage);
 
-    chatCompletion(settings.openAiKey, finalPrompt)
+    const currentChatCompletion = getChatCompletion(settings);
+
+    currentChatCompletion(finalPrompt)
         .then(response => batch(() => {
             addResponseMessage(
                 dispatch,
+                settings,
                 contact.meta.name,
                 contact.id,
                 response
@@ -125,6 +115,7 @@ export async function dispatchAskBotToMessage(
         dispatch(actionSetWaitingAnswer(true));
         dispatch(actionSetStatus("Someone is typing"));
     });    
+
     const sysEntry = writeSystemEntry(
         botContact.meta.name,
         JSON.stringify(botContact.meta),
@@ -135,12 +126,15 @@ export async function dispatchAskBotToMessage(
         promptContext
     );
 
+    const currentChatCompletion = getChatCompletion(settings);
+    
     const finalPrompt = cleanAndLimitMessagesSize(sysEntry, messagesWithHiddenPlan);
 
-    chatCompletion(settings.openAiKey, finalPrompt)
+    currentChatCompletion(finalPrompt)
         .then(response => {
             addResponseMessage(
                 dispatch,
+                settings,
                 botContact.meta.name,
                 chatContact.id,
                 response
@@ -164,6 +158,7 @@ export async function dispatchAskBotToMessage(
 
 function addResponseMessage(
     dispatch: Dispatch<AnyAction>,
+    settings: Settings,
     name: string, 
     contactId: string, 
     response: Message
@@ -171,7 +166,8 @@ function addResponseMessage(
     // Hopefully the AI formatted the response correctly
     let content: ChatMessageContent;
     try{
-        content = removeSpecialCharsAndParse(response.content);
+        const currentExtractResponse = getChatResponse(settings.chatResponse); // TODO: Get from settings
+        content = currentExtractResponse(response);
     }catch(e: any){
         console.error(e);
         content = {
@@ -250,18 +246,37 @@ export async function dispatchCreateContact(
         status: contactDescription,
     }))
 
-    chatCompletion(settings.openAiKey, generateContact(
-        contactDescription,
-        settings.profileGeneratorSystemEntry,
-        settings.profileGeneratorMessageEntry))
+    const currentGenContact = getCurrentGenerateContact(settings);
+    const currentImageGeneration = getCurrentImageGeneration(settings);
+    const currentExtractResponse = getProfileResponse(settings.profileGeneration);
+
+    currentGenContact(contactDescription)
         .then(response => {
-            const responseJson: MetaFromAI = JSON.parse(response.content);
-            imageGeneration(settings.openAiKey, responseJson.avatar)
+            const responseJson: MetaFromAI = currentExtractResponse(response);
+            currentImageGeneration(responseJson.avatar)
                 .then(img => dispatch(actionAddContact(createBotContactFromMeta(id, settings, responseJson, img))))
                 .catch(() => dispatch(actionAddContact(createBotContactFromMeta(id, settings, responseJson, ""))));
-        }).catch(() => dispatch(actionRemoveContact(id)));
+        }).catch((e) => {
+            console.error(e);
+            dispatch(actionRemoveContact(id));
+        });
 
 }
+
+function loadInitialState(dispatch: Dispatch<AnyAction>){
+    localStorage.setItem("currentVersion", currentVersion);
+    dispatch(actionReloadState({
+        ...initialState,
+        volatileState: {
+            currentScreen: 'welcome',
+            chatId: '',
+            waitingAnswer: false,
+            errorMessage: 'errorMessage',
+            screenStack: ['contacts']
+        }
+    }));
+}
+
 
 export async function dispatchActionReloadState(
     dispatch: Dispatch<AnyAction>
@@ -269,17 +284,7 @@ export async function dispatchActionReloadState(
     const currentInstalledVersion = localStorage.getItem("currentVersion");
     const isFirstTime = currentInstalledVersion === null;
     if (isFirstTime) {
-        localStorage.setItem("currentVersion", currentVersion);
-        dispatch(actionReloadState({
-            ...initialState,
-            volatileState: {
-                currentScreen: 'welcome',
-                chatId: '',
-                waitingAnswer: false,
-                errorMessage: 'errorMessage',
-                screenStack: ['contacts']
-            }
-        }));
+        loadInitialState(dispatch);
         return;
     }
     const storedStateVersion = Number(currentInstalledVersion);
@@ -316,6 +321,12 @@ export async function dispatchActionReloadState(
     }
     console.log(`Reloading state`);
     const loadedState = await getAppState(currentVersion);
+    // loadedState can be null if version exists but no db :(
+    if(!loadedState) {
+        loadInitialState(dispatch);
+        return;
+    }
+
     dispatch(actionReloadState(loadedState));
 }
 
@@ -408,11 +419,4 @@ function replaceAllTokens(str: string, tokens: Record<string, string>): string {
         result = result.replaceAll(key, value);
     }
     return result;
-}
-
-function generateContact(profileDescription: string, profileGeneratorSystem: string, profileGeneratorMessage: string): Message[] {
-    return [
-        { "role": "system", "content": profileGeneratorSystem },
-        { "role": "user", "content": profileGeneratorMessage.replaceAll('%PROFILE%', profileDescription) }
-    ]
 }

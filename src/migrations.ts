@@ -1,3 +1,5 @@
+import { TextProvider } from "./api/chatApi";
+import { ImageProvider } from "./api/imageApi";
 import { AppScreen } from "./AppState";
 import { addAppState, addAvatar, deleteAppState, getAppState } from "./persistence/indexeddb";
 import { defaultGroupChatContext, defaultProfileGeneratorMessage, defaultProfileGeneratorSystem, defaultSingleUserChatContext, defaultSystemEntry } from "./prompts/promptGenerator";
@@ -475,6 +477,32 @@ const migrations = [
                 }
             });
         });
+
+        addAppState(newLoadedState);
+        localStorage.setItem("currentVersion", newVersion);
+        console.log(`Done migration from version ${oldVersion} to ${newVersion}`);
+    },
+    async () => {
+        const oldVersion = '18';
+        const newVersion = '19';
+        console.log(`Running migration from version ${oldVersion} to ${newVersion}`);
+        const loadedState = await getAppState(oldVersion);
+        const newLoadedState = {
+            ...loadedState,
+            version: newVersion,
+            settings: {
+                ...loadedState.settings,
+                geminiKey: "",
+                profileGeneration: 'gpt-3.5-turbo' as TextProvider,
+                chatResponse: 'gpt-3.5-turbo' as TextProvider,
+                avatarGeneration: 'dall-e-2' as ImageProvider,
+            },
+            volatileState: {
+                ...loadedState.volatileState,
+                screenStack: ['contacts' as AppScreen],
+                currenScreen: 'contacts',
+            }
+        };
 
         addAppState(newLoadedState);
         localStorage.setItem("currentVersion", newVersion);

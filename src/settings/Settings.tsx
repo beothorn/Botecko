@@ -7,9 +7,14 @@ import TextField from '@mui/material/TextField';
 import { useAppSelector, useAppDispatch } from '../hooks';
 import Screen, { ScreenTitle } from '../screens/screen';
 import BackButton from '../screens/backButton';
-import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent, styled } from '@mui/material';
+import { Checkbox, FormControl, FormControlLabel, InputLabel, 
+    MenuItem, Select, SelectChangeEvent, styled } from '@mui/material';
 import { selectSettings } from '../selectors';
 import { actionSetScreen, actionSetSettings } from '../actions';
+import BoxWithTitle from '../components/BoxWithTitle';
+import { TextProviders } from '../api/chatApi';
+import { ImageProviders } from '../api/imageApi';
+import { Settings } from '../AppState';
 
 const SettingsForm = styled('form')(({ theme }) => ({
     display: "flex",
@@ -37,7 +42,49 @@ const SelectStyled = styled(Select)(({ theme }) => ({
     },
 }));
 
-export default function Settings() {
+const FormControlStyled = styled(FormControl)(() => ({
+    marginBottom: '1rem'
+}));
+
+const TextFieldStyled = styled(TextField)(() => ({
+    marginBottom: '1rem'
+}));
+
+function ProviderSelector({
+        name, 
+        providers,
+        settings, 
+        handleSelectChange
+    }: {
+        name: string, 
+        providers: readonly string[],
+        settings: Settings, 
+        handleSelectChange: any
+    }) {
+    const nameField = name.replace(/^\w/, (m) => m.toLowerCase()).replace(/\s+/g, '');
+    const nameFieldIndex = nameField as keyof Settings;
+    const nameId = name.toLowerCase().replace(/\s+/g, '-');
+    const labelId = nameId +"-label";
+
+    return (<FormControlStyled fullWidth>
+        <InputLabel id={labelId}>{name}</InputLabel>
+        <SelectStyled
+            labelId={labelId}
+            id={nameId}
+            value={settings[nameFieldIndex] || providers[0]}
+            label={name}
+            onChange={(event: any) => handleSelectChange(event, nameFieldIndex)}
+        >
+            {Object.values(providers).map((value) => (
+                <MenuItem key={value} value={value}>
+                {value}
+                </MenuItem>
+            ))}
+        </SelectStyled>
+    </FormControlStyled>);
+}
+
+export default function SettingsScreen() {
     const settingsFromState = useAppSelector(selectSettings);
     const dispatch = useAppDispatch();
     const [settings, setSettings] = useState(settingsFromState);
@@ -66,7 +113,7 @@ export default function Settings() {
     const updateKey = () => {
         batch(() => {
             dispatch(actionSetSettings(settings));
-            dispatch(actionSetScreen('testOpenAiToken'));
+            dispatch(actionSetScreen('contacts'));
         })
     }
 
@@ -75,52 +122,76 @@ export default function Settings() {
         centerItem={<ScreenTitle title='Settings' />}
     >
         <SettingsForm>
-            <TextField
-                value={settings.openAiKey}
-                onChange={(event) => handleChange(event, "openAiKey")}
-                required
-                size="small"
-                id="openAiKey"
-                label="OpenAi key"
-                variant="outlined"
-            />
-            <TextField
-                value={settings.userName}
-                onChange={(event) => handleChange(event, "userName")}
-                required
-                size="small"
-                id="userName"
-                label="User name"
-                variant="outlined"
-            />
-            <TextField
-                value={settings.userShortInfo}
-                onChange={(event) => handleChange(event, "userShortInfo")}
-                required
-                size="small"
-                id="userShortInfo"
-                label="User short info"
-                variant="outlined"
-            />
-            <FormControl fullWidth>
-                <InputLabel id="model-select-label">Model</InputLabel>
-                <SelectStyled
-                    labelId="model-select-label"
-                    id="model-select"
-                    value={settings.model}
-                    label="Model"
-                    onChange={(event: any) => handleSelectChange(event, "model")}
-                >
-                    <MenuItem value={'gpt-4'}>gpt-4</MenuItem>
-                    <MenuItem value={'gpt-3.5-turbo'}>gpt-3.5-turbo</MenuItem>
-                </SelectStyled>
-            </FormControl>
-            <FormControlLabel control={<Checkbox
-                checked={settings.showThought}
-                onChange={(event) => handleCheckboxChange(event, "showThought")}
-                required
-                size="small"
-                id="Show Thoughts" />} label="showThought" />
+            <BoxWithTitle title="API Keys">
+                <TextFieldStyled
+                    value={settings.openAiKey || ""}
+                    onChange={(event) => handleChange(event, "openAiKey")}
+                    size="small"
+                    id="openAiKey"
+                    label="OpenAi key"
+                    variant="outlined"
+                    fullWidth
+                />
+                <TextFieldStyled
+                    value={settings.geminiKey || ""}
+                    onChange={(event) => handleChange(event, "geminiKey")}
+                    size="small"
+                    id="geminiKey"
+                    label="Gemini key"
+                    variant="outlined"
+                    fullWidth
+                />
+            </BoxWithTitle>    
+            <BoxWithTitle title="Providers">
+                <ProviderSelector
+                    name='Profile Generation'
+                    providers={TextProviders}
+                    settings={settings}
+                    handleSelectChange={handleSelectChange}
+                />
+                <ProviderSelector
+                    name='Chat Response'
+                    providers={TextProviders}
+                    settings={settings}
+                    handleSelectChange={handleSelectChange}
+                />
+                <ProviderSelector
+                    name='Avatar Generation'
+                    providers={ImageProviders}
+                    settings={settings}
+                    handleSelectChange={handleSelectChange}
+                />
+            </BoxWithTitle>    
+            
+            <BoxWithTitle title="Bot Context">
+                <TextFieldStyled
+                    value={settings.userName}
+                    onChange={(event) => handleChange(event, "userName")}
+                    size="small"
+                    id="userName"
+                    label="User name"
+                    variant="outlined"
+                    fullWidth
+                />
+                <TextFieldStyled
+                    value={settings.userShortInfo}
+                    onChange={(event) => handleChange(event, "userShortInfo")}
+                    size="small"
+                    id="userShortInfo"
+                    label="User short info"
+                    variant="outlined"
+                    fullWidth
+                />
+            </BoxWithTitle>    
+            
+            <BoxWithTitle title="Other Options">
+                <FormControlLabel control={<Checkbox
+                    checked={settings.showThought}
+                    onChange={(event) => handleCheckboxChange(event, "showThought")}
+                    required
+                    size="small"
+                    id="Show Thoughts" />} label="showThought" />
+            </BoxWithTitle>
             <Button onClick={updateKey}>Save settings</Button>
         </SettingsForm>
     </Screen>;
