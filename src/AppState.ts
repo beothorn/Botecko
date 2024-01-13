@@ -5,11 +5,10 @@ import {
 import { TextProvider } from './api/chatApi';
 import { ImageProvider } from './api/imageApi';
 
-export const currentVersion = '18';
+export const currentVersion = '19';
 
 export type AppScreen = 'welcome'
   | 'loading'
-  | 'testOpenAiToken'
   | 'settings'
   | 'contacts'
   | 'chat'

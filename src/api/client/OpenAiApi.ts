@@ -43,13 +43,6 @@ export const imageGeneration: ImageGeneration = (openAiKey: string, prompt: stri
     return response;
 });
 
-export const listEngines = (openAiKey: string) => axios.get(`${openAiUrl}/engines`, {
-    headers: {
-        'Authorization': `Bearer ${openAiKey}`,
-        'Content-Type': 'application/json'
-    }
-});
-
 export const extractAIProfileResponse: ExtractAIProfileResponse = (response: any): MetaFromAI => {
     return removeSpecialCharsAndParse(response.content);
 }

@@ -113,7 +113,7 @@ export default function SettingsScreen() {
     const updateKey = () => {
         batch(() => {
             dispatch(actionSetSettings(settings));
-            dispatch(actionSetScreen('testOpenAiToken'));
+            dispatch(actionSetScreen('contacts'));
         })
     }
 

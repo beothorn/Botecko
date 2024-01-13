@@ -11,7 +11,7 @@ import { actionSetScreen } from '../actions';
 export function Welcome() {
   const dispatch = useAppDispatch();
 
-  const gotoNextScreen = () => dispatch(actionSetScreen('testOpenAiToken'));
+  const gotoNextScreen = () => dispatch(actionSetScreen('settings'));
 
   return (
     <Screen

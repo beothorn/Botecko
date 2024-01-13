@@ -7,11 +7,10 @@ import { chatCompletion as chatCompletionGemini, directQuery as directQueryGemin
     extractAIProfileResponse as extractAIProfileResponseGemini  } from "./api/client/GeminiAPI";
 import { extractAIChatResponse as extractAIChatResponseOpenAi,
     extractAIProfileResponse as extractAIProfileResponseOpenAi, 
-    chatCompletionGPT3, chatCompletionGPT4, imageGeneration, listEngines } from "./api/client/OpenAiApi";
+    chatCompletionGPT3, chatCompletionGPT4, imageGeneration } from "./api/client/OpenAiApi";
 import { batch } from "react-redux";
 import { actionAddContact, actionAddMessage, actionReloadState, 
-    actionRemoveContact, actionSetErrorMessage, actionSetScreen, 
-    actionSetSettings, actionSetStatus, actionSetWaitingAnswer } from "./actions";
+    actionRemoveContact, actionSetStatus, actionSetWaitingAnswer } from "./actions";
 import { countWords } from "./utils/StringUtils";
 import { addAvatar, getAppState } from "./persistence/indexeddb";
 import migrations from "./migrations";
@@ -29,22 +28,6 @@ export type MetaFromAI = {
     dislikes: string,
     chatCharacteristics: string,
     avatar: string
-}
-
-export async function dispatchActionCheckOpenAiKey(dispatch: Dispatch<AnyAction>, settings: Settings) {
-    listEngines(settings.openAiKey)
-        .then(() => {
-            return batch(() => {
-                dispatch(actionSetSettings(settings));
-                dispatch(actionSetScreen('contacts'));
-            })
-        })
-        .catch(() => {
-            batch(() => {
-                dispatch(actionSetErrorMessage("Bad openAI key"));
-                dispatch(actionSetScreen('error'));
-            })
-        });
 }
 
 export async function dispatchSendMessage(
