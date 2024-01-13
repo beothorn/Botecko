@@ -1,6 +1,8 @@
 # Botecko
 An instant chat app where all contacts are bots.
 
+[Check it now!](http://www.isageek.com.br/Botecko/)
+
 ![Botecko](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/logo.png)
 
 This is a client for openAI api or Gemini, so you need an API key.  
@@ -21,9 +23,7 @@ This is running entirely on your browser. The only network calls are the ones fo
 
 Chat with your contact, look behind the curtains to see why they answered the way they did.  
 
+![Settings](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/settings.png)
 ![Add Contact](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/addContact.png)
-![Profile2](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/profile2.png)
-![Profile](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/profile.png)
-![Chat without plan](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/chatNotPlan.png)
-![PlanMenu](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/planMenu.png)
-![Chat with plan](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/chatWithPlan.png)
+![Profile2](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/contactList.png)
+![Profile](https://raw.githubusercontent.com/beothorn/Botecko/main/screenshots/contactInfo.png)
