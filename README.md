@@ -19,7 +19,7 @@ This is running entirely on your browser. The only network calls are the ones fo
 - You can create group chats with characters with different opinions and learn from them.  
 - It is fun
 
-[![Botecko demo](//img.youtube.com/vi/T5jF57Luoh4/0.jpg)](//www.youtube.com/watch?v=T5jF57Luoh4 "Botecko demo")
+[Botecko video demo](//www.youtube.com/watch?v=T5jF57Luoh4 "Botecko demo")
 
 Chat with your contact, look behind the curtains to see why they answered the way they did.  
 
